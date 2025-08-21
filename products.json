@@ -232,6 +232,13 @@
             "deskripsiPanjang": "Iana",
             "createdAt": "2025-08-21T13:49:38.544Z",
             "menuContent": "Auto pusj"
+        },
+        {
+            "id": 68,
+            "nama": "Halo",
+            "harga": 3999,
+            "deskripsiPanjang": "Ssjs",
+            "createdAt": "2025-08-21T14:36:32.649Z"
         }
     ],
     "Jasa": [
