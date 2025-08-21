@@ -9,10 +9,8 @@
     <link rel="stylesheet" href="admin.css">
 </head>
 <body>
-    <!-- Notifikasi -->
     <div id="toast-container" class="toast-container"></div>
 
-    <!-- Login Screen -->
     <div id="login-screen" class="admin-container">
         <div class="form-card">
             <h2><i class="fas fa-lock"></i> Admin Panel</h2>
@@ -22,7 +20,6 @@
         </div>
     </div>
 
-    <!-- Product Form Screen -->
     <div id="product-form-screen" class="admin-container" style="display: none;">
         <div class="form-card">
             <h2><i class="fas fa-plus-circle"></i> Tambah Produk Baru</h2>
@@ -47,48 +44,14 @@
             <label for="product-description">Deskripsi Produk (Tekan Enter untuk baris baru):</label>
             <textarea id="product-description" rows="5" placeholder="Tulis deskripsi di sini..."></textarea>
 
-            <!-- Tambahan khusus Stock Akun -->
             <div id="stock-photo-section" style="display: none;">
                 <label for="product-photos">Link Foto (pisahkan dengan koma jika lebih dari satu):</label>
                 <input type="text" id="product-photos" placeholder="https://url.com/foto1.jpg, https://url.com/foto2.jpg">
             </div>
 
-                        <!-- Popup Modal khusus Script -->
-            <div id="script-modal" class="modal" style="display:none;">
-              <div class="modal-content">
-                       <div id="scriptDescriptionSection" style="display: none; margin-top: 10px;">
-           <label for="scriptFeatures">Fitur Script (pisahkan setiap fitur dengan baris baru):</label>
-           <textarea id="scriptFeatures" rows="5" placeholder="Contoh:&#10;- Auto Push Kontak&#10;- Anti Delay"></textarea>
-             </div>
-                <input type="text" id="script-feature-input" placeholder="Contoh: Auto Push Kontak">
-                <button id="add-feature-btn">Tambah Fitur</button>
-                <ul id="script-feature-list"></ul>
-                <div class="modal-actions">
-                  <button id="save-script-features">Simpan</button>
-                  <button id="close-script-modal">Batal</button>
-                </div>
-              </div>
-            </div>
-           
             <button id="add-product-button">Tambah Produk</button>
         </div>
-
-        <div class="form-card" style="margin-top:20px;">
-          <h2><i class="fas fa-trash"></i> Hapus Produk</h2>
-          <label for="delete-category">Pilih Kategori:</label>
-          <select id="delete-category">
-              <option value="">-- Pilih Kategori --</option>
-              <option value="Panel">Panel</option>
-              <option value="VPS">VPS</option>
-              <option value="Script">Script</option>
-              <option value="Jasa">Jasa</option>
-              <option value="murid">Join Murid</option>
-              <option value="Sewa Bot">Sewa Bot</option>
-              <option value="Stock Akun">Stock Akun</option>
-          </select>
-          <div id="delete-product-list" class="delete-list"></div>
-        </div>
-
+    </div>
     
     <script src="admin.js"></script>
 </body>

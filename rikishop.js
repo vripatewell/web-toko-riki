@@ -283,31 +283,23 @@ function loadServiceProducts(serviceType) {
     serviceDetailPageTitle.textContent = serviceType;
     productListDiv.innerHTML = '';
     productDetailViewDiv.style.display = 'none';
-    let productData = products[serviceType];
-    
-    if (productData && productData.length > 0) {
-        // Urutkan produk, yang terbaru (createdAt tertinggi) di atas
-        productData.sort((a, b) => {
-            const dateA = a.createdAt ? new Date(a.createdAt).getTime() : 0;
-            const dateB = b.createdAt ? new Date(b.createdAt).getTime() : 0;
-            return dateB - dateA;
-        });
+    const productData = products[serviceType];
 
+    if (productData && productData.length > 0) {
         productData.forEach(product => {
             const productItem = document.createElement('div');
             productItem.classList.add('product-item');
 
-            // Cek apakah produk masih dalam 24 jam terakhir
+            // ✅ cek apakah produk masih dalam 24 jam terakhir
             let isNew = false;
             if (product.createdAt) {
                 const createdTime = new Date(product.createdAt).getTime();
                 const now = Date.now();
-                const oneDayInMs = 24 * 60 * 60 * 1000;
-                if (now - createdTime < oneDayInMs) {
+                if (now - createdTime < 24 * 60 * 60 * 1000) { // 24 jam
                     isNew = true;
                 }
             }
-            
+
             productItem.innerHTML = `
                 <div>
                     <span class="product-name">
@@ -330,7 +322,6 @@ function loadServiceProducts(serviceType) {
         productListDiv.innerHTML = '<p style="text-align: center; color: var(--light-text-color); padding: 20px;">Produk akan segera hadir.</p>';
     }
 }
-
 function showProductDetail(product, serviceType) {
     productListDiv.style.display = 'none';
     productDetailViewDiv.style.display = 'block';
@@ -393,7 +384,6 @@ function showProductDetail(product, serviceType) {
         cekMenuBtn.textContent = 'Cek Menu';
         cekMenuBtn.addEventListener('click', () => {
             genericScriptMenuTitle.textContent = `Menu ${product.nama}`;
-            // Memformat menuContent dengan benar dari string ke tampilan
             genericScriptMenuContent.innerHTML = product.menuContent.replace(/\n/g, '<br>');
             genericScriptMenuModal.style.display = 'flex';
         });
