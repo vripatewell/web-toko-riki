@@ -118,3 +118,23 @@ button:disabled { background-color: var(--light-text-color); cursor: not-allowed
 .toast.success i { color: var(--success-color); }
 .toast.error i { color: var(--error-color); }
 .toast.info i { color: var(--primary-color); }
+
+ .product-item-admin {
+  display: flex;
+  justify-content: space-between;
+  padding: 6px 10px;
+  background: #f7f7f7;
+  margin-bottom: 5px;
+  border-radius: 6px;
+}
+.delete-btn {
+  background: red;
+  color: white;
+  border: none;
+  padding: 4px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.delete-btn:hover {
+  background: darkred;
+}       
