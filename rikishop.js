@@ -193,7 +193,7 @@ muteAudioBtn.addEventListener('click', (e) => {
     }
 });
 
-// Fungsi Pembantu
+// --- Fungsi Pembantu ---
 function showPage(pageId) {
     document.querySelectorAll('.page-content').forEach(page => page.classList.remove('active'));
     document.getElementById(pageId).classList.add('active');
@@ -202,9 +202,9 @@ function showPage(pageId) {
 }
 function updateDateTime() {
     const now = new Date();
-    const formattedDate = now.toLocaleDateString('id-ID', { month: 'short', day: 'numeric', year: 'numeric' });
+    const formattedDate = now.toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
     const formattedTime = now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false });
-    currentDateTimeSpan.innerHTML = `<span class="date">${formattedDate}</span> <span class="time">${formattedTime}</span>`;
+    currentDateTimeSpan.innerHTML = `<span class="date">${formattedDate}</span><br><span class="time">${formattedTime}</span>`;
 }
 function formatRupiah(number) {
     return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(number);
