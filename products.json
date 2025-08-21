@@ -31,15 +31,15 @@
             "deskripsiPanjang": "Syarat & Ketentuan : Server private & kualitas terbaik! || Script bot dijamin aman (anti drama/maling) | masa aktif panel 30 hari || Garansi 15 hari (1x replace) || Server anti delay/lemot! || Claim garansi wajib bawa bukti transaksi dan data panel yang lengkap"
         },
         {
-            "id": 6,
-            "nama": "Panel Ram 6GB",
-            "harga": 8000,
-            "deskripsiPanjang": "Syarat & Ketentuan : Server private & kualitas terbaik! || Script bot dijamin aman (anti drama/maling) | masa aktif panel 30 hari || Garansi 15 hari (1x replace) || Server anti delay/lemot! || Claim garansi wajib bawa bukti transaksi dan data panel yang lengkap"
-        },
-        {
             "id": 7,
             "nama": "Panel Ram 7GB",
             "harga": 9000,
+            "deskripsiPanjang": "Syarat & Ketentuan : Server private & kualitas terbaik! || Script bot dijamin aman (anti drama/maling) | masa aktif panel 30 hari || Garansi 15 hari (1x replace) || Server anti delay/lemot! || Claim garansi wajib bawa bukti transaksi dan data panel yang lengkap"
+        },
+        {
+            "id": 6,
+            "nama": "Panel Ram 6GB",
+            "harga": 8000,
             "deskripsiPanjang": "Syarat & Ketentuan : Server private & kualitas terbaik! || Script bot dijamin aman (anti drama/maling) | masa aktif panel 30 hari || Garansi 15 hari (1x replace) || Server anti delay/lemot! || Claim garansi wajib bawa bukti transaksi dan data panel yang lengkap"
         },
         {
@@ -67,17 +67,17 @@
             "deskripsiPanjang": "Syarat & Ketentuan : Server private & kualitas terbaik! || Script bot dijamin aman (anti drama/maling) | masa aktif panel 30 hari || Garansi 15 hari (1x replace) || Server anti delay/lemot! || Claim garansi wajib bawa bukti transaksi dan data panel yang lengkap"
         },
         {
-            "id": 12,
-            "nama": "Panel Ram UNLIMITED",
-            "harga": 15000,
-            "deskripsiPanjang": "Syarat & Ketentuan : Server private & kualitas terbaik! || Script bot dijamin aman (anti drama/maling) | masa aktif panel 30 hari || Garansi 15 hari (1x replace) || Server anti delay/lemot! || Claim garansi wajib bawa bukti transaksi dan data panel yang lengkap"
-        },
-        {
             "id": 66,
             "nama": "Panel 15gb || yah",
             "harga": 300000,
             "deskripsiPanjang": "Oke min",
             "createdAt": "2025-08-21T13:47:35.208Z"
+        },
+        {
+            "id": 12,
+            "nama": "Panel Ram UNLIMITED",
+            "harga": 15000,
+            "deskripsiPanjang": "Syarat & Ketentuan : Server private & kualitas terbaik! || Script bot dijamin aman (anti drama/maling) | masa aktif panel 30 hari || Garansi 15 hari (1x replace) || Server anti delay/lemot! || Claim garansi wajib bawa bukti transaksi dan data panel yang lengkap"
         }
     ],
     "VPS": [
