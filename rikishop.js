@@ -42,7 +42,7 @@ const visitorCountSpan = visitorCountDisplay.querySelector('.count');
 let currentBannerIndex = 0;
 let bannerInterval;
 
-// --- Elemen untuk Fitur Stock Akun ---
+// --- Elemen untuk Fitur Stock Akun & Logo ---
 const stockImageSliderContainer = document.getElementById('stockImageSliderContainer');
 const stockImageSlider = document.getElementById('stockImageSlider');
 const sliderPrevBtn = document.getElementById('sliderPrevBtn');
@@ -52,6 +52,9 @@ const lightboxImage = document.getElementById('lightboxImage');
 const lightboxClose = document.querySelector('.lightbox-close');
 let currentStockImageIndex = 0;
 let totalStockImages = 0;
+// Tambahan untuk Logo
+const logoGallery = document.getElementById('logoGallery');
+const logoDetailView = document.getElementById('logoDetailView');
 
 // Elemen Modal
 const aboutUsModal = document.getElementById('aboutUsModal');
@@ -98,14 +101,22 @@ let cart = JSON.parse(localStorage.getItem('rikishop_cart')) || [];
 let currentPage = 'home-page';
 const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-rikishop';
 
-// --- Logika Firebase untuk Pengunjung Unik & Real-time ---
+// --- Logika Firebase untuk Pengunjung Unik (Single count per session) ---
 async function setupFirebaseVisitorCounter() {
-    visitorCountSpan.textContent = '-';
+    visitorCountSpan.textContent = '1x';
+    const sessionCountedKey = 'visitor_counted_session';
+
+    if (!sessionStorage.getItem(sessionCountedKey)) {
+        sessionStorage.setItem(sessionCountedKey, 'true');
+        console.log("Session counted.");
+    }
+
     if (!window.firebaseServices) {
         console.warn("Layanan Firebase tidak tersedia.");
-        visitorCountSpan.textContent = 'N/A';
+        visitorCountDisplay.textContent = 'Masuk Website: 1x';
         return;
     }
+
     const { auth, db, doc, runTransaction, onSnapshot, signInAnonymously, signInWithCustomToken, initialAuthToken } = window.firebaseServices;
     try {
         if (!auth.currentUser) {
@@ -116,24 +127,15 @@ async function setupFirebaseVisitorCounter() {
         const visitorDocRef = doc(db, "artifacts", appId, "public/data/site_stats/visitors");
 
         onSnapshot(visitorDocRef, (doc) => {
-            const oldCount = visitorCountSpan.textContent;
-            let newCountText = '0';
+            let newCount = 0;
             if (doc.exists() && typeof doc.data().count === 'number' && !isNaN(doc.data().count)) {
-                newCountText = doc.data().count.toString();
+                newCount = doc.data().count;
             }
-            
-            visitorCountSpan.textContent = newCountText;
-
-            if (oldCount !== '-' && oldCount !== newCountText) {
-                visitorCountDisplay.classList.add('updated');
-                setTimeout(() => {
-                    visitorCountDisplay.classList.remove('updated');
-                }, 500);
-            }
+            visitorCountDisplay.innerHTML = `<i class="fas fa-globe-asia"></i> Masuk Website: <span class="count">${newCount}x</span>`;
         });
 
-        const sessionCountedKey = 'visitor_counted_global_v3';
-        if (!localStorage.getItem(sessionCountedKey)) {
+        const visitorTrackedKey = 'visitor_counted_global_v4';
+        if (!localStorage.getItem(visitorTrackedKey)) {
             await runTransaction(db, async (transaction) => {
                 const visitorDoc = await transaction.get(visitorDocRef);
                 let currentCount = 0;
@@ -143,11 +145,11 @@ async function setupFirebaseVisitorCounter() {
                 const newCount = currentCount + 1;
                 transaction.set(visitorDocRef, { count: newCount }, { merge: true });
             });
-            localStorage.setItem(sessionCountedKey, 'true');
+            localStorage.setItem(visitorTrackedKey, 'true');
         }
     } catch (error) {
         console.error("Error pada Firebase Visitor Counter:", error);
-        visitorCountSpan.textContent = 'Error';
+        visitorCountDisplay.innerHTML = `<i class="fas fa-globe-asia"></i> Masuk Website: <span class="count">N/A</span>`;
     }
 }
 
@@ -284,7 +286,13 @@ function loadServiceProducts(serviceType) {
     serviceDetailPageTitle.textContent = serviceType;
     productListDiv.innerHTML = '';
     productDetailViewDiv.style.display = 'none';
+    
     let productData = products[serviceType];
+    
+    if (serviceType === 'Logo') {
+      showLogoSelection(productData, serviceType);
+      return;
+    }
     
     if (productData && productData.length > 0) {
         // Urutkan produk, yang terbaru (createdAt tertinggi) di atas
@@ -332,23 +340,53 @@ function loadServiceProducts(serviceType) {
     }
 }
 
+function showLogoSelection(logoData, serviceType) {
+    productListDiv.style.display = 'block';
+    productDetailViewDiv.style.display = 'none';
+    productListDiv.innerHTML = '<h3 style="text-align:center; padding-top:15px; margin-bottom: 20px;">Pilih Logo Favoritmu!</h3>';
+    
+    const logoGrid = document.createElement('div');
+    logoGrid.className = 'logo-grid';
+    
+    if (logoData && logoData.length > 0) {
+        logoData.forEach(logo => {
+            const logoItem = document.createElement('div');
+            logoItem.className = 'logo-item';
+            logoItem.innerHTML = `<img src="${logo.images[0]}" alt="${logo.nama}">`;
+            
+            logoItem.addEventListener('click', () => {
+                showProductDetail(logo, serviceType);
+            });
+            logoGrid.appendChild(logoItem);
+        });
+        productListDiv.appendChild(logoGrid);
+    } else {
+         productListDiv.innerHTML = '<p style="text-align: center; color: var(--light-text-color); padding: 20px;">Tidak ada logo yang tersedia saat ini.</p>';
+    }
+}
+
 function showProductDetail(product, serviceType) {
     productListDiv.style.display = 'none';
     productDetailViewDiv.style.display = 'block';
     detailProductName.textContent = product.nama;
     detailProductPrice.textContent = formatRupiah(product.harga);
     detailProductActions.innerHTML = '';
+    let selectedImageLink = product.images && product.images.length > 0 ? product.images[0] : '';
 
-    if (serviceType === 'Stock Akun' && product.images && product.images.length > 0) {
+    if (serviceType === 'Stock Akun' || serviceType === 'Logo') {
         stockImageSliderContainer.style.display = 'block';
         detailProductDescriptionContent.innerHTML = product.deskripsiPanjang ? product.deskripsiPanjang.replace(/\|\|/g, '<br>') : 'Tidak ada deskripsi.';
         
         stockImageSlider.innerHTML = '';
-        product.images.forEach((imgUrl) => {
+        product.images.forEach((imgUrl, index) => {
             const slide = document.createElement('div');
             slide.className = 'image-slide';
             slide.style.backgroundImage = `url('${imgUrl}')`;
-            slide.addEventListener('click', () => openLightbox(imgUrl));
+            slide.addEventListener('click', () => {
+                openLightbox(imgUrl);
+                selectedImageLink = imgUrl;
+                updateBuyNowLink(product, serviceType, selectedImageLink);
+            });
             stockImageSlider.appendChild(slide);
         });
         
@@ -368,7 +406,7 @@ function showProductDetail(product, serviceType) {
         productId: product.id,
         productName: product.nama,
         productPrice: product.harga,
-        serviceType: serviceType // Menyimpan tipe layanan untuk logika keranjang
+        serviceType: serviceType
     });
     addToCartBtn.addEventListener('click', addToCart);
     detailProductActions.appendChild(addToCartBtn);
@@ -376,17 +414,11 @@ function showProductDetail(product, serviceType) {
     const buyNowLink = document.createElement('a');
     buyNowLink.className = 'buy-now';
     buyNowLink.textContent = 'Beli Sekarang';
-
-    let buyNowMessage = '';
-    if (serviceType === 'Stock Akun' && product.images && product.images.length > 0) {
-        buyNowMessage = `Halo Kak Admin Rikishopreal ✨\n\nSaya tertarik untuk memesan Akun ini:\n\nProduk: *${product.nama}*\nHarga: *${formatRupiah(product.harga)}*\n\nSebagai referensi, ini link gambarnya:\n${product.images[0]}\n\nMohon info ketersediaan dan panduan pembayarannya ya. Terima kasih! 🙏`;
-    } else {
-        buyNowMessage = `Halo Kak Admin Rikishopreal ✨\n\nSaya tertarik untuk memesan produk ini:\n\nProduk: *${product.nama}*\nHarga: *${formatRupiah(product.harga)}*\n\nMohon info selanjutnya untuk proses pembayaran ya. Terima kasih! 🙏`;
-    }
-    
-    buyNowLink.href = `https://wa.me/${WA_ADMIN_NUMBER}?text=${encodeURIComponent(buyNowMessage)}`;
     buyNowLink.target = "_blank";
     detailProductActions.appendChild(buyNowLink);
+    
+    // Update link "Beli Sekarang"
+    updateBuyNowLink(product, serviceType, selectedImageLink);
 
     if (serviceType === 'Script' && product.menuContent) {
         const cekMenuBtn = document.createElement('button');
@@ -394,12 +426,26 @@ function showProductDetail(product, serviceType) {
         cekMenuBtn.textContent = 'Cek Menu';
         cekMenuBtn.addEventListener('click', () => {
             genericScriptMenuTitle.textContent = `Menu ${product.nama}`;
-            // Memformat menuContent dengan benar dari string ke tampilan
             genericScriptMenuContent.innerHTML = product.menuContent.replace(/\n/g, '<br>');
             genericScriptMenuModal.style.display = 'flex';
         });
         detailProductActions.appendChild(cekMenuBtn);
     }
+}
+
+function updateBuyNowLink(product, serviceType, imageLink = '') {
+    const buyNowLink = document.querySelector('.product-detail .actions a.buy-now');
+    let buyNowMessage = '';
+    
+    if (serviceType === 'Stock Akun' && imageLink) {
+        buyNowMessage = `Halo Kak Admin Rikishopreal ✨\n\nSaya tertarik untuk memesan Akun ini:\n\nProduk: *${product.nama}*\nHarga: *${formatRupiah(product.harga)}*\n\nSebagai referensi, ini link gambarnya:\n${imageLink}\n\nMohon info ketersediaan dan panduan pembayarannya ya. Terima kasih! 🙏`;
+    } else if (serviceType === 'Logo' && imageLink) {
+        buyNowMessage = `Halo Kak Admin Rikishopreal ✨\n\nSaya tertarik untuk memesan Logo ini:\n\nNama Logo: *${product.nama}*\nHarga: *${formatRupiah(product.harga)}*\n\nSebagai referensi, ini link gambarnya:\n${imageLink}\n\nMohon info selanjutnya untuk proses pembayaran dan kustomisasi ya, Kak. Terima kasih! 🙏`;
+    } else {
+        buyNowMessage = `Halo Kak Admin Rikishopreal ✨\n\nSaya tertarik untuk memesan produk ini:\n\nProduk: *${product.nama}*\nHarga: *${formatRupiah(product.harga)}*\n\nMohon info selanjutnya untuk proses pembayaran ya. Terima kasih! 🙏`;
+    }
+    
+    buyNowLink.href = `https://wa.me/${WA_ADMIN_NUMBER}?text=${encodeURIComponent(buyNowMessage)}`;
 }
 
 // --- Logika untuk Slider & Lightbox ---
@@ -409,10 +455,18 @@ function updateSliderPosition() {
 function showNextImage() {
     currentStockImageIndex = (currentStockImageIndex + 1) % totalStockImages;
     updateSliderPosition();
+    const currentProduct = products[serviceDetailPageTitle.textContent].find(p => p.nama === detailProductName.textContent);
+    if (currentProduct && currentProduct.images) {
+        updateBuyNowLink(currentProduct, serviceDetailPageTitle.textContent, currentProduct.images[currentStockImageIndex]);
+    }
 }
 function showPrevImage() {
     currentStockImageIndex = (currentStockImageIndex - 1 + totalStockImages) % totalStockImages;
     updateSliderPosition();
+    const currentProduct = products[serviceDetailPageTitle.textContent].find(p => p.nama === detailProductName.textContent);
+    if (currentProduct && currentProduct.images) {
+        updateBuyNowLink(currentProduct, serviceDetailPageTitle.textContent, currentProduct.images[currentStockImageIndex]);
+    }
 }
 function openLightbox(imageUrl) {
     lightboxImage.src = imageUrl;
@@ -437,6 +491,10 @@ backArrows.forEach(arrow => {
         if (currentPage === 'service-detail-page' && productDetailViewDiv.style.display === 'block') {
             productListDiv.style.display = 'block';
             productDetailViewDiv.style.display = 'none';
+            // Cek jika kategori adalah Logo, kembali ke grid
+            if (serviceDetailPageTitle.textContent === 'Logo') {
+                loadServiceProducts('Logo');
+            }
         } else {
             showPage(backToPageId || 'home-page');
         }
@@ -461,9 +519,9 @@ function addToCart(event) {
     const id = parseInt(productId), price = parseInt(productPrice);
     const existingItem = cart.find(item => item.id === id);
 
-    if (serviceType === 'Stock Akun') {
+    if (serviceType === 'Stock Akun' || serviceType === 'Logo') {
         if (existingItem) {
-            showToastNotification('Stok Akun hanya bisa dibeli 1 kali.', 'fa-exclamation-circle');
+            showToastNotification('Produk ini hanya bisa dibeli 1 kali.', 'fa-exclamation-circle');
             return;
         } else {
             cart.push({ id, name: productName, price, quantity: 1, serviceType });
@@ -497,7 +555,7 @@ function renderCart() {
             cartItemCard.className = 'cart-item-card';
 
             let itemActionsHTML = '';
-            if (item.serviceType === 'Stock Akun') {
+            if (item.serviceType === 'Stock Akun' || item.serviceType === 'Logo') {
                 itemActionsHTML = `
                     <div class="item-actions">
                         <span class="stock-info">Hanya 1 Stok</span>
@@ -730,5 +788,5 @@ document.addEventListener('firebaseReady', () => {
 document.addEventListener('firebaseFailed', () => {
     console.log("Firebase failed to load, initializing app without visitor counter.");
     initializeApp();
-    visitorCountDisplay.querySelector('.count').textContent = 'N/A';
+    visitorCountDisplay.innerHTML = `<i class="fas fa-globe-asia"></i> Masuk Website: <span class="count">N/A</span>`;
 });

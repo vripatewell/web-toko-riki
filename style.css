@@ -115,7 +115,6 @@ h3 { font-size: 1.2em; color: var(--primary-color); margin-bottom: 15px; border-
 .service-item { background-color: var(--white-color); padding: 18px 12px; border-radius: 12px; text-align: center; box-shadow: 0 2px 8px var(--shadow-color); transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease; cursor: pointer; text-decoration: none; color: inherit; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 120px; border: 1px solid var(--border-color); }
 .service-item:hover { transform: translateY(-3px); box-shadow: 0 4px 15px var(--shadow-color); background-color: var(--primary-color); color: var(--white-color); }
 .service-item:hover img { filter: brightness(0) invert(1); }
-.service-item img { width: 45px; height: 45px; object-fit: contain; margin-bottom: 10px; transition: filter 0.2s ease; }
 .service-item span { display: block; font-size: 0.95em; color: var(--light-text-color); font-weight: 500; transition: color 0.2s ease; }
 .service-item:hover span { color: var(--white-color); }
 
@@ -278,6 +277,39 @@ h3 { font-size: 1.2em; color: var(--primary-color); margin-bottom: 15px; border-
 .lightbox-close { position: absolute; top: 20px; right: 35px; color: #f1f1f1; font-size: 40px; font-weight: bold; transition: 0.3s; cursor: pointer; }
 .lightbox-close:hover, .lightbox-close:focus { color: #bbb; text-decoration: none; }
 
+/* Gaya untuk Grid Logo baru */
+.logo-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 15px;
+    padding: 15px;
+    background-color: var(--white-color);
+    border-radius: 12px;
+    box-shadow: 0 2px 8px var(--shadow-color);
+    border: 1px solid var(--border-color);
+}
+.logo-item {
+    padding: 10px;
+    background-color: var(--secondary-color);
+    border-radius: 12px;
+    box-shadow: 0 2px 5px var(--shadow-color);
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.logo-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 10px var(--shadow-color);
+}
+.logo-item img {
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+    object-fit: contain;
+}
+
 /* Responsif */
 @media (max-width: 480px) {
     .info-bar { margin-left: 10px; margin-right: 10px; padding: 12px; }
@@ -286,21 +318,11 @@ h3 { font-size: 1.2em; color: var(--primary-color); margin-bottom: 15px; border-
     .service-item img { width: 40px; height: 40px; }
     .service-item span { font-size: 0.85em; }
     .product-detail .actions button, .product-detail .actions a.buy-now { padding: 12px; font-size: 0.9em; }
+    .logo-grid { grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); }
 }
 
 .visitor-count.updated .count {
     transform: scale(1.2);
     color: #4caf50; 
     transition: all 0.2s ease-in-out;
-}
-
-.new-badge {
-  background: var(--success-color);
-  color: white;
-  font-size: 10px;
-  padding: 2px 6px;
-  border-radius: 8px;
-  margin-left: 5px;
-  font-weight: bold;
-  animation: scaleUp 0.3s ease-out;
 }

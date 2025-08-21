@@ -74,7 +74,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // ✅ Toggle field tambahan
     categorySelect.addEventListener('change', () => {
         const category = categorySelect.value;
-        stockPhotoSection.style.display = category === 'Stock Akun' ? 'block' : 'none';
+        stockPhotoSection.style.display = category === 'Stock Akun' || category === 'Logo' ? 'block' : 'none';
         scriptMenuSection.style.display = category === 'Script' ? 'block' : 'none';
     });
 
@@ -86,7 +86,7 @@ document.addEventListener('DOMContentLoaded', () => {
             harga: parseInt(priceInput.value, 10),
             deskripsiPanjang: descriptionInput.value.trim(),
             images: photosInput.value.split(',').map(l => l.trim()).filter(Boolean),
-            createdAt: new Date().toISOString() // Tambahkan stempel waktu pembuatan
+            createdAt: new Date().toISOString()
         };
         if (productData.category === 'Script') {
             productData.menuContent = scriptMenuContentInput.value.trim();
