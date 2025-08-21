@@ -229,12 +229,6 @@
             "nama": "Hinal hidup a",
             "harga": 12000,
             "deskripsiPanjang": "Cocok untuk bisnis"
-        },
-        {
-            "id": 66,
-            "nama": "Abana",
-            "harga": 100000,
-            "deskripsiPanjang": "Ya"
         }
     ],
     "Jasa": [
