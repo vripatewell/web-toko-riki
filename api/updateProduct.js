@@ -6,7 +6,7 @@ export default async function handler(request, response) {
     }
 
     try {
-        const { id, category, newName, newPrice, newDesc } = request.body;
+        const { id, category, newName, newPrice, newDesc, newImages } = request.body;
         if (!id || !category || !newName || !newDesc || typeof newPrice !== 'number' || newPrice < 0) {
             return response.status(400).json({ message: 'Data tidak valid.' });
         }
@@ -36,11 +36,14 @@ export default async function handler(request, response) {
             if (product.id === id) {
                 productFound = true;
                 if (product.harga !== newPrice) {
-                    product.hargaAsli = product.harga; // Simpan harga lama jika harga berubah
+                    product.hargaAsli = product.harga;
                 }
                 product.nama = newName;
                 product.harga = newPrice;
                 product.deskripsiPanjang = newDesc;
+                if (newImages) {
+                    product.images = newImages;
+                }
             }
             return product;
         });
