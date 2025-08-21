@@ -38,12 +38,14 @@ export default async function handler(request, response) {
         
         // 4. Buat objek produk baru yang akan disimpan
         const newProduct = {
-            id: newId,
-            nama: newProductData.nama,
-            harga: newProductData.harga,
-            deskripsiPanjang: newProductData.deskripsiPanjang.replace(/\n/g, ' || '),
-            createdAt: newProductData.createdAt
-        };
+    id: newId,
+    nama: newProductData.nama,
+    harga: newProductData.harga,
+    hargaAsli: newProductData.harga, // Menambahkan harga asli saat produk pertama kali dibuat
+    deskripsiPanjang: newProductData.deskripsiPanjang.replace(/\n/g, ' || '),
+    createdAt: newProductData.createdAt
+};
+
 
 if ((newProductData.category === 'Stock Akun' || newProductData.category === 'Logo') && newProductData.images.length > 0) {
     newProduct.images = newProductData.images;
