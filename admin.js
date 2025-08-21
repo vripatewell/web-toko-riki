@@ -1,80 +1,193 @@
-import { Octokit } from "@octokit/rest";
+document.addEventListener('DOMContentLoaded', () => {
+    // Elemen Halaman
+    const loginScreen = document.getElementById('login-screen');
+    const productFormScreen = document.getElementById('product-form-screen');
+    const toastContainer = document.getElementById('toast-container');
+    
+    const passwordInput = document.getElementById('password');
+    const loginButton = document.getElementById('login-button');
+    
+    const categorySelect = document.getElementById('category');
+    const nameInput = document.getElementById('product-name');
+    const priceInput = document.getElementById('product-price');
+    const descriptionInput = document.getElementById('product-description');
+    const stockPhotoSection = document.getElementById('stock-photo-section');
+    const photosInput = document.getElementById('product-photos');
+    const addButton = document.getElementById('add-product-button');
 
-// Fungsi utama
-export default async function handler(request, response) {
-    if (request.method !== 'POST') {
-        return response.status(405).json({ message: 'Metode tidak diizinkan' });
+    // ✅ Tambahan untuk kategori Script
+    const menuContentSection = document.getElementById('menu-content-section');
+    const menuContentInput = document.getElementById('product-menu-content');
+
+    // ✅ Daftar produk
+    const productListDiv = document.getElementById('product-list');
+    
+    const API_BASE_URL = '/api';
+    let activeToastTimeout = null;
+
+    // ✅ Toast
+    function showToast(message, type = 'info', duration = 3000) {
+        if (toastContainer.firstChild) {
+            clearTimeout(activeToastTimeout);
+            toastContainer.innerHTML = '';
+        }
+        const toast = document.createElement('div');
+        toast.className = `toast ${type}`;
+        
+        let iconClass = 'fas fa-info-circle';
+        if (type === 'success') iconClass = 'fas fa-check-circle';
+        if (type === 'error') iconClass = 'fas fa-exclamation-circle';
+
+        toast.innerHTML = `<i class="${iconClass}"></i> ${message}`;
+        toastContainer.appendChild(toast);
+
+        activeToastTimeout = setTimeout(() => {
+            toast.classList.add('fade-out');
+            toast.addEventListener('animationend', () => toast.remove());
+        }, duration);
     }
 
-    try {
-        // Ambil semua kredensial aman dari Environment Variables
-        const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
-        const REPO_OWNER = process.env.REPO_OWNER; // Nama pengguna GitHub Anda
-        const REPO_NAME = process.env.REPO_NAME;   // Nama repositori Anda
-        const FILE_PATH = 'products.json';         // Path ke file produk
+    // ✅ Cek sesi login
+    if (sessionStorage.getItem('isAdminAuthenticated')) {
+        loginScreen.style.display = 'none';
+        productFormScreen.style.display = 'block';
+        loadProducts();
+    }
 
-        const octokit = new Octokit({ auth: GITHUB_TOKEN });
+    // ✅ Handle login
+    const handleLogin = async () => {
+        const password = passwordInput.value;
+        if (!password) {
+            showToast('Password tidak boleh kosong.', 'error');
+            return;
+        }
+        loginButton.textContent = 'Memverifikasi...';
+        loginButton.disabled = true;
+        try {
+            const response = await fetch(`${API_BASE_URL}/login`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ password })
+            });
+            const result = await response.json();
+            if (!response.ok) throw new Error(result.message);
+            
+            sessionStorage.setItem('isAdminAuthenticated', 'true');
+            loginScreen.style.display = 'none';
+            productFormScreen.style.display = 'block';
+            showToast('Login berhasil!', 'success');
+            loadProducts();
+        } catch (error) {
+            showToast(error.message || 'Password salah.', 'error');
+        } finally {
+            loginButton.textContent = 'Masuk';
+            loginButton.disabled = false;
+        }
+    };
 
-        // 1. Ambil konten file products.json dari GitHub
-        const { data: fileData } = await octokit.repos.getContent({
-            owner: REPO_OWNER,
-            repo: REPO_NAME,
-            path: FILE_PATH,
-        });
+    loginButton.addEventListener('click', handleLogin);
+    passwordInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') handleLogin();
+    });
+    
+    // ✅ Munculkan field sesuai kategori
+    categorySelect.addEventListener('change', () => {
+        stockPhotoSection.style.display = categorySelect.value === 'Stock Akun' ? 'block' : 'none';
+        menuContentSection.style.display = categorySelect.value === 'Script' ? 'block' : 'none';
+    });
 
-        const content = Buffer.from(fileData.content, 'base64').toString('utf-8');
-        const productsJson = JSON.parse(content);
-
-        // 2. Data produk baru dari frontend
-        const newProductData = request.body;
-        
-        // 3. Cari ID tertinggi
-        let maxId = 0;
-        Object.values(productsJson).flat().forEach(product => {
-            if (product.id > maxId) maxId = product.id;
-        });
-        const newId = maxId + 1;
-
-        // 4. Buat objek produk baru
-        const newProduct = {
-            id: newId,
-            nama: newProductData.nama,
-            harga: newProductData.harga,
-            deskripsiPanjang: newProductData.deskripsiPanjang.replace(/\n/g, ' || '),
-            createdAt: new Date().toISOString() // ✅ simpan timestamp buat label NEW
+    // ✅ Tambah produk
+    addButton.addEventListener('click', async () => {
+        const productData = {
+            category: categorySelect.value,
+            nama: nameInput.value.trim(),
+            harga: parseInt(priceInput.value, 10),
+            deskripsiPanjang: descriptionInput.value.trim(),
+            images: photosInput.value.split(',').map(link => link.trim()).filter(Boolean),
+            createdAt: new Date().toISOString()
         };
-
-        // ✅ Jika kategori Script, sertakan menuContent
-        if (newProductData.category === 'Script' && newProductData.menuContent) {
-            newProduct.menuContent = newProductData.menuContent;
-        }
-
-        // ✅ Jika kategori Stock Akun, sertakan images
-        if (newProductData.category === 'Stock Akun' && newProductData.images.length > 0) {
-            newProduct.images = newProductData.images;
-        }
         
-        // 5. Tambahkan produk ke kategori di posisi paling atas
-        if (productsJson[newProductData.category]) {
-            productsJson[newProductData.category].unshift(newProduct); // ✅ taruh di atas
-        } else {
-            return response.status(400).json({ message: 'Kategori produk tidak valid.' });
+        if (categorySelect.value === 'Script') {
+            productData.menuContent = menuContentInput.value.trim();
         }
 
-        // 6. Update file ke repositori GitHub
-        await octokit.repos.createOrUpdateFileContents({
-            owner: REPO_OWNER,
-            repo: REPO_NAME,
-            path: FILE_PATH,
-            message: `feat: Menambahkan produk baru "${newProduct.nama}"`,
-            content: Buffer.from(JSON.stringify(productsJson, null, 4)).toString('base64'),
-            sha: fileData.sha,
-        });
+        if (!productData.nama || !productData.harga || !productData.deskripsiPanjang) {
+            showToast('Semua kolom wajib diisi.', 'error');
+            return;
+        }
 
-        response.status(200).json({ message: 'Produk berhasil ditambahkan!', newProduct });
+        addButton.textContent = 'Memproses...';
+        addButton.disabled = true;
+        showToast('Menambahkan produk...', 'info', 2000);
 
-    } catch (error) {
-        console.error("Kesalahan Backend:", error);
-        response.status(500).json({ message: 'Terjadi kesalahan di server.', error: error.message });
+        try {
+            const response = await fetch(`${API_BASE_URL}/addProduct`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(productData)
+            });
+            const result = await response.json();
+            if (!response.ok) throw new Error(result.message);
+            
+            showToast(`Produk "${productData.nama}" berhasil ditambahkan.`, 'success');
+            nameInput.value = '';
+            priceInput.value = '';
+            descriptionInput.value = '';
+            photosInput.value = '';
+            menuContentInput.value = '';
+            loadProducts();
+        } catch (error) {
+            showToast(error.message || 'Gagal menambahkan produk.', 'error');
+        } finally {
+            addButton.textContent = 'Tambah Produk';
+            addButton.disabled = false;
+        }
+    });
+
+    // ✅ Load daftar produk
+    async function loadProducts() {
+        productListDiv.innerHTML = 'Memuat...';
+        try {
+            const res = await fetch('/products.json');
+            const data = await res.json();
+            let html = '';
+            Object.keys(data).forEach(category => {
+                html += `<h4>${category}</h4>`;
+                data[category].forEach(prod => {
+                    html += `
+                        <div class="product-item-admin">
+                            <span>${prod.nama} - Rp${prod.harga}</span>
+                            <button class="delete-btn" data-id="${prod.id}" data-cat="${category}">Hapus</button>
+                        </div>
+                    `;
+                });
+            });
+            productListDiv.innerHTML = html;
+
+            // Listener delete
+            document.querySelectorAll('.delete-btn').forEach(btn => {
+                btn.addEventListener('click', async () => {
+                    const id = parseInt(btn.dataset.id);
+                    const category = btn.dataset.cat;
+                    if (confirm(`Hapus produk ${id} dari kategori ${category}?`)) {
+                        try {
+                            const res = await fetch('/api/deleteProduct', {
+                                method: 'DELETE',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({ id, category })
+                            });
+                            const result = await res.json();
+                            if (!res.ok) throw new Error(result.message);
+                            showToast(result.message, 'success');
+                            loadProducts();
+                        } catch (err) {
+                            showToast(err.message, 'error');
+                        }
+                    }
+                });
+            });
+        } catch (err) {
+            productListDiv.innerHTML = 'Gagal memuat produk.';
+        }
     }
-}
+});
