@@ -9,8 +9,10 @@
     <link rel="stylesheet" href="admin.css">
 </head>
 <body>
+    <!-- Notifikasi -->
     <div id="toast-container" class="toast-container"></div>
 
+    <!-- Login Screen -->
     <div id="login-screen" class="admin-container">
         <div class="form-card">
             <h2><i class="fas fa-lock"></i> Admin Panel</h2>
@@ -20,6 +22,7 @@
         </div>
     </div>
 
+    <!-- Product Form Screen -->
     <div id="product-form-screen" class="admin-container" style="display: none;">
         <div class="form-card">
             <h2><i class="fas fa-plus-circle"></i> Tambah Produk Baru</h2>
@@ -44,12 +47,25 @@
             <label for="product-description">Deskripsi Produk (Tekan Enter untuk baris baru):</label>
             <textarea id="product-description" rows="5" placeholder="Tulis deskripsi di sini..."></textarea>
 
+            <!-- Tambahan khusus Stock Akun -->
             <div id="stock-photo-section" style="display: none;">
                 <label for="product-photos">Link Foto (pisahkan dengan koma jika lebih dari satu):</label>
                 <input type="text" id="product-photos" placeholder="https://url.com/foto1.jpg, https://url.com/foto2.jpg">
             </div>
 
+            <!-- Tambahan khusus Script -->
+            <div id="menu-content-section" style="display:none;">
+                <label for="product-menu-content">Menu Content (hanya untuk Script)</label>
+                <textarea id="product-menu-content" placeholder="Tulis daftar fitur script..."></textarea>
+            </div>
+
             <button id="add-product-button">Tambah Produk</button>
+        </div>
+
+        <!-- Daftar Produk -->
+        <div class="form-card" style="margin-top:20px;">
+            <h2><i class="fas fa-list"></i> Daftar Produk</h2>
+            <div id="product-list"></div>
         </div>
     </div>
     
