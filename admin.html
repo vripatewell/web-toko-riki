@@ -29,6 +29,10 @@
             
             <label for="category">Kategori Produk:</label>
             <select id="category">
+                       <div id="scriptDescriptionSection" style="display: none; margin-top: 10px;">
+           <label for="scriptFeatures">Fitur Script (pisahkan setiap fitur dengan baris baru):</label>
+           <textarea id="scriptFeatures" rows="5" placeholder="Contoh:&#10;- Auto Push Kontak&#10;- Anti Delay"></textarea>
+                       </div>
                 <option value="Panel">Panel</option>
                 <option value="VPS">VPS</option>
                 <option value="Script">Script</option>
@@ -53,12 +57,7 @@
                 <input type="text" id="product-photos" placeholder="https://url.com/foto1.jpg, https://url.com/foto2.jpg">
             </div>
 
-            <!-- Popup Modal khusus Script -->
-                   <div id="scriptDescriptionSection" style="display: none; margin-top: 10px;">
-           <label for="scriptFeatures">Fitur Script (pisahkan setiap fitur dengan baris baru):</label>
-           <textarea id="scriptFeatures" rows="5" placeholder="Contoh:&#10;- Auto Push Kontak&#10;- Anti Delay"></textarea>
-             </div>
-
+           
             <button id="add-product-button">Tambah Produk</button>
         </div>
 
