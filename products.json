@@ -445,6 +445,17 @@
             "images": [
                 "https://e.top4top.io/p_3520t4qhs0.jpg"
             ]
+        },
+        {
+            "id": 70,
+            "nama": "Babayo",
+            "harga": 139999,
+            "hargaAsli": 139999,
+            "deskripsiPanjang": "Oke",
+            "createdAt": "2025-08-21T20:56:34.407Z",
+            "images": [
+                "https://e.top4top.io/p_3520t4qhs0.jpg"
+            ]
         }
     ]
 }
