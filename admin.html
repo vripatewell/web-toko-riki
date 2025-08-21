@@ -53,10 +53,18 @@
                 <input type="text" id="product-photos" placeholder="https://url.com/foto1.jpg, https://url.com/foto2.jpg">
             </div>
 
-            <!-- Tambahan khusus Script -->
-            <div id="menu-content-section" style="display:none;">
-                <label for="product-menu-content">Menu Content (hanya untuk Script)</label>
-                <textarea id="product-menu-content" placeholder="Tulis daftar fitur script..."></textarea>
+            <!-- Popup Modal khusus Script -->
+            <div id="script-modal" class="modal" style="display:none;">
+              <div class="modal-content">
+                <h3>Tambah Menu Script</h3>
+                <input type="text" id="script-feature-input" placeholder="Contoh: Auto Push Kontak">
+                <button id="add-feature-btn">Tambah Fitur</button>
+                <ul id="script-feature-list"></ul>
+                <div class="modal-actions">
+                  <button id="save-script-features">Simpan</button>
+                  <button id="close-script-modal">Batal</button>
+                </div>
+              </div>
             </div>
 
             <button id="add-product-button">Tambah Produk</button>
@@ -66,6 +74,23 @@
         <div class="form-card" style="margin-top:20px;">
             <h2><i class="fas fa-list"></i> Daftar Produk</h2>
             <div id="product-list"></div>
+        </div>
+
+        <!-- Hapus Produk -->
+        <div class="form-card" style="margin-top:20px;">
+          <h2><i class="fas fa-trash"></i> Hapus Produk</h2>
+          <label for="delete-category">Pilih Kategori:</label>
+          <select id="delete-category">
+              <option value="">-- Pilih Kategori --</option>
+              <option value="Panel">Panel</option>
+              <option value="VPS">VPS</option>
+              <option value="Script">Script</option>
+              <option value="Jasa">Jasa</option>
+              <option value="murid">Join Murid</option>
+              <option value="Sewa Bot">Sewa Bot</option>
+              <option value="Stock Akun">Stock Akun</option>
+          </select>
+          <div id="delete-product-list" class="delete-list"></div>
         </div>
     </div>
     
