@@ -8,12 +8,17 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="admin.css">
 </head>
-<body>
+<body class="light-mode">
     <div id="toast-container" class="toast-container"></div>
 
     <div id="login-screen" class="admin-container">
         <div class="form-card">
-            <h2><i class="fas fa-lock"></i> Admin Panel</h2>
+            <div class="admin-header">
+                <h2><i class="fas fa-lock"></i> Admin Panel</h2>
+                <div class="theme-switch" id="themeSwitchBtn">
+                    <i class="fas fa-sun"></i>
+                </div>
+            </div>
             <p>Masukkan password untuk mengelola produk.</p>
             <input type="password" id="password" placeholder="••••••••••">
             <button id="login-button">Masuk</button>
@@ -22,7 +27,12 @@
 
     <div id="product-form-screen" class="admin-container" style="display: none;">
         <div class="form-card">
-            <h2><i class="fas fa-plus-circle"></i> Tambah Produk Baru</h2>
+            <div class="admin-header">
+                <h2><i class="fas fa-plus-circle"></i> Tambah Produk Baru</h2>
+                <div class="theme-switch" id="themeSwitchBtn2">
+                    <i class="fas fa-sun"></i>
+                </div>
+            </div>
             
             <label for="category">Kategori Produk:</label>
             <select id="category">
@@ -34,6 +44,7 @@
                 <option value="Sewa Bot">Sewa Bot</option>
                 <option value="Stock Akun">Stock Akun</option>
                 <option value="Logo">Logo</option>
+                <option value="Suntik Sosmed">Suntik Sosmed</option>
             </select>
 
             <label for="product-name">Nama Produk:</label>
@@ -73,9 +84,19 @@
               <option value="Sewa Bot">Sewa Bot</option>
               <option value="Stock Akun">Stock Akun</option>
               <option value="Logo">Logo</option>
+              <option value="Suntik Sosmed">Suntik Sosmed</option>
           </select>
+
           <div id="delete-product-list" class="delete-list"></div>
           <button id="save-order-button" style="display:none;">Simpan Urutan</button>
+        </div>
+        
+        <div class="form-card" style="margin-top:20px;">
+          <h2><i class="fas fa-tags"></i> Diskon Massal</h2>
+          <p>Ubah harga semua produk. Contoh: 5000</p>
+          <label for="new-price">Harga Baru:</label>
+          <input type="number" id="new-price" placeholder="Masukkan harga baru">
+          <button id="update-prices-button">Terapkan Harga ke Semua Produk</button>
         </div>
     </div>
     

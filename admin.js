@@ -6,6 +6,36 @@ document.addEventListener('DOMContentLoaded', () => {
     const passwordInput = document.getElementById('password');
     const loginButton = document.getElementById('login-button');
 
+    const themeSwitchBtn = document.getElementById('themeSwitchBtn');
+    const themeSwitchBtn2 = document.getElementById('themeSwitchBtn2');
+    const body = document.body;
+
+    const savedTheme = localStorage.getItem('admin-theme') || 'light-mode';
+    body.className = savedTheme;
+    function updateThemeButton() {
+        const iconClass = body.classList.contains('dark-mode') ? 'fa-sun' : 'fa-moon';
+        themeSwitchBtn.querySelector('i').className = `fas ${iconClass}`;
+        if (themeSwitchBtn2) {
+            themeSwitchBtn2.querySelector('i').className = `fas ${iconClass}`;
+        }
+    }
+    updateThemeButton();
+
+    function toggleTheme() {
+        if (body.classList.contains('light-mode')) {
+            body.classList.replace('light-mode', 'dark-mode');
+            localStorage.setItem('admin-theme', 'dark-mode');
+        } else {
+            body.classList.replace('dark-mode', 'light-mode');
+            localStorage.setItem('admin-theme', 'light-mode');
+        }
+        updateThemeButton();
+    }
+    themeSwitchBtn.addEventListener('click', toggleTheme);
+    if (themeSwitchBtn2) {
+        themeSwitchBtn2.addEventListener('click', toggleTheme);
+    }
+
     const categorySelect = document.getElementById('category');
     const nameInput = document.getElementById('product-name');
     const priceInput = document.getElementById('product-price');
@@ -71,12 +101,13 @@ document.addEventListener('DOMContentLoaded', () => {
     loginButton.addEventListener('click', handleLogin);
     passwordInput.addEventListener('keypress', e => e.key === 'Enter' && handleLogin());
 
-    // ✅ Toggle field tambahan
-    categorySelect.addEventListener('change', () => {
-        const category = categorySelect.value;
-        stockPhotoSection.style.display = category === 'Stock Akun' || category === 'Logo' ? 'block' : 'none';
-        scriptMenuSection.style.display = category === 'Script' ? 'block' : 'none';
-    });
+// ✅ Toggle field tambahan
+categorySelect.addEventListener('change', () => {
+    const category = categorySelect.value;
+    stockPhotoSection.style.display = (category === 'Stock Akun' || category === 'Logo') ? 'block' : 'none';
+    scriptMenuSection.style.display = category === 'Script' ? 'block' : 'none';
+});
+
 
     // ✅ Tambah produk
     addButton.addEventListener('click', async () => {
@@ -86,7 +117,7 @@ document.addEventListener('DOMContentLoaded', () => {
             harga: parseInt(priceInput.value, 10),
             deskripsiPanjang: descriptionInput.value.trim(),
             images: photosInput.value.split(',').map(l => l.trim()).filter(Boolean),
-            createdAt: new Date().toISOString()
+            createdAt: new Date().toISOString() // Tambahkan stempel waktu pembuatan
         };
         if (productData.category === 'Script') {
             productData.menuContent = scriptMenuContentInput.value.trim();
@@ -241,6 +272,40 @@ document.addEventListener('DOMContentLoaded', () => {
             showToast('Urutan berhasil disimpan.', 'success');
         } catch (err) {
             showToast(err.message || 'Gagal menyimpan urutan.', 'error');
+        }
+    });
+    
+    // ✅ Fitur Update Harga Massal
+    const newPriceInput = document.getElementById('new-price');
+    const updatePricesButton = document.getElementById('update-prices-button');
+
+    updatePricesButton.addEventListener('click', async () => {
+        const newPrice = parseInt(newPriceInput.value, 10);
+        if (isNaN(newPrice) || newPrice < 0) {
+            return showToast('Harga baru harus berupa angka positif.', 'error');
+        }
+
+        updatePricesButton.textContent = 'Memproses...';
+        updatePricesButton.disabled = true;
+
+        try {
+            const res = await fetch(`${API_BASE_URL}/updateAllPrices`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ newPrice })
+            });
+            const result = await res.json();
+
+            if (!res.ok) {
+                throw new Error(result.message);
+            }
+
+            showToast(result.message, 'success');
+        } catch (err) {
+            showToast(err.message || 'Gagal memperbarui harga.', 'error');
+        } finally {
+            updatePricesButton.textContent = 'Terapkan Harga ke Semua Produk';
+            updatePricesButton.disabled = false;
         }
     });
 

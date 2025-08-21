@@ -431,37 +431,5 @@
                 "https://d.top4top.io/p_3520eqk5b0.jpg"
             ]
         }
-    ],
-    "Logo": [
-        {
-            "id": 70,
-            "nama": "Logo Minimalis",
-            "harga": 5000,
-            "deskripsiPanjang": "Logo dengan desain minimalis dan elegan. Cocok untuk branding pribadi atau bisnis kecil.",
-            "images": [
-                "https://c.top4top.io/p_3520a7b451.jpg",
-                "https://d.top4top.io/p_3520gaj8e2.jpg"
-            ]
-        },
-        {
-            "id": 69,
-            "nama": "Logo E-Sport Keren",
-            "harga": 5000,
-            "deskripsiPanjang": "Desain logo E-Sport unik dan keren. Cocok untuk tim game atau streamer.",
-            "images": [
-                "https://f.top4top.io/p_35205ehum2.jpg",
-                "https://g.top4top.io/p_3520njyrl3.jpg"
-            ]
-        },
-        {
-            "id": 71,
-            "nama": "Logo Maskot",
-            "harga": 10000,
-            "deskripsiPanjang": "Logo maskot dengan karakter lucu dan menarik.",
-            "images": [
-                "https://a.top4top.io/p_3520k5x1p3.jpg",
-                "https://b.top4top.io/p_35208q29b4.jpg"
-            ]
-        }
     ]
 }
