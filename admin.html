@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - Rikishopreal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+    <div id="toast-container" class="toast-container"></div>
+
+    <div id="login-screen" class="admin-container">
+        <div class="form-card">
+            <h2><i class="fas fa-lock"></i> Admin Panel</h2>
+            <p>Masukkan password untuk mengelola produk.</p>
+            <input type="password" id="password" placeholder="••••••••••">
+            <button id="login-button">Masuk</button>
+        </div>
+    </div>
+
+    <div id="product-form-screen" class="admin-container" style="display: none;">
+        <div class="form-card">
+            <h2><i class="fas fa-plus-circle"></i> Tambah Produk Baru</h2>
+            
+            <label for="category">Kategori Produk:</label>
+            <select id="category">
+                <option value="Panel">Panel</option>
+                <option value="VPS">VPS</option>
+                <option value="Script">Script</option>
+                <option value="Jasa">Jasa</option>
+                <option value="murid">Join Murid</option>
+                <option value="Sewa Bot">Sewa Bot</option>
+                <option value="Stock Akun">Stock Akun</option>
+            </select>
+
+            <label for="product-name">Nama Produk:</label>
+            <input type="text" id="product-name" placeholder="Contoh: Panel Ram 1GB">
+
+            <label for="product-price">Harga Produk (hanya angka):</label>
+            <input type="number" id="product-price" placeholder="Contoh: 3000">
+
+            <label for="product-description">Deskripsi Produk (Tekan Enter untuk baris baru):</label>
+            <textarea id="product-description" rows="5" placeholder="Tulis deskripsi di sini..."></textarea>
+
+            <div id="stock-photo-section" style="display: none;">
+                <label for="product-photos">Link Foto (pisahkan dengan koma jika lebih dari satu):</label>
+                <input type="text" id="product-photos" placeholder="https://url.com/foto1.jpg, https://url.com/foto2.jpg">
+            </div>
+
+            <button id="add-product-button">Tambah Produk</button>
+        </div>
+    </div>
+    
+    <script src="admin.js"></script>
+</body>
+</html>
