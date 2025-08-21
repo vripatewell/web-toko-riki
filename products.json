@@ -433,5 +433,18 @@
                 "https://d.top4top.io/p_3520eqk5b0.jpg"
             ]
         }
+    ],
+    "Logo": [
+        {
+            "id": 69,
+            "nama": "Logo jb",
+            "harga": 13777,
+            "hargaAsli": 13777,
+            "deskripsiPanjang": "Hampura",
+            "createdAt": "2025-08-21T20:54:48.649Z",
+            "images": [
+                "https://e.top4top.io/p_3520t4qhs0.jpg"
+            ]
+        }
     ]
 }
