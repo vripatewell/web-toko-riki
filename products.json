@@ -339,6 +339,12 @@
             "deskripsiPanjang": "Spesifikasi 💾 || ▪︎ bot tinggal pasang saja tidak ribet || ▪︎ buy bakal di ajarkan sampai bisa || ▪︎ bot sudah di lengkapi garansi || ▪︎ setiap harga bot garansi berbeda beda || ▪︎ gas order sekarang juga dengan cara hubungi owner"
         },
         {
+            "id": 57,
+            "nama": "Bot Jaga Grup 30 Hari",
+            "harga": 40000,
+            "deskripsiPanjang": "Spesifikasi 💾 || ▪︎ bot tinggal pasang saja tidak ribet || ▪︎ buy bakal di ajarkan sampai bisa || ▪︎ bot sudah di lengkapi garansi || ▪︎ setiap harga bot garansi berbeda beda || ▪︎ gas order sekarang juga dengan cara hubungi owner"
+        },
+        {
             "id": 47,
             "nama": "Bot Push Kontak 5 Hari",
             "harga": 10000,
@@ -396,12 +402,6 @@
             "id": 56,
             "nama": "Bot Jaga Grup 20 Hari",
             "harga": 30000,
-            "deskripsiPanjang": "Spesifikasi 💾 || ▪︎ bot tinggal pasang saja tidak ribet || ▪︎ buy bakal di ajarkan sampai bisa || ▪︎ bot sudah di lengkapi garansi || ▪︎ setiap harga bot garansi berbeda beda || ▪︎ gas order sekarang juga dengan cara hubungi owner"
-        },
-        {
-            "id": 57,
-            "nama": "Bot Jaga Grup 30 Hari",
-            "harga": 40000,
             "deskripsiPanjang": "Spesifikasi 💾 || ▪︎ bot tinggal pasang saja tidak ribet || ▪︎ buy bakal di ajarkan sampai bisa || ▪︎ bot sudah di lengkapi garansi || ▪︎ setiap harga bot garansi berbeda beda || ▪︎ gas order sekarang juga dengan cara hubungi owner"
         }
     ],
