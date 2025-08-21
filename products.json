@@ -77,7 +77,8 @@
             "nama": "Panel 15gb || yah",
             "harga": 300000,
             "deskripsiPanjang": "Oke min",
-            "createdAt": "2025-08-21T13:47:35.208Z"
+            "createdAt": "2025-08-21T13:47:35.208Z",
+            "hargaAsli": 300000
         }
     ],
     "VPS": [
