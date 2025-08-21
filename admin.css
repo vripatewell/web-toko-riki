@@ -126,15 +126,55 @@ button:disabled { background-color: var(--light-text-color); cursor: not-allowed
   background: #f7f7f7;
   margin-bottom: 5px;
   border-radius: 6px;
+ }
+
+/* Modal */
+.modal {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  display: flex;
+  align-items: center; justify-content: center;
+  background: rgba(0,0,0,0.6);
+  z-index: 999;
+}
+.modal-content {
+  background: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  width: 320px;
+}
+.modal-actions {
+  margin-top: 10px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+.new-badge {
+  background: red;
+  color: white;
+  font-size: 10px;
+  padding: 2px 6px;
+  border-radius: 8px;
+  margin-left: 5px;
+  font-weight: bold;
+}
+.delete-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #f7f7f7;
+  margin: 4px 0;
+  padding: 6px 10px;
+  border-radius: 6px;
 }
 .delete-btn {
   background: red;
-  color: white;
+  color: #fff;
   border: none;
-  padding: 4px 10px;
+  padding: 4px 8px;
   border-radius: 4px;
   cursor: pointer;
 }
 .delete-btn:hover {
   background: darkred;
-}       
+}
