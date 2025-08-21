@@ -431,5 +431,15 @@
                 "https://d.top4top.io/p_3520eqk5b0.jpg"
             ]
         }
+    ],
+    "Suntik Sosmed": [
+        {
+            "id": 69,
+            "nama": "Suntik tok tok",
+            "harga": 12000,
+            "hargaAsli": 12000,
+            "deskripsiPanjang": "Testimoni",
+            "createdAt": "2025-08-21T21:31:16.334Z"
+        }
     ]
 }
