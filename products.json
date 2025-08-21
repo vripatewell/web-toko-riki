@@ -431,5 +431,14 @@
                 "https://d.top4top.io/p_3520eqk5b0.jpg"
             ]
         }
+    ],
+    "Suntik Sosmed": [
+        {
+            "id": 69,
+            "nama": "Suntuik tt",
+            "harga": 4000,
+            "deskripsiPanjang": "Oke",
+            "createdAt": "2025-08-21T20:24:39.521Z"
+        }
     ]
 }
