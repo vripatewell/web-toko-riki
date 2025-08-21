@@ -57,7 +57,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const manageCategorySelect = document.getElementById('manage-category');
     const manageProductList = document.getElementById('manage-product-list');
     const saveOrderButton = document.getElementById('save-order-button');
-    let currentProducts = [];
 
     const API_BASE_URL = '/api';
     let activeToastTimeout = null;
@@ -181,13 +180,13 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             const res = await fetch('/products.json');
             const data = await res.json();
-            currentProducts = data[category] || [];
-            if (currentProducts.length === 0) {
+            const productsInCat = data[category] || [];
+            if (productsInCat.length === 0) {
                 manageProductList.innerHTML = '<p>Tidak ada produk di kategori ini.</p>';
                 saveOrderButton.style.display = 'none';
                 return;
             }
-            renderManageList(currentProducts, category);
+            renderManageList(productsInCat, category);
             saveOrderButton.style.display = 'block';
         } catch (err) {
             manageProductList.innerHTML = '<p>Gagal memuat produk.</p>';
@@ -208,18 +207,40 @@ document.addEventListener('DOMContentLoaded', () => {
                 : `<span>Rp${prod.harga}</span>`;
             
             item.innerHTML = `
-                <div class="item-info">
+                <div class="item-header">
                     <span>${prod.nama} - ${priceDisplay} ${isNew ? '<span class="new-badge">NEW</span>' : ''}</span>
-                    <div class="product-edit-fields" style="display: none;">
-                        <input type="text" class="edit-name-input" placeholder="Nama baru" value="${prod.nama}">
-                        <input type="number" class="edit-price-input" placeholder="Harga baru" value="${prod.harga}">
-                        <textarea class="edit-desc-input" placeholder="Deskripsi baru">${prod.deskripsiPanjang}</textarea>
-                        <button class="save-edit-btn">Simpan Perubahan</button>
+                    <div class="item-actions">
+                        <button class="edit-btn"><i class="fas fa-edit"></i> Edit</button>
+                        <button class="delete-btn"><i class="fas fa-trash-alt"></i> Hapus</button>
                     </div>
                 </div>
-                <div class="item-actions-manage">
-                    <button class="edit-btn"><i class="fas fa-edit"></i> Edit</button>
-                    <button class="delete-btn"><i class="fas fa-trash-alt"></i> Hapus</button>
+                <div class="edit-form" style="display: none;">
+                    <label for="edit-name-${prod.id}">Nama Produk:</label>
+                    <input type="text" id="edit-name-${prod.id}" class="edit-name-input" value="${prod.nama}">
+                    
+                    <label for="edit-price-${prod.id}">Harga Baru:</label>
+                    <input type="number" id="edit-price-${prod.id}" class="edit-price-input" value="${prod.harga}">
+                    
+                    <label for="edit-desc-${prod.id}">Deskripsi:</label>
+                    <textarea id="edit-desc-${prod.id}" class="edit-desc-input">${prod.deskripsiPanjang.replace(/ \|\| /g, '\n')}</textarea>
+                    
+                    ${(category === 'Stock Akun' || category === 'Logo') ? `
+                        <label>Kelola Foto:</label>
+                        <div class="photo-grid">
+                            ${(prod.images || []).map(img => `
+                                <div class="photo-item">
+                                    <img src="${img}" alt="Product Photo">
+                                    <button class="delete-photo-btn" data-img-url="${img}"><i class="fas fa-times"></i></button>
+                                </div>
+                            `).join('')}
+                        </div>
+                        <div class="add-photo-container">
+                            <input type="text" class="add-photo-input" placeholder="URL foto baru">
+                            <button class="add-photo-btn">Tambah</button>
+                        </div>
+                    ` : ''}
+
+                    <button class="save-edit-btn" data-id="${prod.id}">Simpan Perubahan</button>
                 </div>
             `;
             manageProductList.appendChild(item);
@@ -249,35 +270,36 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             });
         });
-        
-        // Edit Produk (Harga & Deskripsi)
+
+        // Toggle Edit Form
         manageProductList.querySelectorAll('.edit-btn').forEach(btn => {
             btn.addEventListener('click', e => {
                 const parent = e.target.closest('.delete-item');
-                const editFields = parent.querySelector('.product-edit-fields');
-                const infoSpan = parent.querySelector('.item-info > span');
-                const isEditing = editFields.style.display === 'flex';
+                const editForm = parent.querySelector('.edit-form');
+                const isEditing = editForm.style.display === 'flex';
 
-                if (isEditing) {
-                    editFields.style.display = 'none';
-                    infoSpan.style.display = 'block';
-                    btn.innerHTML = `<i class="fas fa-edit"></i> Edit`;
-                } else {
-                    editFields.style.display = 'flex';
-                    infoSpan.style.display = 'none';
-                    btn.innerHTML = `<i class="fas fa-times"></i> Batal`;
-                }
+                editForm.style.display = isEditing ? 'none' : 'flex';
+                btn.innerHTML = isEditing ? `<i class="fas fa-edit"></i> Edit` : `<i class="fas fa-times"></i> Batal`;
             });
         });
 
+        // Simpan Perubahan Produk
         manageProductList.querySelectorAll('.save-edit-btn').forEach(btn => {
             btn.addEventListener('click', async e => {
                 const parent = e.target.closest('.delete-item');
                 const id = parseInt(parent.dataset.id);
                 const newName = parent.querySelector('.edit-name-input').value;
                 const newPrice = parseInt(parent.querySelector('.edit-price-input').value, 10);
-                const newDesc = parent.querySelector('.edit-desc-input').value;
+                const newDesc = parent.querySelector('.edit-desc-input').value.replace(/\n/g, ' || ');
                 
+                let newImages = [];
+                if (category === 'Stock Akun' || category === 'Logo') {
+                    const existingImages = [...parent.querySelectorAll('.photo-grid img')].map(img => img.src);
+                    const newPhotoInput = parent.querySelector('.add-photo-input').value.trim();
+                    const newPhotos = newPhotoInput ? newPhotoInput.split(',').map(url => url.trim()) : [];
+                    newImages = [...existingImages, ...newPhotos];
+                }
+
                 if (isNaN(newPrice) || newPrice < 0 || !newName || !newDesc) {
                     return showToast('Data tidak valid.', 'error');
                 }
@@ -289,7 +311,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     const res = await fetch(`${API_BASE_URL}/updateProduct`, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ id, category, newName, newPrice, newDesc })
+                        body: JSON.stringify({ id, category, newName, newPrice, newDesc, newImages })
                     });
                     const result = await res.json();
 
@@ -297,12 +319,43 @@ document.addEventListener('DOMContentLoaded', () => {
                         throw new Error(result.message);
                     }
                     showToast(result.message, 'success');
-                    manageCategorySelect.dispatchEvent(new Event('change')); // Reload daftar produk
+                    manageCategorySelect.dispatchEvent(new Event('change'));
                 } catch (err) {
                     showToast(err.message || 'Gagal memperbarui produk.', 'error');
                 } finally {
                     btn.textContent = 'Simpan Perubahan';
                     btn.disabled = false;
+                }
+            });
+        });
+        
+        // Hapus Foto
+        manageProductList.querySelectorAll('.delete-photo-btn').forEach(btn => {
+            btn.addEventListener('click', e => {
+                e.target.closest('.photo-item').remove();
+            });
+        });
+        
+        // Tambah Foto
+        manageProductList.querySelectorAll('.add-photo-btn').forEach(btn => {
+            btn.addEventListener('click', e => {
+                const parent = e.target.closest('.edit-form');
+                const input = parent.querySelector('.add-photo-input');
+                const photoGrid = parent.querySelector('.photo-grid');
+                const newPhotoUrl = input.value.trim();
+                
+                if (newPhotoUrl) {
+                    const newPhotoItem = document.createElement('div');
+                    newPhotoItem.className = 'photo-item';
+                    newPhotoItem.innerHTML = `<img src="${newPhotoUrl}" alt="Product Photo"><button class="delete-photo-btn"><i class="fas fa-times"></i></button>`;
+                    photoGrid.appendChild(newPhotoItem);
+                    input.value = '';
+                    
+                    newPhotoItem.querySelector('.delete-photo-btn').addEventListener('click', e => {
+                        e.target.closest('.photo-item').remove();
+                    });
+                } else {
+                    showToast('URL foto tidak boleh kosong.', 'error');
                 }
             });
         });

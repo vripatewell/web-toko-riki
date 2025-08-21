@@ -39,6 +39,7 @@ const bannerCarousel = document.getElementById('bannerCarousel');
 const bannerPagination = document.getElementById('bannerPagination');
 const visitorCountDisplay = document.getElementById('visitorCountDisplay');
 const visitorCountSpan = visitorCountDisplay.querySelector('.count');
+const visitorCountLabel = visitorCountDisplay.querySelector('i').nextSibling; // Untuk mengubah teks
 let currentBannerIndex = 0;
 let bannerInterval;
 
@@ -100,9 +101,7 @@ const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-rikishop';
 
 // --- Logika Firebase untuk Pengunjung & Hitungan Masuk ---
 async function setupFirebaseVisitorCounter() {
-    const visitorCountLabel = visitorCountDisplay.querySelector('i').nextSibling; // Menambahkan ini
-    visitorCountLabel.textContent = ' Masuk website: ';
-    visitorCountSpan.textContent = '-';
+    visitorCountSpan.textContent = '-'; // Ini akan diubah saat data dimuat
     if (!window.firebaseServices) {
         console.warn("Layanan Firebase tidak tersedia.");
         visitorCountSpan.textContent = 'N/A';
@@ -309,24 +308,24 @@ function loadServiceProducts(serviceType) {
                 }
             }
             
-let priceDisplay = `<span class="product-price-list">${formatRupiah(product.harga)}</span>`;
-if (product.hargaAsli && product.hargaAsli > product.harga) {
-    priceDisplay = `<span class="original-price"><del>${formatRupiah(product.hargaAsli)}</del></span> <span class="discounted-price">${formatRupiah(product.harga)}</span>`;
-}
-productItem.innerHTML = `
-    <div>
-        <span class="product-name">
-            ${product.nama} 
-            ${isNew ? '<span class="new-badge">NEW</span>' : ''}
-        </span>
-        <p class="product-short-desc">
-            ${product.deskripsiPanjang ? product.deskripsiPanjang.split('||')[0].trim() + '...' : ''}
-        </p>
-        ${priceDisplay}
-    </div>
-    <i class="fas fa-chevron-right"></i>
-`;
-
+            let priceDisplay = `<span class="product-price-list">${formatRupiah(product.harga)}</span>`;
+            if (product.hargaAsli && product.hargaAsli > product.harga) {
+                priceDisplay = `<span class="original-price"><del>${formatRupiah(product.hargaAsli)}</del></span> <span class="discounted-price">${formatRupiah(product.harga)}</span>`;
+            }
+            
+            productItem.innerHTML = `
+                <div>
+                    <span class="product-name">
+                        ${product.nama} 
+                        ${isNew ? '<span class="new-badge">NEW</span>' : ''}
+                    </span>
+                    <p class="product-short-desc">
+                        ${product.deskripsiPanjang ? product.deskripsiPanjang.split('||')[0].trim() + '...' : ''}
+                    </p>
+                    ${priceDisplay}
+                </div>
+                <i class="fas fa-chevron-right"></i>
+            `;
 
             productItem.addEventListener('click', () => showProductDetail(product, serviceType));
             productListDiv.appendChild(productItem);
@@ -341,13 +340,14 @@ function showProductDetail(product, serviceType) {
     productListDiv.style.display = 'none';
     productDetailViewDiv.style.display = 'block';
     detailProductName.textContent = product.nama;
+    
     const priceHtml = product.hargaAsli && product.hargaAsli > product.harga
-    ? `<span class="original-price"><del>${formatRupiah(product.hargaAsli)}</del></span> <span class="discounted-price">${formatRupiah(product.harga)}</span>`
-    : `${formatRupiah(product.harga)}`;
-detailProductPrice.innerHTML = priceHtml;
+        ? `<span class="original-price"><del>${formatRupiah(product.hargaAsli)}</del></span> <span class="discounted-price">${formatRupiah(product.harga)}</span>`
+        : `${formatRupiah(product.harga)}`;
+    detailProductPrice.innerHTML = priceHtml;
     detailProductActions.innerHTML = '';
 
-if ((serviceType === 'Stock Akun' || serviceType === 'Logo') && product.images && product.images.length > 0) {
+    if ((serviceType === 'Stock Akun' || serviceType === 'Logo') && product.images && product.images.length > 0) {
         stockImageSliderContainer.style.display = 'block';
         detailProductDescriptionContent.innerHTML = product.deskripsiPanjang ? product.deskripsiPanjang.replace(/\|\|/g, '<br>') : 'Tidak ada deskripsi.';
         
@@ -385,14 +385,14 @@ if ((serviceType === 'Stock Akun' || serviceType === 'Logo') && product.images &
     buyNowLink.className = 'buy-now';
     buyNowLink.textContent = 'Beli Sekarang';
 
-let buyNowMessage = '';
-if (serviceType === 'Stock Akun' && product.images && product.images.length > 0) {
-    buyNowMessage = `Halo Kak Admin Rikishopreal ✨\n\nSaya tertarik untuk memesan Akun ini:\n\nProduk: *${product.nama}*\nHarga: *${formatRupiah(product.harga)}*\n\nSebagai referensi, ini link gambarnya:\n${product.images[0]}\n\nMohon info ketersediaan dan panduan pembayarannya ya. Terima kasih! 🙏`;
-} else if (serviceType === 'Logo' && product.images && product.images.length > 0) {
-    buyNowMessage = `Halo Kak Admin Rikishopreal ✨\n\nSaya tertarik untuk memesan Logo ini:\n\nNama Logo: *${product.nama}*\nHarga: *${formatRupiah(product.harga)}*\n\nBerikut link gambar logonya:\n${product.images[0]}\n\nMohon info ketersediaan dan panduan pembayarannya ya. Terima kasih! 🙏`;
-} else {
-    buyNowMessage = `Halo Kak Admin Rikishopreal ✨\n\nSaya tertarik untuk memesan produk ini:\n\nProduk: *${product.nama}*\nHarga: *${formatRupiah(product.harga)}*\n\nMohon info selanjutnya untuk proses pembayaran ya. Terima kasih! 🙏`;
-}
+    let buyNowMessage = '';
+    if (serviceType === 'Stock Akun' && product.images && product.images.length > 0) {
+        buyNowMessage = `Halo Kak Admin Rikishopreal ✨\n\nSaya tertarik untuk memesan Akun ini:\n\nProduk: *${product.nama}*\nHarga: *${formatRupiah(product.harga)}*\n\nSebagai referensi, ini link gambarnya:\n${product.images[0]}\n\nMohon info ketersediaan dan panduan pembayarannya ya. Terima kasih! 🙏`;
+    } else if (serviceType === 'Logo' && product.images && product.images.length > 0) {
+        buyNowMessage = `Halo Kak Admin Rikishopreal ✨\n\nSaya tertarik untuk memesan Logo ini:\n\nNama Logo: *${product.nama}*\nHarga: *${formatRupiah(product.harga)}*\n\nBerikut link gambar logonya:\n${product.images[0]}\n\nMohon info ketersediaan dan panduan pembayarannya ya. Terima kasih! 🙏`;
+    } else {
+        buyNowMessage = `Halo Kak Admin Rikishopreal ✨\n\nSaya tertarik untuk memesan produk ini:\n\nProduk: *${product.nama}*\nHarga: *${formatRupiah(product.harga)}*\n\nMohon info selanjutnya untuk proses pembayaran ya. Terima kasih! 🙏`;
+    }
     
     buyNowLink.href = `https://wa.me/${WA_ADMIN_NUMBER}?text=${encodeURIComponent(buyNowMessage)}`;
     buyNowLink.target = "_blank";
@@ -699,7 +699,9 @@ function playBackgroundMusic() {
 async function initializeApp() {
     mainContainer.style.display = 'none';
     try {
-        const response = await fetch('products.json');
+        // Tambahkan timestamp untuk mencegah cache
+        const timestamp = new Date().getTime();
+        const response = await fetch(`products.json?v=${timestamp}`);
         if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
         products = await response.json();
     } catch (error) {
