@@ -148,23 +148,39 @@ button:disabled { background-color: var(--light-text-color); cursor: not-allowed
   margin-left: 5px;
   font-weight: bold;
 }
+/* Gaya untuk daftar item yang akan dihapus */
+.delete-list {
+    margin-top: 15px;
+}
 .delete-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background: #f7f7f7;
-  margin: 4px 0;
-  padding: 6px 10px;
-  border-radius: 6px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #f7f7f7;
+    margin: 4px 0;
+    padding: 6px 10px;
+    border-radius: 6px;
+    transition: background 0.2s;
+}
+.delete-item:hover {
+    background: #e9e9e9;
+}
+.delete-item span {
+    font-size: 0.9em;
+    color: var(--text-color);
 }
 .delete-btn {
-  background: red;
-  color: #fff;
-  border: none;
-  padding: 4px 8px;
-  border-radius: 4px;
-  cursor: pointer;
+    background-color: var(--error-color);
+    color: #fff;
+    border: none;
+    padding: 4px 8px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.8em;
+    width: auto;
+    margin: 0;
+    transition: background-color 0.2s;
 }
 .delete-btn:hover {
-  background: darkred;
+    background-color: darkred;
 }
