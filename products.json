@@ -441,5 +441,18 @@
             "deskripsiPanjang": "Testimoni",
             "createdAt": "2025-08-21T21:31:16.334Z"
         }
+    ],
+    "Logo": [
+        {
+            "id": 70,
+            "nama": "Logo jb",
+            "harga": 14000,
+            "hargaAsli": 14000,
+            "deskripsiPanjang": "Ok",
+            "createdAt": "2025-08-21T21:33:20.365Z",
+            "images": [
+                "https://e.top4top.io/p_3520t4qhs0.jpg"
+            ]
+        }
     ]
 }
