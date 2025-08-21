@@ -284,11 +284,36 @@ function loadServiceProducts(serviceType) {
     productListDiv.innerHTML = '';
     productDetailViewDiv.style.display = 'none';
     const productData = products[serviceType];
+
     if (productData && productData.length > 0) {
         productData.forEach(product => {
             const productItem = document.createElement('div');
             productItem.classList.add('product-item');
-            productItem.innerHTML = `<div><span class="product-name">${product.nama}</span><p class="product-short-desc">${product.deskripsiPanjang ? product.deskripsiPanjang.split('||')[0].trim() + '...' : ''}</p><span class="product-price-list">${formatRupiah(product.harga)}</span></div><i class="fas fa-chevron-right"></i>`;
+
+            // ✅ cek apakah produk masih dalam 24 jam terakhir
+            let isNew = false;
+            if (product.createdAt) {
+                const createdTime = new Date(product.createdAt).getTime();
+                const now = Date.now();
+                if (now - createdTime < 24 * 60 * 60 * 1000) { // 24 jam
+                    isNew = true;
+                }
+            }
+
+            productItem.innerHTML = `
+                <div>
+                    <span class="product-name">
+                        ${product.nama} 
+                        ${isNew ? '<span class="new-badge">NEW</span>' : ''}
+                    </span>
+                    <p class="product-short-desc">
+                        ${product.deskripsiPanjang ? product.deskripsiPanjang.split('||')[0].trim() + '...' : ''}
+                    </p>
+                    <span class="product-price-list">${formatRupiah(product.harga)}</span>
+                </div>
+                <i class="fas fa-chevron-right"></i>
+            `;
+
             productItem.addEventListener('click', () => showProductDetail(product, serviceType));
             productListDiv.appendChild(productItem);
         });
