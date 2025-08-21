@@ -77,12 +77,12 @@ document.addEventListener('DOMContentLoaded', () => {
     passwordInput.addEventListener('keypress', e => e.key === 'Enter' && handleLogin());
 
     // ✅ Toggle field tambahan
-    categorySelect.addEventListener('change', () => {
-        stockPhotoSection.style.display = categorySelect.value === 'Stock Akun' ? 'block' : 'none';
-        if (categorySelect.value === 'Script') {
-            scriptModal.style.display = 'flex'; // Menggunakan flex untuk menampilkan modal
-        }
-    });
+       const scriptDescriptionSection = document.getElementById('scriptDescriptionSection');
+   categorySelect.addEventListener('change', () => {
+       stockPhotoSection.style.display = categorySelect.value === 'Stock Akun' ? 'block' : 'none';
+       scriptDescriptionSection.style.display = categorySelect.value === 'Script' ? 'block' : 'none';
+   });
+
 
     // ✅ Modal Script
     addFeatureBtn.addEventListener('click', () => {
@@ -112,9 +112,10 @@ document.addEventListener('DOMContentLoaded', () => {
             images: photosInput.value.split(',').map(l => l.trim()).filter(Boolean),
             createdAt: new Date().toISOString() // Tambahkan stempel waktu pembuatan
         };
-        if (categorySelect.value === 'Script') {
-            productData.menuContent = scriptFeatures.join('\n'); // Menyimpan sebagai string
-        }
+               if (categorySelect.value === 'Script') {
+           const scriptFeaturesTextarea = document.getElementById('scriptFeatures');
+           productData.menuContent = scriptFeaturesTextarea.value.trim(); // Ambil langsung dari textarea
+       }
 
         if (!productData.nama || !productData.harga || !productData.deskripsiPanjang) {
             return showToast('Semua kolom wajib diisi.', 'error');
