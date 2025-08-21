@@ -82,72 +82,15 @@ body.dark-mode {
 /* Info Bar */
 .info-bar {
     background-color: var(--white-color); padding: 15px; margin: 15px; border-radius: 12px;
-    box-shadow: 0 4px 10px var(--shadow-color);
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    align-items: flex-start;
-    position: relative;
-    z-index: 2;
-    border: 1px solid var(--border-color);
-    animation: fadeInUp 0.5s ease-out forwards;
+    box-shadow: 0 4px 10px var(--shadow-color); display: flex; flex-direction: column;
+    gap: 10px; align-items: flex-start; position: relative; z-index: 2;
+    border: 1px solid var(--border-color); animation: fadeInUp 0.5s ease-out forwards;
 }
-
-@media (min-width: 481px) {
-    .info-bar {
-        flex-direction: row;
-        justify-content: space-between;
-        align-items: center;
-        gap: 0;
-    }
-}
-
-/* Gaya untuk format tanggal dan waktu */
-.info-bar .date-time {
-    display: flex;
-    flex-direction: column;
-    align-items: center; /* Menyesuaikan agar di tengah */
-    font-weight: 600;
-    font-size: 1em;
-    color: var(--text-color);
-    flex-basis: 100%;
-    margin-bottom: 5px;
-    text-align: center; /* Menambahkan ini untuk teks di tengah */
-}
-
-.info-bar .date-time .date {
-    font-size: 0.9em;
-    color: var(--light-text-color);
-    font-weight: 500;
-    white-space: nowrap; /* Mencegah teks tanggal patah */
-}
-
-.info-bar .date-time .time {
-    font-size: 1.1em;
-    color: var(--text-color);
-    font-weight: 700;
-    white-space: nowrap; /* Mencegah teks waktu patah */
-}
-
-.info-bar .visitor-count {
-    font-size: 0.9em;
-    font-weight: 500;
-    color: var(--text-color);
-    display: flex;
-    align-items: center;
-    justify-content: center; /* Menambahkan ini agar sejajar */
-}
-
-.info-bar .visitor-count i {
-    margin-right: 8px;
-    color: var(--primary-color);
-}
-
-.info-bar .visitor-count .count {
-    font-weight: 700;
-    color: var(--primary-color);
-    margin-left: 5px;
-}
+@media (min-width: 481px) { .info-bar { flex-direction: row; justify-content: space-between; align-items: center; gap: 0; } }
+.info-bar .date-time { font-size: 1em; font-weight: 500; color: var(--text-color); flex-basis: 100%; margin-bottom: 5px; }
+.info-bar .visitor-count { font-size: 0.9em; font-weight: 500; color: var(--text-color); display: flex; align-items: center; }
+.info-bar .visitor-count i { margin-right: 8px; color: var(--primary-color); }
+.info-bar .visitor-count .count { font-weight: 700; color: var(--primary-color); margin-left: 5px; }
 
 /* Konten Halaman Beranda */
 .main-content { padding: 15px; flex-grow: 1; display: flex; flex-direction: column; padding-bottom: 20px; }
@@ -172,6 +115,7 @@ h3 { font-size: 1.2em; color: var(--primary-color); margin-bottom: 15px; border-
 .service-item { background-color: var(--white-color); padding: 18px 12px; border-radius: 12px; text-align: center; box-shadow: 0 2px 8px var(--shadow-color); transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease; cursor: pointer; text-decoration: none; color: inherit; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 120px; border: 1px solid var(--border-color); }
 .service-item:hover { transform: translateY(-3px); box-shadow: 0 4px 15px var(--shadow-color); background-color: var(--primary-color); color: var(--white-color); }
 .service-item:hover img { filter: brightness(0) invert(1); }
+.service-item img { width: 45px; height: 45px; object-fit: contain; margin-bottom: 10px; transition: filter 0.2s ease; }
 .service-item span { display: block; font-size: 0.95em; color: var(--light-text-color); font-weight: 500; transition: color 0.2s ease; }
 .service-item:hover span { color: var(--white-color); }
 
@@ -348,16 +292,4 @@ h3 { font-size: 1.2em; color: var(--primary-color); margin-bottom: 15px; border-
     transform: scale(1.2);
     color: #4caf50; 
     transition: all 0.2s ease-in-out;
-}
-
-/* Gaya untuk lencana NEW */
-.new-badge {
-  background: var(--success-color);
-  color: white;
-  font-size: 10px;
-  padding: 2px 6px;
-  border-radius: 8px;
-  margin-left: 5px;
-  font-weight: bold;
-  animation: scaleUp 0.3s ease-out;
 }
