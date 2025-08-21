@@ -5,18 +5,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const passwordInput = document.getElementById('password');
     const loginButton = document.getElementById('login-button');
+    const passwordToggle = document.getElementById('passwordToggle');
 
-    const themeSwitchBtn = document.getElementById('themeSwitchBtn');
-    const themeSwitchBtn2 = document.getElementById('themeSwitchBtn2');
+    const themeSwitchBtnLogin = document.getElementById('themeSwitchBtnLogin');
+    const themeSwitchBtnPanel = document.getElementById('themeSwitchBtnPanel');
     const body = document.body;
 
     const savedTheme = localStorage.getItem('admin-theme') || 'light-mode';
     body.className = savedTheme;
     function updateThemeButton() {
         const iconClass = body.classList.contains('dark-mode') ? 'fa-sun' : 'fa-moon';
-        themeSwitchBtn.querySelector('i').className = `fas ${iconClass}`;
-        if (themeSwitchBtn2) {
-            themeSwitchBtn2.querySelector('i').className = `fas ${iconClass}`;
+        themeSwitchBtnLogin.querySelector('i').className = `fas ${iconClass}`;
+        if (themeSwitchBtnPanel) {
+            themeSwitchBtnPanel.querySelector('i').className = `fas ${iconClass}`;
         }
     }
     updateThemeButton();
@@ -31,10 +32,17 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         updateThemeButton();
     }
-    themeSwitchBtn.addEventListener('click', toggleTheme);
-    if (themeSwitchBtn2) {
-        themeSwitchBtn2.addEventListener('click', toggleTheme);
+    themeSwitchBtnLogin.addEventListener('click', toggleTheme);
+    if (themeSwitchBtnPanel) {
+        themeSwitchBtnPanel.addEventListener('click', toggleTheme);
     }
+    
+    // Toggle Password Visibility
+    passwordToggle.addEventListener('click', () => {
+        const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+        passwordInput.setAttribute('type', type);
+        passwordToggle.querySelector('i').className = `fas ${type === 'password' ? 'fa-eye-slash' : 'fa-eye'}`;
+    });
 
     const categorySelect = document.getElementById('category');
     const nameInput = document.getElementById('product-name');
@@ -46,15 +54,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const photosInput = document.getElementById('product-photos');
     const addButton = document.getElementById('add-product-button');
 
-    // ✅ Delete dan Urutkan Produk
-    const deleteCategorySelect = document.getElementById('delete-category');
-    const deleteProductList = document.getElementById('delete-product-list');
-    const saveOrderButton = document.getElementById('save-order-button');
-    let currentProducts = []; // Untuk menyimpan data produk lokal
+    const manageCategorySelect = document.getElementById('manage-category');
+    const manageProductList = document.getElementById('manage-product-list');
 
     const API_BASE_URL = '/api';
     let activeToastTimeout = null;
 
+    // ... (Fungsi showToast dan handleLogin tetap sama)
     function showToast(message, type = 'info', duration = 3000) {
         if (toastContainer.firstChild) {
             clearTimeout(activeToastTimeout);
@@ -72,8 +78,6 @@ document.addEventListener('DOMContentLoaded', () => {
             toast.addEventListener('animationend', () => toast.remove());
         }, duration);
     }
-
-    // ✅ Login
     const handleLogin = async () => {
         const password = passwordInput.value;
         if (!password) return showToast('Password tidak boleh kosong.', 'error');
@@ -101,15 +105,15 @@ document.addEventListener('DOMContentLoaded', () => {
     loginButton.addEventListener('click', handleLogin);
     passwordInput.addEventListener('keypress', e => e.key === 'Enter' && handleLogin());
 
-// ✅ Toggle field tambahan
-categorySelect.addEventListener('change', () => {
-    const category = categorySelect.value;
-    stockPhotoSection.style.display = (category === 'Stock Akun' || category === 'Logo') ? 'block' : 'none';
-    scriptMenuSection.style.display = category === 'Script' ? 'block' : 'none';
-});
+    // Toggle field tambahan
+    categorySelect.addEventListener('change', () => {
+        const category = categorySelect.value;
+        stockPhotoSection.style.display = (category === 'Stock Akun' || category === 'Logo') ? 'block' : 'none';
+        scriptMenuSection.style.display = category === 'Script' ? 'block' : 'none';
+    });
 
 
-    // ✅ Tambah produk
+    // Tambah produk
     addButton.addEventListener('click', async () => {
         const productData = {
             category: categorySelect.value,
@@ -117,7 +121,7 @@ categorySelect.addEventListener('change', () => {
             harga: parseInt(priceInput.value, 10),
             deskripsiPanjang: descriptionInput.value.trim(),
             images: photosInput.value.split(',').map(l => l.trim()).filter(Boolean),
-            createdAt: new Date().toISOString() // Tambahkan stempel waktu pembuatan
+            createdAt: new Date().toISOString()
         };
         if (productData.category === 'Script') {
             productData.menuContent = scriptMenuContentInput.value.trim();
@@ -150,48 +154,68 @@ categorySelect.addEventListener('change', () => {
         }
     });
 
-    // ✅ Hapus & Urutkan Produk
-    deleteCategorySelect.addEventListener('change', async () => {
-        deleteProductList.innerHTML = 'Memuat...';
-        saveOrderButton.style.display = 'none';
-        const category = deleteCategorySelect.value;
-        if (!category) return (deleteProductList.innerHTML = '');
+    // Logika tab
+    const tabButtons = document.querySelectorAll('.tab-button');
+    const tabContents = document.querySelectorAll('.admin-tab-content');
+    tabButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            tabButtons.forEach(btn => btn.classList.remove('active'));
+            button.classList.add('active');
+            tabContents.forEach(content => content.classList.remove('active'));
+            document.getElementById(button.dataset.tab).classList.add('active');
+        });
+    });
+
+    // Kelola Produk (sekarang berada di tab)
+    manageCategorySelect.addEventListener('change', async () => {
+        manageProductList.innerHTML = 'Memuat...';
+        const category = manageCategorySelect.value;
+        if (!category) return (manageProductList.innerHTML = '');
         try {
             const res = await fetch('/products.json');
             const data = await res.json();
-            currentProducts = data[category] || [];
-            if (currentProducts.length === 0) {
-                deleteProductList.innerHTML = '<p>Tidak ada produk di kategori ini.</p>';
+            const productsInCat = data[category] || [];
+            if (productsInCat.length === 0) {
+                manageProductList.innerHTML = '<p>Tidak ada produk di kategori ini.</p>';
                 return;
             }
-            renderDeleteList(currentProducts);
+            renderManageList(productsInCat, category);
         } catch (err) {
-            deleteProductList.innerHTML = '<p>Gagal memuat produk.</p>';
+            manageProductList.innerHTML = '<p>Gagal memuat produk.</p>';
         }
     });
 
-    function renderDeleteList(productsToRender) {
-        deleteProductList.innerHTML = '';
+    function renderManageList(productsToRender, category) {
+        manageProductList.innerHTML = '';
         productsToRender.forEach(prod => {
             const isNew = prod.createdAt && Date.now() - new Date(prod.createdAt).getTime() < 24 * 60 * 60 * 1000;
             const item = document.createElement('div');
             item.className = 'delete-item';
-            item.setAttribute('draggable', 'true');
             item.dataset.id = prod.id;
+            
+            // Tampilan harga lama dan baru
+            const priceDisplay = prod.hargaAsli
+                ? `<span><del>Rp${prod.hargaAsli}</del> <span class="new-price-text">Rp${prod.harga}</span></span>`
+                : `<span>Rp${prod.harga}</span>`;
+
             item.innerHTML = `
-              <span>${prod.nama} - Rp${prod.harga} ${isNew ? '<span class="new-badge">NEW</span>' : ''}</span>
-              <button class="delete-btn">Hapus</button>
+              <span>${prod.nama} - ${priceDisplay} ${isNew ? '<span class="new-badge">NEW</span>' : ''}</span>
+              <div class="item-actions">
+                <div class="update-price-container">
+                    <input type="number" class="update-price-input" placeholder="Harga baru" value="${prod.harga}">
+                    <button class="update-price-btn">Update</button>
+                </div>
+                <button class="delete-btn">Hapus</button>
+              </div>
             `;
-            deleteProductList.appendChild(item);
+            manageProductList.appendChild(item);
         });
 
-        setupDragAndDrop();
-        setupDeleteButtons();
-        saveOrderButton.style.display = 'block';
+        setupManageActions(category);
     }
 
-    function setupDeleteButtons() {
-        deleteProductList.querySelectorAll('.delete-btn').forEach(btn => {
+    function setupManageActions(category) {
+        manageProductList.querySelectorAll('.delete-btn').forEach(btn => {
             btn.addEventListener('click', async e => {
                 const parent = e.target.closest('.delete-item');
                 const id = parseInt(parent.dataset.id);
@@ -199,115 +223,59 @@ categorySelect.addEventListener('change', () => {
                     const res = await fetch('/api/deleteProduct', {
                         method: 'DELETE',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ id, category: deleteCategorySelect.value })
+                        body: JSON.stringify({ id, category: category })
                     });
                     const result = await res.json();
                     if (!res.ok) throw new Error(result.message);
                     showToast(result.message, 'success');
                     parent.remove();
-                    currentProducts = currentProducts.filter(p => p.id !== id);
                 } catch (err) {
                     showToast(err.message, 'error');
                 }
             });
         });
-    }
 
-    function setupDragAndDrop() {
-        let draggingItem = null;
+        manageProductList.querySelectorAll('.update-price-btn').forEach(btn => {
+            btn.addEventListener('click', async e => {
+                const parent = e.target.closest('.delete-item');
+                const id = parseInt(parent.dataset.id);
+                const newPrice = parseInt(parent.querySelector('.update-price-input').value, 10);
+                
+                if (isNaN(newPrice) || newPrice < 0) {
+                    return showToast('Harga harus berupa angka positif.', 'error');
+                }
+                
+                btn.textContent = '...';
+                btn.disabled = true;
 
-        deleteProductList.addEventListener('dragstart', (e) => {
-            draggingItem = e.target.closest('.delete-item');
-            if (draggingItem) {
-                setTimeout(() => draggingItem.classList.add('dragging'), 0);
-            }
-        });
+                try {
+                    const res = await fetch(`${API_BASE_URL}/updateProductPrice`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ id, category, newPrice })
+                    });
+                    const result = await res.json();
 
-        deleteProductList.addEventListener('dragend', () => {
-            if (draggingItem) {
-                draggingItem.classList.remove('dragging');
-                draggingItem = null;
-            }
-        });
+                    if (!res.ok) {
+                        throw new Error(result.message);
+                    }
+                    showToast(result.message, 'success');
+                    // Perbarui tampilan di halaman tanpa reload
+                    const priceSpan = parent.querySelector('.new-price-text');
+                    const oldPriceSpan = parent.querySelector('del');
+                    if (oldPriceSpan) oldPriceSpan.textContent = `Rp${result.oldPrice}`;
+                    else parent.querySelector('.item-actions').insertAdjacentHTML('beforebegin', `<span><del>Rp${result.oldPrice}</del> <span class="new-price-text">Rp${newPrice}</span></span>`);
+                    if (priceSpan) priceSpan.textContent = `Rp${newPrice}`;
 
-        deleteProductList.addEventListener('dragover', (e) => {
-            e.preventDefault();
-            const afterElement = getDragAfterElement(deleteProductList, e.clientY);
-            const draggable = document.querySelector('.dragging');
-            if (afterElement == null) {
-                deleteProductList.appendChild(draggable);
-            } else {
-                deleteProductList.insertBefore(draggable, afterElement);
-            }
-        });
-    }
-
-    function getDragAfterElement(container, y) {
-        const draggableElements = [...container.querySelectorAll('.delete-item:not(.dragging)')];
-        return draggableElements.reduce((closest, child) => {
-            const box = child.getBoundingClientRect();
-            const offset = y - box.top - box.height / 2;
-            if (offset < 0 && offset > closest.offset) {
-                return { offset: offset, element: child };
-            } else {
-                return closest;
-            }
-        }, { offset: Number.NEGATIVE_INFINITY }).element;
-    }
-
-    saveOrderButton.addEventListener('click', async () => {
-        const newOrder = [...deleteProductList.children].map(item => parseInt(item.dataset.id));
-        const category = deleteCategorySelect.value;
-        if (!category || newOrder.length === 0) return;
-
-        showToast('Menyimpan urutan...', 'info', 5000);
-        try {
-            const res = await fetch('/api/reorderProducts', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ category, order: newOrder })
+                } catch (err) {
+                    showToast(err.message || 'Gagal memperbarui harga.', 'error');
+                } finally {
+                    btn.textContent = 'Update';
+                    btn.disabled = false;
+                }
             });
-            const result = await res.json();
-            if (!res.ok) throw new Error(result.message);
-            showToast('Urutan berhasil disimpan.', 'success');
-        } catch (err) {
-            showToast(err.message || 'Gagal menyimpan urutan.', 'error');
-        }
-    });
-    
-    // ✅ Fitur Update Harga Massal
-    const newPriceInput = document.getElementById('new-price');
-    const updatePricesButton = document.getElementById('update-prices-button');
-
-    updatePricesButton.addEventListener('click', async () => {
-        const newPrice = parseInt(newPriceInput.value, 10);
-        if (isNaN(newPrice) || newPrice < 0) {
-            return showToast('Harga baru harus berupa angka positif.', 'error');
-        }
-
-        updatePricesButton.textContent = 'Memproses...';
-        updatePricesButton.disabled = true;
-
-        try {
-            const res = await fetch(`${API_BASE_URL}/updateAllPrices`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ newPrice })
-            });
-            const result = await res.json();
-
-            if (!res.ok) {
-                throw new Error(result.message);
-            }
-
-            showToast(result.message, 'success');
-        } catch (err) {
-            showToast(err.message || 'Gagal memperbarui harga.', 'error');
-        } finally {
-            updatePricesButton.textContent = 'Terapkan Harga ke Semua Produk';
-            updatePricesButton.disabled = false;
-        }
-    });
+        });
+    }
 
     // Cek status login saat halaman dimuat
     if (sessionStorage.getItem('isAdminAuthenticated')) {

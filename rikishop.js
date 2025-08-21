@@ -309,19 +309,24 @@ function loadServiceProducts(serviceType) {
                 }
             }
             
-            productItem.innerHTML = `
-                <div>
-                    <span class="product-name">
-                        ${product.nama} 
-                        ${isNew ? '<span class="new-badge">NEW</span>' : ''}
-                    </span>
-                    <p class="product-short-desc">
-                        ${product.deskripsiPanjang ? product.deskripsiPanjang.split('||')[0].trim() + '...' : ''}
-                    </p>
-                    <span class="product-price-list">${formatRupiah(product.harga)}</span>
-                </div>
-                <i class="fas fa-chevron-right"></i>
-            `;
+let priceDisplay = `<span class="product-price-list">${formatRupiah(product.harga)}</span>`;
+if (product.hargaAsli && product.hargaAsli > product.harga) {
+    priceDisplay = `<span class="original-price"><del>${formatRupiah(product.hargaAsli)}</del></span> <span class="discounted-price">${formatRupiah(product.harga)}</span>`;
+}
+productItem.innerHTML = `
+    <div>
+        <span class="product-name">
+            ${product.nama} 
+            ${isNew ? '<span class="new-badge">NEW</span>' : ''}
+        </span>
+        <p class="product-short-desc">
+            ${product.deskripsiPanjang ? product.deskripsiPanjang.split('||')[0].trim() + '...' : ''}
+        </p>
+        ${priceDisplay}
+    </div>
+    <i class="fas fa-chevron-right"></i>
+`;
+
 
             productItem.addEventListener('click', () => showProductDetail(product, serviceType));
             productListDiv.appendChild(productItem);
@@ -336,7 +341,10 @@ function showProductDetail(product, serviceType) {
     productListDiv.style.display = 'none';
     productDetailViewDiv.style.display = 'block';
     detailProductName.textContent = product.nama;
-    detailProductPrice.textContent = formatRupiah(product.harga);
+    const priceHtml = product.hargaAsli && product.hargaAsli > product.harga
+    ? `<span class="original-price"><del>${formatRupiah(product.hargaAsli)}</del></span> <span class="discounted-price">${formatRupiah(product.harga)}</span>`
+    : `${formatRupiah(product.harga)}`;
+detailProductPrice.innerHTML = priceHtml;
     detailProductActions.innerHTML = '';
 
     if (serviceType === 'Stock Akun' && product.images && product.images.length > 0) {

@@ -55,6 +55,10 @@ body {
     border: 1px solid var(--border-color);
     animation: fadeIn 0.5s ease-out forwards;
     transition: background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+    margin-top: 20px;
+}
+.form-card:first-child {
+    margin-top: 0;
 }
 
 h2 {
@@ -136,7 +140,7 @@ button:disabled { background-color: var(--light-text-color); cursor: not-allowed
 }
 .delete-item {
     display: flex;
-    justify-content: space-between;
+    flex-wrap: wrap;
     align-items: center;
     background: #f7f7f7;
     margin: 4px 0;
@@ -154,9 +158,22 @@ button:disabled { background-color: var(--light-text-color); cursor: not-allowed
     opacity: 0.5;
     transform: scale(1.02);
 }
-.delete-item span {
+.delete-item > span {
     font-size: 0.9em;
     color: var(--text-color);
+    flex: 1;
+}
+.delete-item .item-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+    width: 100%;
+}
+@media (min-width: 480px) {
+    .delete-item .item-actions {
+        margin-top: 0;
+        width: auto;
+    }
 }
 .delete-btn {
     background-color: var(--error-color);
@@ -173,6 +190,26 @@ button:disabled { background-color: var(--light-text-color); cursor: not-allowed
 .delete-btn:hover {
     background-color: darkred;
 }
+.update-price-container {
+    display: flex;
+    gap: 5px;
+    align-items: center;
+}
+.update-price-input {
+    width: 80px;
+    padding: 4px 6px;
+    font-size: 0.8em;
+    border-radius: 4px;
+}
+.update-price-btn {
+    width: auto;
+    font-size: 0.8em;
+    padding: 4px 8px;
+    margin: 0;
+    background-color: var(--primary-color);
+    white-space: nowrap;
+}
+
 
 /* --- Gaya Tambahan untuk Fitur Baru --- */
 /* Gaya untuk Tombol Ganti Tema & Header Admin */
@@ -199,6 +236,60 @@ button:disabled { background-color: var(--light-text-color); cursor: not-allowed
 .theme-switch i {
     color: var(--text-color);
     font-size: 1.1em;
+    transition: transform 0.2s ease;
+}
+
+/* Password Toggle */
+.password-input-container {
+    position: relative;
+    width: 100%;
+}
+.password-input-container input {
+    width: 100%;
+    padding-right: 45px;
+}
+.password-toggle {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: var(--light-text-color);
+}
+
+/* Tabs */
+.admin-tabs {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: var(--white-color);
+    border-radius: 12px;
+    padding: 5px;
+    border: 1px solid var(--border-color);
+    max-width: 500px;
+    margin: 0 auto;
+}
+.tab-button {
+    flex: 1;
+    border: none;
+    background-color: transparent;
+    padding: 10px 15px;
+    border-radius: 8px;
+    font-weight: 500;
+    cursor: pointer;
+    color: var(--text-color);
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+.tab-button.active {
+    background-color: var(--primary-color);
+    color: var(--white-color);
+}
+.admin-tab-content {
+    display: none;
+}
+.admin-tab-content.active {
+    display: block;
+    animation: fadeIn 0.5s ease-out forwards;
 }
 
 /* Tema Gelap */
@@ -275,4 +366,15 @@ body.dark-mode .theme-switch {
 }
 body.dark-mode .theme-switch i {
     color: var(--text-color);
+}
+body.dark-mode .admin-tabs {
+    background-color: var(--white-color);
+    border-color: var(--border-color);
+}
+body.dark-mode .tab-button {
+    color: var(--text-color);
+}
+body.dark-mode .tab-button.active {
+    background-color: var(--primary-color);
+    color: var(--white-color);
 }

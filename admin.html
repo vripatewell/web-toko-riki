@@ -15,88 +15,93 @@
         <div class="form-card">
             <div class="admin-header">
                 <h2><i class="fas fa-lock"></i> Admin Panel</h2>
-                <div class="theme-switch" id="themeSwitchBtn">
+                <div class="theme-switch" id="themeSwitchBtnLogin">
                     <i class="fas fa-sun"></i>
                 </div>
             </div>
             <p>Masukkan password untuk mengelola produk.</p>
-            <input type="password" id="password" placeholder="••••••••••">
+            <div class="password-input-container">
+                <input type="password" id="password" placeholder="••••••••••">
+                <span class="password-toggle" id="passwordToggle"><i class="fas fa-eye-slash"></i></span>
+            </div>
             <button id="login-button">Masuk</button>
         </div>
     </div>
 
     <div id="product-form-screen" class="admin-container" style="display: none;">
-        <div class="form-card">
-            <div class="admin-header">
+        <div class="admin-header">
+            <h2><i class="fas fa-tools"></i> Admin Panel</h2>
+            <div class="theme-switch" id="themeSwitchBtnPanel">
+                <i class="fas fa-sun"></i>
+            </div>
+        </div>
+
+        <nav class="admin-tabs">
+            <button class="tab-button active" data-tab="addProduct">Tambah Produk</button>
+            <button class="tab-button" data-tab="manageProducts">Kelola Produk</button>
+        </nav>
+
+        <div id="addProduct" class="admin-tab-content active">
+            <div class="form-card">
                 <h2><i class="fas fa-plus-circle"></i> Tambah Produk Baru</h2>
-                <div class="theme-switch" id="themeSwitchBtn2">
-                    <i class="fas fa-sun"></i>
+                
+                <label for="category">Kategori Produk:</label>
+                <select id="category">
+                    <option value="Panel">Panel</option>
+                    <option value="VPS">VPS</option>
+                    <option value="Script">Script</option>
+                    <option value="Jasa">Jasa</option>
+                    <option value="murid">Join Murid</option>
+                    <option value="Sewa Bot">Sewa Bot</option>
+                    <option value="Stock Akun">Stock Akun</option>
+                    <option value="Logo">Logo</option>
+                    <option value="Suntik Sosmed">Suntik Sosmed</option>
+                </select>
+
+                <label for="product-name">Nama Produk:</label>
+                <input type="text" id="product-name" placeholder="Contoh: Panel Ram 1GB">
+
+                <label for="product-price">Harga Produk (hanya angka):</label>
+                <input type="number" id="product-price" placeholder="Contoh: 3000">
+
+                <div id="commonDescriptionSection">
+                    <label for="product-description">Deskripsi Produk (Tekan Enter untuk baris baru):</label>
+                    <textarea id="product-description" rows="5" placeholder="Tulis deskripsi di sini..."></textarea>
                 </div>
-            </div>
-            
-            <label for="category">Kategori Produk:</label>
-            <select id="category">
-                <option value="Panel">Panel</option>
-                <option value="VPS">VPS</option>
-                <option value="Script">Script</option>
-                <option value="Jasa">Jasa</option>
-                <option value="murid">Join Murid</option>
-                <option value="Sewa Bot">Sewa Bot</option>
-                <option value="Stock Akun">Stock Akun</option>
-                <option value="Logo">Logo</option>
-                <option value="Suntik Sosmed">Suntik Sosmed</option>
-            </select>
+                
+                <div id="scriptMenuSection" style="display: none;">
+                    <label for="script-menu-content">Konten Menu Script:</label>
+                    <textarea id="script-menu-content" rows="10" placeholder="Tulis menu script di sini..."></textarea>
+                </div>
 
-            <label for="product-name">Nama Produk:</label>
-            <input type="text" id="product-name" placeholder="Contoh: Panel Ram 1GB">
-
-            <label for="product-price">Harga Produk (hanya angka):</label>
-            <input type="number" id="product-price" placeholder="Contoh: 3000">
-
-            <div id="commonDescriptionSection">
-                <label for="product-description">Deskripsi Produk (Tekan Enter untuk baris baru):</label>
-                <textarea id="product-description" rows="5" placeholder="Tulis deskripsi di sini..."></textarea>
+                <div id="stock-photo-section" style="display: none;">
+                    <label for="product-photos">Link Foto (pisahkan dengan koma jika lebih dari satu):</label>
+                    <input type="text" id="product-photos" placeholder="https://url.com/foto1.jpg, https://url.com/foto2.jpg">
+                </div>
+               
+                <button id="add-product-button">Tambah Produk</button>
             </div>
-            
-            <div id="scriptMenuSection" style="display: none;">
-                <label for="script-menu-content">Konten Menu Script:</label>
-                <textarea id="script-menu-content" rows="10" placeholder="Tulis menu script di sini..."></textarea>
-            </div>
-
-            <div id="stock-photo-section" style="display: none;">
-                <label for="product-photos">Link Foto (pisahkan dengan koma jika lebih dari satu):</label>
-                <input type="text" id="product-photos" placeholder="https://url.com/foto1.jpg, https://url.com/foto2.jpg">
-            </div>
-           
-            <button id="add-product-button">Tambah Produk</button>
         </div>
 
-        <div class="form-card" style="margin-top:20px;">
-          <h2><i class="fas fa-trash"></i> Hapus & Atur Produk</h2>
-          <label for="delete-category">Pilih Kategori:</label>
-          <select id="delete-category">
-              <option value="">-- Pilih Kategori --</option>
-              <option value="Panel">Panel</option>
-              <option value="VPS">VPS</option>
-              <option value="Script">Script</option>
-              <option value="Jasa">Jasa</option>
-              <option value="murid">Join Murid</option>
-              <option value="Sewa Bot">Sewa Bot</option>
-              <option value="Stock Akun">Stock Akun</option>
-              <option value="Logo">Logo</option>
-              <option value="Suntik Sosmed">Suntik Sosmed</option>
-          </select>
+        <div id="manageProducts" class="admin-tab-content">
+            <div class="form-card">
+              <h2><i class="fas fa-cogs"></i> Kelola Produk</h2>
+              <label for="manage-category">Pilih Kategori:</label>
+              <select id="manage-category">
+                  <option value="">-- Pilih Kategori --</option>
+                  <option value="Panel">Panel</option>
+                  <option value="VPS">VPS</option>
+                  <option value="Script">Script</option>
+                  <option value="Jasa">Jasa</option>
+                  <option value="murid">Join Murid</option>
+                  <option value="Sewa Bot">Sewa Bot</option>
+                  <option value="Stock Akun">Stock Akun</option>
+                  <option value="Logo">Logo</option>
+                  <option value="Suntik Sosmed">Suntik Sosmed</option>
+              </select>
 
-          <div id="delete-product-list" class="delete-list"></div>
-          <button id="save-order-button" style="display:none;">Simpan Urutan</button>
-        </div>
-        
-        <div class="form-card" style="margin-top:20px;">
-          <h2><i class="fas fa-tags"></i> Diskon Massal</h2>
-          <p>Ubah harga semua produk. Contoh: 5000</p>
-          <label for="new-price">Harga Baru:</label>
-          <input type="number" id="new-price" placeholder="Masukkan harga baru">
-          <button id="update-prices-button">Terapkan Harga ke Semua Produk</button>
+              <div id="manage-product-list" class="delete-list"></div>
+            </div>
         </div>
     </div>
     
