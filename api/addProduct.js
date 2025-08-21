@@ -45,10 +45,10 @@ export default async function handler(request, response) {
             createdAt: newProductData.createdAt
         };
 
-        // Jika kategori adalah Stock Akun, tambahkan array 'images'
-        if (newProductData.category === 'Stock Akun' && newProductData.images.length > 0) {
-            newProduct.images = newProductData.images;
-        }
+if ((newProductData.category === 'Stock Akun' || newProductData.category === 'Logo') && newProductData.images.length > 0) {
+    newProduct.images = newProductData.images;
+}
+
 
         // Jika kategori adalah Script, tambahkan konten menu
         if (newProductData.category === 'Script' && newProductData.menuContent) {
@@ -57,10 +57,11 @@ export default async function handler(request, response) {
         
         // 5. Tambahkan produk ke kategori yang sesuai
         if (productsJson[newProductData.category]) {
-            productsJson[newProductData.category].push(newProduct);
-        } else {
-             return response.status(400).json({ message: 'Kategori produk tidak valid.' });
-        }
+    productsJson[newProductData.category].push(newProduct);
+} else {
+    // Jika kategori tidak ada, buat array baru
+    productsJson[newProductData.category] = [newProduct];
+}
 
         // 6. Update file kembali ke repositori GitHub
         await octokit.repos.createOrUpdateFileContents({
