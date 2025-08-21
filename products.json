@@ -434,16 +434,6 @@
     ],
     "Logo": [
         {
-            "id": 69,
-            "nama": "Logo E-Sport Keren",
-            "harga": 5000,
-            "deskripsiPanjang": "Desain logo E-Sport unik dan keren. Cocok untuk tim game atau streamer.",
-            "images": [
-                "https://f.top4top.io/p_35205ehum2.jpg",
-                "https://g.top4top.io/p_3520njyrl3.jpg"
-            ]
-        },
-        {
             "id": 70,
             "nama": "Logo Minimalis",
             "harga": 5000,
@@ -451,6 +441,16 @@
             "images": [
                 "https://c.top4top.io/p_3520a7b451.jpg",
                 "https://d.top4top.io/p_3520gaj8e2.jpg"
+            ]
+        },
+        {
+            "id": 69,
+            "nama": "Logo E-Sport Keren",
+            "harga": 5000,
+            "deskripsiPanjang": "Desain logo E-Sport unik dan keren. Cocok untuk tim game atau streamer.",
+            "images": [
+                "https://f.top4top.io/p_35205ehum2.jpg",
+                "https://g.top4top.io/p_3520njyrl3.jpg"
             ]
         },
         {
