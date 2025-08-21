@@ -41,15 +41,39 @@
             <label for="product-price">Harga Produk (hanya angka):</label>
             <input type="number" id="product-price" placeholder="Contoh: 3000">
 
-            <label for="product-description">Deskripsi Produk (Tekan Enter untuk baris baru):</label>
-            <textarea id="product-description" rows="5" placeholder="Tulis deskripsi di sini..."></textarea>
+            <div id="commonDescriptionSection">
+                <label for="product-description">Deskripsi Produk (Tekan Enter untuk baris baru):</label>
+                <textarea id="product-description" rows="5" placeholder="Tulis deskripsi di sini..."></textarea>
+            </div>
+            
+            <div id="scriptMenuSection" style="display: none;">
+                <label for="script-menu-content">Konten Menu Script:</label>
+                <textarea id="script-menu-content" rows="10" placeholder="Tulis menu script di sini..."></textarea>
+            </div>
 
             <div id="stock-photo-section" style="display: none;">
                 <label for="product-photos">Link Foto (pisahkan dengan koma jika lebih dari satu):</label>
                 <input type="text" id="product-photos" placeholder="https://url.com/foto1.jpg, https://url.com/foto2.jpg">
             </div>
-
+           
             <button id="add-product-button">Tambah Produk</button>
+        </div>
+
+        <div class="form-card" style="margin-top:20px;">
+          <h2><i class="fas fa-trash"></i> Hapus & Atur Produk</h2>
+          <label for="delete-category">Pilih Kategori:</label>
+          <select id="delete-category">
+              <option value="">-- Pilih Kategori --</option>
+              <option value="Panel">Panel</option>
+              <option value="VPS">VPS</option>
+              <option value="Script">Script</option>
+              <option value="Jasa">Jasa</option>
+              <option value="murid">Join Murid</option>
+              <option value="Sewa Bot">Sewa Bot</option>
+              <option value="Stock Akun">Stock Akun</option>
+          </select>
+          <div id="delete-product-list" class="delete-list"></div>
+          <button id="save-order-button" style="display:none;">Simpan Urutan</button>
         </div>
     </div>
     
