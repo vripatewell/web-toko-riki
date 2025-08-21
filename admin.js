@@ -80,7 +80,7 @@ document.addEventListener('DOMContentLoaded', () => {
     categorySelect.addEventListener('change', () => {
         stockPhotoSection.style.display = categorySelect.value === 'Stock Akun' ? 'block' : 'none';
         if (categorySelect.value === 'Script') {
-            scriptModal.style.display = 'block';
+            scriptModal.style.display = 'flex'; // Menggunakan flex untuk menampilkan modal
         }
     });
 
@@ -110,11 +110,12 @@ document.addEventListener('DOMContentLoaded', () => {
             harga: parseInt(priceInput.value, 10),
             deskripsiPanjang: descriptionInput.value.trim(),
             images: photosInput.value.split(',').map(l => l.trim()).filter(Boolean),
-            createdAt: new Date().toISOString()
+            createdAt: new Date().toISOString() // Tambahkan stempel waktu pembuatan
         };
         if (categorySelect.value === 'Script') {
-            productData.menuContent = scriptFeatures;
+            productData.menuContent = scriptFeatures.join('\n'); // Menyimpan sebagai string
         }
+
         if (!productData.nama || !productData.harga || !productData.deskripsiPanjang) {
             return showToast('Semua kolom wajib diisi.', 'error');
         }
