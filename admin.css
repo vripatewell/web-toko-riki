@@ -119,16 +119,6 @@ button:disabled { background-color: var(--light-text-color); cursor: not-allowed
 .toast.error i { color: var(--error-color); }
 .toast.info i { color: var(--primary-color); }
 
- .product-item-admin {
-  display: flex;
-  justify-content: space-between;
-  padding: 6px 10px;
-  background: #f7f7f7;
-  margin-bottom: 5px;
-  border-radius: 6px;
- }
-
-/* Modal */
 .modal {
   position: fixed;
   top: 0; left: 0; right: 0; bottom: 0;
