@@ -4,8 +4,7 @@
             "id": 1,
             "nama": "Panel Ram 1GB",
             "harga": 3000,
-            "deskripsiPanjang": "Syarat & Ketentuan : Server private & kualitas terbaik! || Script bot dijamin aman (anti drama/maling) | masa aktif panel 30 hari || Garansi 15 hari (1x replace) || Server anti delay/lemot! || Claim garansi wajib bawa bukti transaksi dan data panel yang lengkap",
-            "hargaAsli": 3000
+            "deskripsiPanjang": "Syarat & Ketentuan : Server private & kualitas terbaik! || Script bot dijamin aman (anti drama/maling) | masa aktif panel 30 hari || Garansi 15 hari (1x replace) || Server anti delay/lemot! || Claim garansi wajib bawa bukti transaksi dan data panel yang lengkap"
         },
         {
             "id": 2,
@@ -72,6 +71,13 @@
             "nama": "Panel Ram UNLIMITED",
             "harga": 15000,
             "deskripsiPanjang": "Syarat & Ketentuan : Server private & kualitas terbaik! || Script bot dijamin aman (anti drama/maling) | masa aktif panel 30 hari || Garansi 15 hari (1x replace) || Server anti delay/lemot! || Claim garansi wajib bawa bukti transaksi dan data panel yang lengkap"
+        },
+        {
+            "id": 66,
+            "nama": "Panel 15gb || yah",
+            "harga": 300000,
+            "deskripsiPanjang": "Oke min",
+            "createdAt": "2025-08-21T13:47:35.208Z"
         }
     ],
     "VPS": [
@@ -395,14 +401,13 @@
         {
             "id": 60,
             "nama": "Akun F-B Lawas",
-            "harga": 2500,
+            "harga": 25000,
             "deskripsiPanjang": "Akun Facebook tua, cocok untuk beriklan. Tahan banting dan minim AME.",
             "images": [
                 "https://d.top4top.io/p_3519yr64s1.jpg",
                 "https://e.top4top.io/p_35195k0522.png",
                 "https://c.top4top.io/p_3519ljkjr0.jpg"
-            ],
-            "hargaAsli": 25000
+            ]
         },
         {
             "id": 61,
@@ -425,40 +430,6 @@
                 "https://e.top4top.io/p_3520od8be1.jpg",
                 "https://d.top4top.io/p_3520eqk5b0.jpg"
             ]
-        }
-    ],
-    "Logo": [
-        {
-            "id": 69,
-            "nama": "Logo jb",
-            "harga": 13777,
-            "hargaAsli": 13777,
-            "deskripsiPanjang": "Hampura",
-            "createdAt": "2025-08-21T20:54:48.649Z",
-            "images": [
-                "https://e.top4top.io/p_3520t4qhs0.jpg"
-            ]
-        },
-        {
-            "id": 70,
-            "nama": "Babayo",
-            "harga": 139999,
-            "hargaAsli": 139999,
-            "deskripsiPanjang": "Oke",
-            "createdAt": "2025-08-21T20:56:34.407Z",
-            "images": [
-                "https://e.top4top.io/p_3520t4qhs0.jpg"
-            ]
-        }
-    ],
-    "Suntik Sosmed": [
-        {
-            "id": 71,
-            "nama": "Janana",
-            "harga": 319434,
-            "hargaAsli": 319434,
-            "deskripsiPanjang": "Oke",
-            "createdAt": "2025-08-21T20:59:10.748Z"
         }
     ]
 }

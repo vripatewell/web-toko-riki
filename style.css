@@ -314,3 +314,14 @@ h3 { font-size: 1.2em; color: var(--primary-color); margin-bottom: 15px; border-
     justify-content: center;
     font-size: 2.5em; /* Menyesuaikan ukuran ikon */
 }
+
+.original-price {
+    font-size: 0.8em;
+    color: var(--light-text-color);
+    margin-right: 5px;
+}
+.discounted-price {
+    font-size: 1em;
+    font-weight: 600;
+    color: var(--error-color);
+}

@@ -56,11 +56,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const manageCategorySelect = document.getElementById('manage-category');
     const manageProductList = document.getElementById('manage-product-list');
+    const saveOrderButton = document.getElementById('save-order-button');
+    let currentProducts = [];
 
     const API_BASE_URL = '/api';
     let activeToastTimeout = null;
 
-    // ... (Fungsi showToast dan handleLogin tetap sama)
     function showToast(message, type = 'info', duration = 3000) {
         if (toastContainer.firstChild) {
             clearTimeout(activeToastTimeout);
@@ -105,7 +106,6 @@ document.addEventListener('DOMContentLoaded', () => {
     loginButton.addEventListener('click', handleLogin);
     passwordInput.addEventListener('keypress', e => e.key === 'Enter' && handleLogin());
 
-    // Toggle field tambahan
     categorySelect.addEventListener('change', () => {
         const category = categorySelect.value;
         stockPhotoSection.style.display = (category === 'Stock Akun' || category === 'Logo') ? 'block' : 'none';
@@ -113,7 +113,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
 
-    // Tambah produk
     addButton.addEventListener('click', async () => {
         const productData = {
             category: categorySelect.value,
@@ -163,6 +162,10 @@ document.addEventListener('DOMContentLoaded', () => {
             button.classList.add('active');
             tabContents.forEach(content => content.classList.remove('active'));
             document.getElementById(button.dataset.tab).classList.add('active');
+            if (button.dataset.tab === 'manageProducts') {
+                manageCategorySelect.value = '';
+                manageProductList.innerHTML = '';
+            }
         });
     });
 
@@ -170,16 +173,22 @@ document.addEventListener('DOMContentLoaded', () => {
     manageCategorySelect.addEventListener('change', async () => {
         manageProductList.innerHTML = 'Memuat...';
         const category = manageCategorySelect.value;
-        if (!category) return (manageProductList.innerHTML = '');
+        if (!category) {
+            manageProductList.innerHTML = '';
+            saveOrderButton.style.display = 'none';
+            return;
+        }
         try {
             const res = await fetch('/products.json');
             const data = await res.json();
-            const productsInCat = data[category] || [];
-            if (productsInCat.length === 0) {
+            currentProducts = data[category] || [];
+            if (currentProducts.length === 0) {
                 manageProductList.innerHTML = '<p>Tidak ada produk di kategori ini.</p>';
+                saveOrderButton.style.display = 'none';
                 return;
             }
-            renderManageList(productsInCat, category);
+            renderManageList(currentProducts, category);
+            saveOrderButton.style.display = 'block';
         } catch (err) {
             manageProductList.innerHTML = '<p>Gagal memuat produk.</p>';
         }
@@ -191,30 +200,36 @@ document.addEventListener('DOMContentLoaded', () => {
             const isNew = prod.createdAt && Date.now() - new Date(prod.createdAt).getTime() < 24 * 60 * 60 * 1000;
             const item = document.createElement('div');
             item.className = 'delete-item';
+            item.setAttribute('draggable', 'true');
             item.dataset.id = prod.id;
             
-            // Tampilan harga lama dan baru
-            const priceDisplay = prod.hargaAsli
-                ? `<span><del>Rp${prod.hargaAsli}</del> <span class="new-price-text">Rp${prod.harga}</span></span>`
+            const priceDisplay = prod.hargaAsli && prod.hargaAsli > prod.harga
+                ? `<span class="original-price"><del>Rp${prod.hargaAsli}</del></span> <span class="discounted-price">Rp${prod.harga}</span>`
                 : `<span>Rp${prod.harga}</span>`;
-
+            
             item.innerHTML = `
-              <span>${prod.nama} - ${priceDisplay} ${isNew ? '<span class="new-badge">NEW</span>' : ''}</span>
-              <div class="item-actions">
-                <div class="update-price-container">
-                    <input type="number" class="update-price-input" placeholder="Harga baru" value="${prod.harga}">
-                    <button class="update-price-btn">Update</button>
+                <div class="item-info">
+                    <span>${prod.nama} - ${priceDisplay} ${isNew ? '<span class="new-badge">NEW</span>' : ''}</span>
+                    <div class="product-edit-fields" style="display: none;">
+                        <input type="text" class="edit-name-input" placeholder="Nama baru" value="${prod.nama}">
+                        <input type="number" class="edit-price-input" placeholder="Harga baru" value="${prod.harga}">
+                        <textarea class="edit-desc-input" placeholder="Deskripsi baru">${prod.deskripsiPanjang}</textarea>
+                        <button class="save-edit-btn">Simpan Perubahan</button>
+                    </div>
                 </div>
-                <button class="delete-btn">Hapus</button>
-              </div>
+                <div class="item-actions-manage">
+                    <button class="edit-btn"><i class="fas fa-edit"></i> Edit</button>
+                    <button class="delete-btn"><i class="fas fa-trash-alt"></i> Hapus</button>
+                </div>
             `;
             manageProductList.appendChild(item);
         });
 
         setupManageActions(category);
     }
-
+    
     function setupManageActions(category) {
+        // Hapus Produk
         manageProductList.querySelectorAll('.delete-btn').forEach(btn => {
             btn.addEventListener('click', async e => {
                 const parent = e.target.closest('.delete-item');
@@ -234,25 +249,47 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             });
         });
+        
+        // Edit Produk (Harga & Deskripsi)
+        manageProductList.querySelectorAll('.edit-btn').forEach(btn => {
+            btn.addEventListener('click', e => {
+                const parent = e.target.closest('.delete-item');
+                const editFields = parent.querySelector('.product-edit-fields');
+                const infoSpan = parent.querySelector('.item-info > span');
+                const isEditing = editFields.style.display === 'flex';
 
-        manageProductList.querySelectorAll('.update-price-btn').forEach(btn => {
+                if (isEditing) {
+                    editFields.style.display = 'none';
+                    infoSpan.style.display = 'block';
+                    btn.innerHTML = `<i class="fas fa-edit"></i> Edit`;
+                } else {
+                    editFields.style.display = 'flex';
+                    infoSpan.style.display = 'none';
+                    btn.innerHTML = `<i class="fas fa-times"></i> Batal`;
+                }
+            });
+        });
+
+        manageProductList.querySelectorAll('.save-edit-btn').forEach(btn => {
             btn.addEventListener('click', async e => {
                 const parent = e.target.closest('.delete-item');
                 const id = parseInt(parent.dataset.id);
-                const newPrice = parseInt(parent.querySelector('.update-price-input').value, 10);
+                const newName = parent.querySelector('.edit-name-input').value;
+                const newPrice = parseInt(parent.querySelector('.edit-price-input').value, 10);
+                const newDesc = parent.querySelector('.edit-desc-input').value;
                 
-                if (isNaN(newPrice) || newPrice < 0) {
-                    return showToast('Harga harus berupa angka positif.', 'error');
+                if (isNaN(newPrice) || newPrice < 0 || !newName || !newDesc) {
+                    return showToast('Data tidak valid.', 'error');
                 }
                 
                 btn.textContent = '...';
                 btn.disabled = true;
 
                 try {
-                    const res = await fetch(`${API_BASE_URL}/updateProductPrice`, {
+                    const res = await fetch(`${API_BASE_URL}/updateProduct`, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ id, category, newPrice })
+                        body: JSON.stringify({ id, category, newName, newPrice, newDesc })
                     });
                     const result = await res.json();
 
@@ -260,21 +297,72 @@ document.addEventListener('DOMContentLoaded', () => {
                         throw new Error(result.message);
                     }
                     showToast(result.message, 'success');
-                    // Perbarui tampilan di halaman tanpa reload
-                    const priceSpan = parent.querySelector('.new-price-text');
-                    const oldPriceSpan = parent.querySelector('del');
-                    if (oldPriceSpan) oldPriceSpan.textContent = `Rp${result.oldPrice}`;
-                    else parent.querySelector('.item-actions').insertAdjacentHTML('beforebegin', `<span><del>Rp${result.oldPrice}</del> <span class="new-price-text">Rp${newPrice}</span></span>`);
-                    if (priceSpan) priceSpan.textContent = `Rp${newPrice}`;
-
+                    manageCategorySelect.dispatchEvent(new Event('change')); // Reload daftar produk
                 } catch (err) {
-                    showToast(err.message || 'Gagal memperbarui harga.', 'error');
+                    showToast(err.message || 'Gagal memperbarui produk.', 'error');
                 } finally {
-                    btn.textContent = 'Update';
+                    btn.textContent = 'Simpan Perubahan';
                     btn.disabled = false;
                 }
             });
         });
+
+        // Geser Produk
+        let draggingItem = null;
+        manageProductList.addEventListener('dragstart', (e) => {
+            draggingItem = e.target.closest('.delete-item');
+            if (draggingItem) {
+                setTimeout(() => draggingItem.classList.add('dragging'), 0);
+            }
+        });
+        manageProductList.addEventListener('dragend', () => {
+            if (draggingItem) {
+                draggingItem.classList.remove('dragging');
+                draggingItem = null;
+            }
+        });
+        manageProductList.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            const afterElement = getDragAfterElement(manageProductList, e.clientY);
+            const draggable = document.querySelector('.dragging');
+            if (afterElement == null) {
+                manageProductList.appendChild(draggable);
+            } else {
+                manageProductList.insertBefore(draggable, afterElement);
+            }
+        });
+        saveOrderButton.addEventListener('click', async () => {
+            const newOrder = [...manageProductList.children].map(item => parseInt(item.dataset.id));
+            const category = manageCategorySelect.value;
+            if (!category || newOrder.length === 0) return;
+
+            showToast('Menyimpan urutan...', 'info', 5000);
+            try {
+                const res = await fetch('/api/reorderProducts', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ category, order: newOrder })
+                });
+                const result = await res.json();
+                if (!res.ok) throw new Error(result.message);
+                showToast('Urutan berhasil disimpan.', 'success');
+            } catch (err) {
+                showToast(err.message || 'Gagal menyimpan urutan.', 'error');
+            }
+        });
+    }
+
+    function getDragAfterElement(container, y) {
+        const draggableElements = [...container.querySelectorAll('.delete-item:not(.dragging)')];
+        return draggableElements.reduce((closest, child) => {
+            const box = child.getBoundingClientRect();
+            const offset = y - box.top - box.height / 2;
+            if (offset < 0 && offset > closest.offset) {
+                return { offset: offset, element: child };
+            } else {
+                return closest;
+            }
+        }, { offset: Number.NEGATIVE_INFINITY }).element;
     }
 
     // Cek status login saat halaman dimuat

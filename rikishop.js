@@ -347,7 +347,7 @@ function showProductDetail(product, serviceType) {
 detailProductPrice.innerHTML = priceHtml;
     detailProductActions.innerHTML = '';
 
-    if (serviceType === 'Stock Akun' && product.images && product.images.length > 0) {
+if ((serviceType === 'Stock Akun' || serviceType === 'Logo') && product.images && product.images.length > 0) {
         stockImageSliderContainer.style.display = 'block';
         detailProductDescriptionContent.innerHTML = product.deskripsiPanjang ? product.deskripsiPanjang.replace(/\|\|/g, '<br>') : 'Tidak ada deskripsi.';
         
