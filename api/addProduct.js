@@ -28,26 +28,31 @@ export default async function handler(request, response) {
         // 2. Siapkan data produk baru dari frontend
         const newProductData = request.body;
         
+        
         // 3. Cari ID tertinggi untuk generate ID otomatis yang unik
         let maxId = 0;
         Object.values(productsJson).flat().forEach(product => {
             if (product.id > maxId) maxId = product.id;
         });
         const newId = maxId + 1;
-
+        
         // 4. Buat objek produk baru yang akan disimpan
         const newProduct = {
             id: newId,
             nama: newProductData.nama,
             harga: newProductData.harga,
-            // Backend ini juga cerdas: deskripsi yang Anda ketik dengan Enter (baris baru)
-            // akan otomatis diubah menjadi format "||" seperti di products.json Anda.
             deskripsiPanjang: newProductData.deskripsiPanjang.replace(/\n/g, ' || '),
+            createdAt: newProductData.createdAt
         };
 
         // Jika kategori adalah Stock Akun, tambahkan array 'images'
         if (newProductData.category === 'Stock Akun' && newProductData.images.length > 0) {
             newProduct.images = newProductData.images;
+        }
+
+        // Jika kategori adalah Script, tambahkan konten menu
+        if (newProductData.category === 'Script' && newProductData.menuContent) {
+            newProduct.menuContent = newProductData.menuContent;
         }
         
         // 5. Tambahkan produk ke kategori yang sesuai
