@@ -87,9 +87,28 @@ body.dark-mode {
     border: 1px solid var(--border-color); animation: fadeInUp 0.5s ease-out forwards;
 }
 @media (min-width: 481px) { .info-bar { flex-direction: row; justify-content: space-between; align-items: center; gap: 0; } }
-.info-bar .date-time { font-size: 1em; font-weight: 500; color: var(--text-color); flex-basis: 100%; margin-bottom: 5px; display: flex; flex-direction: column; align-items: center; }
-.info-bar .date-time .date { font-weight: 600; font-size: 1.1em; }
-.info-bar .date-time .time { font-size: 0.9em; color: var(--light-text-color); }
+/* Gaya untuk format tanggal dan waktu iOS */
+.info-bar .date-time {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start; /* Mengubah flex-direction agar rapi */
+    font-weight: 600;
+    font-size: 1em;
+    color: var(--text-color);
+    flex-basis: 100%;
+    margin-bottom: 5px;
+}
+.info-bar .date-time .date {
+    font-size: 0.9em;
+    color: var(--light-text-color);
+    font-weight: 500;
+}
+.info-bar .date-time .time {
+    font-size: 1.1em;
+    color: var(--text-color);
+    font-weight: 700;
+}
+
 .info-bar .visitor-count { font-size: 0.9em; font-weight: 500; color: var(--text-color); display: flex; align-items: center; }
 .info-bar .visitor-count i { margin-right: 8px; color: var(--primary-color); }
 .info-bar .visitor-count .count { font-weight: 700; color: var(--primary-color); margin-left: 5px; }
