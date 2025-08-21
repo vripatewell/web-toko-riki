@@ -54,18 +54,10 @@
             </div>
 
             <!-- Popup Modal khusus Script -->
-            <div id="script-modal" class="modal" style="display:none;">
-              <div class="modal-content">
-                <h3>Tambah Menu Script</h3>
-                <input type="text" id="script-feature-input" placeholder="Contoh: Auto Push Kontak">
-                <button id="add-feature-btn">Tambah Fitur</button>
-                <ul id="script-feature-list"></ul>
-                <div class="modal-actions">
-                  <button id="save-script-features">Simpan</button>
-                  <button id="close-script-modal">Batal</button>
-                </div>
-              </div>
-            </div>
+                   <div id="scriptDescriptionSection" style="display: none; margin-top: 10px;">
+           <label for="scriptFeatures">Fitur Script (pisahkan setiap fitur dengan baris baru):</label>
+           <textarea id="scriptFeatures" rows="5" placeholder="Contoh:&#10;- Auto Push Kontak&#10;- Anti Delay"></textarea>
+       </div>
 
             <button id="add-product-button">Tambah Produk</button>
         </div>
