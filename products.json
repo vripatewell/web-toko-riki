@@ -85,74 +85,86 @@
         {
             "id": 13,
             "nama": "VPS Ram:1GB Cpu:1",
-            "harga": 20000,
-            "deskripsiPanjang": "Bonus Buy Vps: Free Install Panel 1x ram 8/16 || Free Instal Wings/Node 1x ram 8/16 || Free Pasang Egg Bot/Mc || Free Install Thema Buy Ram 8/16 || Garansi 15 Hari Nego? = Nogar || Vps On 30 Hari || Garansi Hanya 1x Ambil"
+            "harga": 50000,
+            "deskripsiPanjang": "Bonus Buy Vps: Free Install Panel 1x ram 8/16 || Free Instal Wings/Node 1x ram 8/16 || Free Pasang Egg Bot/Mc || Free Install Thema Buy Ram 8/16 || Garansi 15 Hari Nego? = Nogar || Vps On 30 Hari || Garansi Hanya 1x Ambil",
+            "hargaAsli": 50000
         },
         {
             "id": 14,
             "nama": "VPS Ram:2GB Cpu:1",
-            "harga": 25000,
-            "deskripsiPanjang": "Bonus Buy Vps: Free Install Panel 1x ram 8/16 || Free Instal Wings/Node 1x ram 8/16 || Free Pasang Egg Bot/Mc || Free Install Thema Buy Ram 8/16 || Garansi 15 Hari Nego? = Nogar || Vps On 30 Hari || Garansi Hanya 1x Ambil"
+            "harga": 50000,
+            "deskripsiPanjang": "Bonus Buy Vps: Free Install Panel 1x ram 8/16 || Free Instal Wings/Node 1x ram 8/16 || Free Pasang Egg Bot/Mc || Free Install Thema Buy Ram 8/16 || Garansi 15 Hari Nego? = Nogar || Vps On 30 Hari || Garansi Hanya 1x Ambil",
+            "hargaAsli": 50000
         },
         {
             "id": 15,
             "nama": "VPS Ram:2GB Cpu:2",
-            "harga": 30000,
-            "deskripsiPanjang": "Bonus Buy Vps: Free Install Panel 1x ram 8/16 || Free Instal Wings/Node 1x ram 8/16 || Free Pasang Egg Bot/Mc || Free Install Thema Buy Ram 8/16 || Garansi 15 Hari Nego? = Nogar || Vps On 30 Hari || Garansi Hanya 1x Ambil"
+            "harga": 50000,
+            "deskripsiPanjang": "Bonus Buy Vps: Free Install Panel 1x ram 8/16 || Free Instal Wings/Node 1x ram 8/16 || Free Pasang Egg Bot/Mc || Free Install Thema Buy Ram 8/16 || Garansi 15 Hari Nego? = Nogar || Vps On 30 Hari || Garansi Hanya 1x Ambil",
+            "hargaAsli": 50000
         },
         {
             "id": 16,
             "nama": "VPS Ram:4GB Cpu:2",
-            "harga": 40000,
-            "deskripsiPanjang": "Bonus Buy Vps: Free Install Panel 1x ram 8/16 || Free Instal Wings/Node 1x ram 8/16 || Free Pasang Egg Bot/Mc || Free Install Thema Buy Ram 8/16 || Garansi 15 Hari Nego? = Nogar || Vps On 30 Hari || Garansi Hanya 1x Ambil"
+            "harga": 50000,
+            "deskripsiPanjang": "Bonus Buy Vps: Free Install Panel 1x ram 8/16 || Free Instal Wings/Node 1x ram 8/16 || Free Pasang Egg Bot/Mc || Free Install Thema Buy Ram 8/16 || Garansi 15 Hari Nego? = Nogar || Vps On 30 Hari || Garansi Hanya 1x Ambil",
+            "hargaAsli": 50000
         },
         {
             "id": 17,
             "nama": "VPS Ram:8GB Cpu:4",
             "harga": 50000,
-            "deskripsiPanjang": "Bonus Buy Vps: Free Install Panel 1x ram 8/16 || Free Instal Wings/Node 1x ram 8/16 || Free Pasang Egg Bot/Mc || Free Install Thema Buy Ram 8/16 || Garansi 15 Hari Nego? = Nogar || Vps On 30 Hari || Garansi Hanya 1x Ambil"
+            "deskripsiPanjang": "Bonus Buy Vps: Free Install Panel 1x ram 8/16 || Free Instal Wings/Node 1x ram 8/16 || Free Pasang Egg Bot/Mc || Free Install Thema Buy Ram 8/16 || Garansi 15 Hari Nego? = Nogar || Vps On 30 Hari || Garansi Hanya 1x Ambil",
+            "hargaAsli": 50000
         },
         {
             "id": 18,
             "nama": "VPS Ram:16GB Cpu:4",
-            "harga": 70000,
-            "deskripsiPanjang": "Bonus Buy Vps: Free Install Panel 1x ram 8/16 || Free Instal Wings/Node 1x ram 8/16 || Free Pasang Egg Bot/Mc || Free Install Thema Buy Ram 8/16 || Garansi 15 Hari Nego? = Nogar || Vps On 30 Hari || Garansi Hanya 1x Ambil"
+            "harga": 50000,
+            "deskripsiPanjang": "Bonus Buy Vps: Free Install Panel 1x ram 8/16 || Free Instal Wings/Node 1x ram 8/16 || Free Pasang Egg Bot/Mc || Free Install Thema Buy Ram 8/16 || Garansi 15 Hari Nego? = Nogar || Vps On 30 Hari || Garansi Hanya 1x Ambil",
+            "hargaAsli": 50000
         },
         {
             "id": 19,
             "nama": "VPS Ram:16GB Cpu:8",
-            "harga": 80000,
-            "deskripsiPanjang": "Bonus Buy Vps: Free Install Panel 1x ram 8/16 || Free Instal Wings/Node 1x ram 8/16 || Free Pasang Egg Bot/Mc || Free Install Thema Buy Ram 8/16 || Garansi 15 Hari Nego? = Nogar || Vps On 30 Hari || Garansi Hanya 1x Ambil"
+            "harga": 50000,
+            "deskripsiPanjang": "Bonus Buy Vps: Free Install Panel 1x ram 8/16 || Free Instal Wings/Node 1x ram 8/16 || Free Pasang Egg Bot/Mc || Free Install Thema Buy Ram 8/16 || Garansi 15 Hari Nego? = Nogar || Vps On 30 Hari || Garansi Hanya 1x Ambil",
+            "hargaAsli": 50000
         },
         {
             "id": 20,
             "nama": "VPS Ram:32GB Cpu:8",
-            "harga": 90000,
-            "deskripsiPanjang": "Bonus Buy Vps: Free Install Panel 1x ram 8/16 || Free Instal Wings/Node 1x ram 8/16 || Free Pasang Egg Bot/Mc || Free Install Thema Buy Ram 8/16 || Garansi 15 Hari Nego? = Nogar || Vps On 30 Hari || Garansi Hanya 1x Ambil"
+            "harga": 50000,
+            "deskripsiPanjang": "Bonus Buy Vps: Free Install Panel 1x ram 8/16 || Free Instal Wings/Node 1x ram 8/16 || Free Pasang Egg Bot/Mc || Free Install Thema Buy Ram 8/16 || Garansi 15 Hari Nego? = Nogar || Vps On 30 Hari || Garansi Hanya 1x Ambil",
+            "hargaAsli": 50000
         },
         {
             "id": 21,
             "nama": "Digital Ocean 10drop PayPal",
-            "harga": 190000,
-            "deskripsiPanjang": "Layanan Digital Ocean dengan 10 akun drop siap pakai melalui PayPal. Ideal untuk pengembangan skala besar."
+            "harga": 50000,
+            "deskripsiPanjang": "Layanan Digital Ocean dengan 10 akun drop siap pakai melalui PayPal. Ideal untuk pengembangan skala besar.",
+            "hargaAsli": 50000
         },
         {
             "id": 22,
             "nama": "Digital Ocean 3drop PayPal",
-            "harga": 135000,
-            "deskripsiPanjang": "Layanan Digital Ocean dengan 3 akun drop siap pakai melalui PayPal. Cocok untuk kebutuhan menengah."
+            "harga": 50000,
+            "deskripsiPanjang": "Layanan Digital Ocean dengan 3 akun drop siap pakai melalui PayPal. Cocok untuk kebutuhan menengah.",
+            "hargaAsli": 50000
         },
         {
             "id": 23,
             "nama": "Digital Ocean 3drop VCC",
-            "harga": 120000,
-            "deskripsiPanjang": "Layanan Digital Ocean dengan 3 akun drop siap pakai menggunakan Virtual Credit Card (VCC)."
+            "harga": 50000,
+            "deskripsiPanjang": "Layanan Digital Ocean dengan 3 akun drop siap pakai menggunakan Virtual Credit Card (VCC).",
+            "hargaAsli": 50000
         },
         {
             "id": 24,
             "nama": "Digital Ocean 10drop VCC",
-            "harga": 150000,
-            "deskripsiPanjang": "Layanan Digital Ocean dengan 10 akun drop siap pakai menggunakan Virtual Credit Card (VCC)."
+            "harga": 50000,
+            "deskripsiPanjang": "Layanan Digital Ocean dengan 10 akun drop siap pakai menggunakan Virtual Credit Card (VCC).",
+            "hargaAsli": 50000
         }
     ],
     "Script": [
