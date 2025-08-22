@@ -11,7 +11,6 @@
 <body class="light-mode">
     <div id="toast-container"></div>
 
-    <!-- Login Screen -->
     <div id="login-screen" class="main-container">
         <div class="form-card login-card">
             <div class="login-header">
@@ -30,7 +29,6 @@
         </div>
     </div>
 
-    <!-- Product Form Screen -->
     <div id="product-form-screen" class="main-container" style="display: none;">
         <header class="admin-header">
             <img src="logo.jpg" alt="Rikishopreal" class="profile-pic">
@@ -43,9 +41,9 @@
         <nav class="admin-tabs">
             <button type="button" class="tab-button active" data-tab="addProduct">Tambah Produk</button>
             <button type="button" class="tab-button" data-tab="manageProducts">Kelola Produk</button>
+            <button type="button" class="tab-button" data-tab="settings">Pengaturan</button>
         </nav>
         
-        <!-- Tambah Produk -->
         <div id="addProduct" class="admin-tab-content active">
             <form class="admin-form" id="addProductForm">
                 <h2><i class="fas fa-plus-circle"></i> Tambah Produk</h2>
@@ -82,11 +80,13 @@
                     <input type="text" id="product-photos" placeholder="https://url.com/foto1.jpg, https://url.com/foto2.jpg">
                 </div>
 
+                <label for="product-wa-number">Nomor WhatsApp Produk (Opsional):</label>
+                <input type="text" id="product-wa-number" placeholder="Contoh: 6281234567890">
+
                 <button type="button" id="add-product-button">Tambah Produk</button>
             </form>
         </div>
         
-        <!-- Kelola Produk -->
         <div id="manageProducts" class="admin-tab-content">
             <form class="admin-form">
                 <h2><i class="fas fa-cogs"></i> Kelola Produk</h2>
@@ -106,7 +106,6 @@
                 <div id="manage-product-list"></div>
                 <button type="button" id="save-order-button" style="display:none;">Simpan Urutan</button>
 
-                <!-- Fitur Edit Harga Massal per Kategori -->
                 <div id="bulk-price-edit-container" class="bulk-price-edit-container" style="display: none;">
                     <label for="bulk-price-input">Ubah Harga Semua Produk di Kategori Ini:</label>
                     <div class="bulk-price-input-group">
@@ -116,9 +115,17 @@
                 </div>
             </form>
         </div>
+
+        <div id="settings" class="admin-tab-content">
+            <form class="admin-form">
+                <h2><i class="fas fa-cog"></i> Pengaturan Website</h2>
+                <label for="admin-wa-number">Nomor WhatsApp Admin:</label>
+                <input type="text" id="admin-wa-number" placeholder="Contoh: 6281234567890">
+                <button type="button" id="save-admin-wa">Simpan Nomor Admin</button>
+            </form>
+        </div>
     </div>
     
-    <!-- Modal Edit Produk -->
     <div id="editProductModal" class="modal">
         <div class="modal-content">
             <form class="admin-form" id="editProductForm">
@@ -136,7 +143,7 @@
                 
                 <label for="edit-desc">Deskripsi Produk:</label>
                 <textarea id="edit-desc" rows="5"></textarea>
-                
+
                 <div id="edit-photo-section" style="display: none;">
                     <label>Kelola Foto:</label>
                     <div class="photo-grid" id="edit-photo-grid"></div>
@@ -150,13 +157,15 @@
                     <label for="edit-script-menu-content">Konten Menu Script:</label>
                     <textarea id="edit-script-menu-content" rows="10"></textarea>
                 </div>
-                
+
+                <label for="edit-wa-number">Nomor WhatsApp Produk (Opsional):</label>
+                <input type="text" id="edit-wa-number">
+
                 <button type="button" id="save-edit-btn">Simpan Perubahan</button>
             </form>
         </div>
     </div>
 
-    <!-- Custom Confirmation Modal (Pengganti window.confirm) -->
     <div id="customConfirmModal" class="modal">
         <div class="modal-content confirm-modal-content">
             <div class="confirm-message" id="confirmMessage"></div>

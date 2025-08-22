@@ -5,8 +5,8 @@ function onYouTubeIframeAPIReady() { isYouTubeApiReady = true; }
 (function() { const tag = document.createElement('script'); tag.src = "https://www.youtube.com/iframe_api"; const firstScriptTag = document.getElementsByTagName('script')[0]; firstScriptTag.parentNode.insertBefore(tag, firstScriptTag); })();
 
 // --- Konfigurasi ---
-const WA_ADMIN_NUMBER = "6285771555374";
-const WA_SELLER_NUMBER = "6285771555374";
+let WA_ADMIN_NUMBER = "6285771555374"; // Akan diisi dari config.json
+let WA_SELLER_NUMBER = "6285771555374"; // Akan diisi dari config.json
 const CREATOR_USERNAME = "Riki Shop Real";
 const SOSMED_LINK = "https://rikishopreal.vercel.app";
 const TESTIMONI_LINK = "https://rikishopreal.vercel.app/testimoni";
@@ -377,7 +377,9 @@ function showProductDetail(product, serviceType) {
     const buyNowLink = document.createElement('a');
     buyNowLink.className = 'buy-now';
     buyNowLink.textContent = 'Beli Sekarang';
-
+    
+    const targetWaNumber = product.waNumber || WA_ADMIN_NUMBER;
+    
     let buyNowMessage = '';
     if (serviceType === 'Stock Akun' && product.images && product.images.length > 0) {
         buyNowMessage = `Halo Kak Admin Rikishopreal ✨\n\nSaya tertarik untuk memesan Akun ini:\n\nProduk: *${product.nama}*\nHarga: *${formatRupiah(product.harga)}*\n\nSebagai referensi, ini link gambarnya:\n${product.images[0]}\n\nMohon info ketersediaan dan panduan pembayarannya ya. Terima kasih! 🙏`;
@@ -387,7 +389,7 @@ function showProductDetail(product, serviceType) {
         buyNowMessage = `Halo Kak Admin Rikishopreal ✨\n\nSaya tertarik untuk memesan produk ini:\n\nProduk: *${product.nama}*\nHarga: *${formatRupiah(product.harga)}*\n\nMohon info selanjutnya untuk proses pembayaran ya. Terima kasih! 🙏`;
     }
     
-    buyNowLink.href = `https://wa.me/${WA_ADMIN_NUMBER}?text=${encodeURIComponent(buyNowMessage)}`;
+    buyNowLink.href = `https://wa.me/${targetWaNumber}?text=${encodeURIComponent(buyNowMessage)}`;
     buyNowLink.target = "_blank";
     detailProductActions.appendChild(buyNowLink);
 
@@ -694,12 +696,19 @@ async function initializeApp() {
     try {
         // Tambahkan timestamp untuk mencegah cache saat memuat products.json
         const timestamp = new Date().getTime();
-        const response = await fetch(`products.json?v=${timestamp}`);
-        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-        products = await response.json();
+        const productRes = await fetch(`products.json?v=${timestamp}`);
+        if (!productRes.ok) throw new Error(`HTTP error! status: ${productRes.status}`);
+        products = await productRes.json();
+
+        // Ambil konfigurasi admin dari config.json
+        const configRes = await fetch(`config.json?v=${timestamp}`);
+        const config = await configRes.json();
+        WA_ADMIN_NUMBER = config.WA_ADMIN_NUMBER;
+        WA_SELLER_NUMBER = config.WA_ADMIN_NUMBER; // Menggunakan nomor admin untuk seller juga
+        
     } catch (error) {
-        console.error("Gagal memuat data produk:", error);
-        document.querySelector('.main-content').innerHTML = `<p style="text-align:center; color:red;">Gagal memuat data produk.</p>`;
+        console.error("Gagal memuat data produk atau konfigurasi:", error);
+        document.querySelector('.main-content').innerHTML = `<p style="text-align:center; color:red;">Gagal memuat data. Mohon periksa kembali.</p>`;
     }
     updateDateTime();
     setInterval(updateDateTime, 1000);
