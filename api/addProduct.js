@@ -51,6 +51,11 @@ export default async function handler(request, response) {
             newProduct.images = newProductData.images;
         }
 
+        // Tambahkan nomor WA produk jika ada
+        if (newProductData.waNumber) {
+            newProduct.waNumber = newProductData.waNumber;
+        }
+
 
         // Jika kategori adalah Script, tambahkan konten menu
         if (newProductData.category === 'Script' && newProductData.menuContent) {
