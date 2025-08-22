@@ -39,7 +39,6 @@ const bannerCarousel = document.getElementById('bannerCarousel');
 const bannerPagination = document.getElementById('bannerPagination');
 const visitorCountDisplay = document.getElementById('visitorCountDisplay');
 const visitorCountSpan = visitorCountDisplay.querySelector('.count');
-const visitorCountLabel = visitorCountDisplay.querySelector('i').nextSibling; // Untuk mengubah teks
 let currentBannerIndex = 0;
 let bannerInterval;
 
@@ -101,19 +100,19 @@ const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-rikishop';
 
 // --- Logika Firebase untuk Pengunjung & Hitungan Masuk ---
 async function setupFirebaseVisitorCounter() {
-    visitorCountSpan.textContent = '-'; // Ini akan diubah saat data dimuat
+    visitorCountSpan.textContent = '-';
     if (!window.firebaseServices) {
         console.warn("Layanan Firebase tidak tersedia.");
-        visitorCountSpan.textContent = 'N/A';
+        visitorCountSpan.textContent = 'R/S';
         return;
     }
     const { auth, db, doc, runTransaction, onSnapshot, signInAnonymously, signInWithCustomToken, initialAuthToken } = window.firebaseServices;
     try {
         if (!auth.currentUser) {
-            if (initialAuthToken) { await signInWithCustomToken(auth, initialAuthToken); }
+            if (initialAuthToken) { await signInWithCustomToken(auth, initialAuthToken); } 
             else { await signInAnonymously(auth); }
         }
-
+        
         const visitorDocRef = doc(db, "artifacts", appId, "public/data/site_stats/visitors");
 
         onSnapshot(visitorDocRef, (doc) => {
@@ -122,7 +121,7 @@ async function setupFirebaseVisitorCounter() {
             if (doc.exists() && typeof doc.data().count === 'number' && !isNaN(doc.data().count)) {
                 newCountText = doc.data().count.toString();
             }
-
+            
             visitorCountSpan.textContent = newCountText;
 
             if (oldCount !== '-' && oldCount !== newCountText) {
@@ -132,7 +131,7 @@ async function setupFirebaseVisitorCounter() {
                 }, 500);
             }
         });
-
+        
         // Menambah hitungan setiap kali halaman dimuat
         await runTransaction(db, async (transaction) => {
             const visitorDoc = await transaction.get(visitorDocRef);
@@ -286,13 +285,7 @@ function loadServiceProducts(serviceType) {
     let productData = products[serviceType];
     
     if (productData && productData.length > 0) {
-        // Urutkan produk, yang terbaru (createdAt tertinggi) di atas
-        productData.sort((a, b) => {
-            const dateA = a.createdAt ? new Date(a.createdAt).getTime() : 0;
-            const dateB = b.createdAt ? new Date(b.createdAt).getTime() : 0;
-            return dateB - dateA;
-        });
-
+        // Produk seharusnya sudah terurut dari products.json yang diupdate oleh admin panel
         productData.forEach(product => {
             const productItem = document.createElement('div');
             productItem.classList.add('product-item');
@@ -511,17 +504,17 @@ function renderCart() {
                 itemActionsHTML = `
                     <div class="item-actions">
                         <span class="stock-info">Hanya 1 Stok</span>
-                        <button class="remove-item-btn" onclick="removeFromCart(${item.id})"><i class="fas fa-trash-alt"></i> Hapus</button>
+                        <button type="button" class="remove-item-btn" onclick="removeFromCart(${item.id})"><i class="fas fa-trash-alt"></i> Hapus</button>
                     </div>`;
             } else {
                 itemActionsHTML = `
                     <div class="item-actions">
                         <div class="quantity-controls">
-                            <button class="quantity-btn" onclick="decreaseQuantity(${item.id})">-</button>
+                            <button type="button" class="quantity-btn" onclick="decreaseQuantity(${item.id})">-</button>
                             <span class="item-quantity">${item.quantity}</span>
-                            <button class="quantity-btn" onclick="increaseQuantity(${item.id})">+</button>
+                            <button type="button" class="quantity-btn" onclick="increaseQuantity(${item.id})">+</button>
                         </div>
-                        <button class="remove-item-btn" onclick="removeFromCart(${item.id})"><i class="fas fa-trash-alt"></i> Hapus</button>
+                        <button type="button" class="remove-item-btn" onclick="removeFromCart(${item.id})"><i class="fas fa-trash-alt"></i> Hapus</button>
                     </div>`;
             }
 
@@ -699,7 +692,7 @@ function playBackgroundMusic() {
 async function initializeApp() {
     mainContainer.style.display = 'none';
     try {
-        // Tambahkan timestamp untuk mencegah cache
+        // Tambahkan timestamp untuk mencegah cache saat memuat products.json
         const timestamp = new Date().getTime();
         const response = await fetch(`products.json?v=${timestamp}`);
         if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
