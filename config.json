@@ -1,13 +1,17 @@
 {
-  "WA_ADMIN_NUMBER": "6285771555374",
-  "domain_categories": {
-    "rikishop.my.id": {
-      "zone": "33970794e3373167a9c9556ad19fdb6a",
-      "apitoken": "5BuYPtwU__7hJIzX1euJn3K-ChzZH29VZ_ivbja"
-    },
-    "kangpanel.biz.id": {
-      "zone": "90ab3a017b7b29dd9ee92fdbb5831b0a",
-      "apitoken": "Jf_bwzYFsH89BZ6az61JlUGGu56SmNOqf7WC7KgV"
+    "WA_ADMIN_NUMBER": "6285771555374",
+    "domain_categories": {
+        "rikishop.my.id": {
+            "zone": "33970794e3373167a9c9556ad19fdb6a",
+            "apitoken": "5BuYPtwU__7hJIzX1euJn3K-ChzZH29VZ_ivbja"
+        },
+        "kangpanel.biz.id": {
+            "zone": "90ab3a017b7b29dd9ee92fdbb5831b0a",
+            "apitoken": "Jf_bwzYFsH89BZ6az61JlUGGu56SmNOqf7WC7KgV"
+        },
+        "panelbadak.my.id": {
+            "zone": "888f7c2f167796048a059466b780844c",
+            "apitoken": "2fnULnR9uj-5a4sYPQfL0k-XFboOEzLPIaQw4_6W"
+        }
     }
-  }
 }
