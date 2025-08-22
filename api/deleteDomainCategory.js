@@ -1,7 +1,7 @@
 import { Octokit } from "@octokit/rest";
 
 export default async function handler(request, response) {
-    if (request.method !== 'POST') { // Menggunakan POST untuk konsistensi atau DELETE jika Anda ingin lebih RESTful
+    if (request.method !== 'POST') { // Menggunakan POST untuk konsistensi
         return response.status(405).json({ message: 'Metode tidak diizinkan.' });
     }
 
@@ -19,7 +19,7 @@ export default async function handler(request, response) {
 
         const octokit = new Octokit({ auth: GITHUB_TOKEN });
 
-        // 1. Ambil konten file config.json yang ada dari GitHub
+        // Ambil konten file config.json yang ada dari GitHub
         const { data: fileData } = await octokit.repos.getContent({
             owner: REPO_OWNER,
             repo: REPO_NAME,
@@ -28,22 +28,23 @@ export default async function handler(request, response) {
 
         const content = Buffer.from(fileData.content, 'base64').toString('utf-8');
         const configJson = JSON.parse(content);
+        let sha = fileData.sha;
 
         if (!configJson.domain_categories || !configJson.domain_categories[domainName]) {
             return response.status(404).json({ message: `Kategori domain "${domainName}" tidak ditemukan.` });
         }
 
-        // 2. Hapus kategori domain
+        // Hapus kategori domain
         delete configJson.domain_categories[domainName];
 
-        // 3. Update file kembali ke repositori GitHub
+        // Update file kembali ke repositori GitHub
         await octokit.repos.createOrUpdateFileContents({
             owner: REPO_OWNER,
             repo: REPO_NAME,
             path: CONFIG_FILE_PATH,
             message: `chore: Menghapus kategori domain "${domainName}"`,
             content: Buffer.from(JSON.stringify(configJson, null, 4)).toString('base64'),
-            sha: fileData.sha, 
+            sha: sha, 
         });
 
         response.status(200).json({ message: 'Kategori domain berhasil dihapus.' });

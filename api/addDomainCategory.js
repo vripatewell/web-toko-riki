@@ -15,20 +15,36 @@ export default async function handler(request, response) {
         const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
         const REPO_OWNER = process.env.REPO_OWNER;
         const REPO_NAME = process.env.REPO_NAME;
-        const CONFIG_FILE_PATH = 'config.json'; // Path ke file konfigurasi
+        const CONFIG_FILE_PATH = 'config.json'; 
 
         const octokit = new Octokit({ auth: GITHUB_TOKEN });
 
-        // 1. Ambil konten file config.json yang ada dari GitHub
-        const { data: fileData } = await octokit.repos.getContent({
-            owner: REPO_OWNER,
-            repo: REPO_NAME,
-            path: CONFIG_FILE_PATH,
-        });
+        let fileData;
+        let configJson;
+        let sha = null;
 
-        const content = Buffer.from(fileData.content, 'base64').toString('utf-8');
-        const configJson = JSON.parse(content);
-
+        try {
+            const res = await octokit.repos.getContent({
+                owner: REPO_OWNER,
+                repo: REPO_NAME,
+                path: CONFIG_FILE_PATH,
+            });
+            fileData = res.data;
+            const content = Buffer.from(fileData.content, 'base64').toString('utf-8');
+            configJson = JSON.parse(content);
+            sha = fileData.sha;
+        } catch (error) {
+            if (error.status === 404) {
+                // Jika file tidak ditemukan, inisialisasi dengan objek dasar
+                configJson = {
+                    "WA_ADMIN_NUMBER": "", // Bisa disesuaikan
+                    "domain_categories": {}
+                };
+            } else {
+                throw error;
+            }
+        }
+        
         // Inisialisasi domain_categories jika belum ada
         if (!configJson.domain_categories) {
             configJson.domain_categories = {};
@@ -39,20 +55,20 @@ export default async function handler(request, response) {
             return response.status(409).json({ message: `Kategori domain "${domainName}" sudah ada.` });
         }
 
-        // 2. Tambahkan kategori domain baru
+        // Tambahkan kategori domain baru
         configJson.domain_categories[domainName] = {
             zone: zoneId,
             apitoken: apiToken,
         };
 
-        // 3. Update file kembali ke repositori GitHub
+        // Update file kembali ke repositori GitHub
         await octokit.repos.createOrUpdateFileContents({
             owner: REPO_OWNER,
             repo: REPO_NAME,
             path: CONFIG_FILE_PATH,
             message: `feat: Menambahkan kategori domain baru "${domainName}"`,
             content: Buffer.from(JSON.stringify(configJson, null, 4)).toString('base64'),
-            sha: fileData.sha, 
+            sha: sha, 
         });
 
         response.status(200).json({ message: 'Kategori domain berhasil ditambahkan!' });
