@@ -41,6 +41,7 @@
         <nav class="admin-tabs">
             <button type="button" class="tab-button active" data-tab="addProduct">Tambah Produk</button>
             <button type="button" class="tab-button" data-tab="manageProducts">Kelola Produk</button>
+            <button type="button" class="tab-button" data-tab="manageDomains">Kelola Domain</button> <!-- NEW TAB -->
             <button type="button" class="tab-button" data-tab="settings">Pengaturan</button>
         </nav>
         
@@ -112,8 +113,63 @@
                         <input type="number" id="bulk-price-input" placeholder="Masukkan harga baru (contoh: 5000)">
                         <button type="button" id="apply-bulk-price-btn">Terapkan Harga</button>
                     </div>
+                     <!-- NEW: Tombol Kembalikan Harga Awal -->
+                    <button type="button" id="revert-bulk-price-btn" class="secondary-button" style="margin-top: 10px;">Kembalikan Harga Awal</button>
                 </div>
             </form>
+        </div>
+
+        <!-- NEW TAB: Kelola Domain -->
+        <div id="manageDomains" class="admin-tab-content">
+            <div class="admin-form">
+                <h2><i class="fas fa-globe"></i> Kelola Domain</h2>
+
+                <!-- Bagian Buat Domain -->
+                <div class="domain-section">
+                    <h3>Buat Domain Baru (VPS)</h3>
+                    <label for="subdomain-name">Nama Subdomain:</label>
+                    <input type="text" id="subdomain-name" placeholder="Contoh: toko">
+
+                    <label for="domain-category-select">Pilih Kategori Domain:</label>
+                    <select id="domain-category-select">
+                        <!-- Opsi akan dimuat secara dinamis oleh JS -->
+                        <option value="">-- Pilih Domain --</option>
+                    </select>
+
+                    <label for="ip-address">Alamat IP (Contoh: 1.1.1.1):</label>
+                    <input type="text" id="ip-address" placeholder="Contoh: 1.1.1.1">
+
+                    <button type="button" id="create-domain-btn">Buat Domain</button>
+                </div>
+
+                <hr class="section-divider">
+
+                <!-- Bagian Tambah Kategori Domain -->
+                <div class="domain-section">
+                    <h3>Tambah Kategori Domain</h3>
+                    <p class="info-text">Tambahkan domain dasar baru (misal: "example.com") yang dapat digunakan untuk membuat subdomain.</p>
+                    <label for="new-domain-category-name">Nama Domain Dasar:</label>
+                    <input type="text" id="new-domain-category-name" placeholder="Contoh: mydomain.id">
+
+                    <label for="new-domain-zone-id">Cloudflare Zone ID:</label>
+                    <input type="text" id="new-domain-zone-id" placeholder="ID Zona dari Cloudflare">
+
+                    <label for="new-domain-api-token">Cloudflare API Token:</label>
+                    <input type="text" id="new-domain-api-token" placeholder="Token API Cloudflare">
+
+                    <button type="button" id="add-domain-category-btn">Tambah Kategori</button>
+                </div>
+
+                <hr class="section-divider">
+
+                <!-- Bagian Daftar Domain (Opsional, untuk tampilan saja) -->
+                <div class="domain-section">
+                    <h3>Daftar Kategori Domain Tersedia</h3>
+                    <ul id="list-domain-categories" class="domain-category-list">
+                        <!-- Kategori domain akan dimuat di sini -->
+                    </ul>
+                </div>
+            </div>
         </div>
 
         <div id="settings" class="admin-tab-content">
@@ -173,6 +229,21 @@
                 <button type="button" id="confirmCancelBtn" class="confirm-cancel-btn">Batal</button>
                 <button type="button" id="confirmOkBtn" class="confirm-ok-btn">Oke</button>
             </div>
+        </div>
+    </div>
+
+    <!-- NEW: Modal Sukses Pembuatan Domain -->
+    <div id="domainSuccessModal" class="modal">
+        <div class="modal-content confirm-modal-content">
+            <span class="close-button" id="closeDomainSuccessModal">&times;</span>
+            <h3>Domain Berhasil Dibuat!</h3>
+            <p>Berikut detail domain dan node Anda:</p>
+            <div class="domain-details-output">
+                <strong>Domain:</strong> <span id="outputDomain"></span><br>
+                <strong>Node:</strong> <span id="outputNode"></span>
+            </div>
+            <button type="button" id="copyDomainBtn" class="secondary-button" style="margin-top: 20px;">Salin Domain</button>
+            <button type="button" id="copyNodeBtn" class="secondary-button">Salin Node</button>
         </div>
     </div>
     

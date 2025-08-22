@@ -164,7 +164,7 @@ body {
 
 /* Untuk panel admin (header) */
 .admin-header .theme-switch {
-    width: 38px; /* Sedikit lebih kecil agar pas di header */
+    width: 38px; 
     height: 38px;
     border-radius: 50%;
     background-color: var(--secondary-color);
@@ -174,7 +174,7 @@ body {
     cursor: pointer;
     transition: background-color 0.2s ease;
     flex-shrink: 0; 
-    box-shadow: 0 2px 5px var(--shadow-color); /* Tambahkan shadow */
+    box-shadow: 0 2px 5px var(--shadow-color); 
 }
 .admin-header .theme-switch:hover { filter: brightness(0.95); }
 .admin-header .theme-switch i { font-size: 1.0em; transition: transform 0.2s ease; }
@@ -256,6 +256,18 @@ button:hover { filter: brightness(1.1); }
 button:active { transform: scale(0.97); }
 button:disabled { background-color: var(--light-text-color); cursor: not-allowed; }
 
+/* Gaya untuk tombol sekunder (misal: "Kembalikan Harga Awal") */
+.secondary-button {
+    background-color: var(--secondary-color);
+    color: var(--text-color);
+    border: 1px solid var(--border-color);
+    box-shadow: none;
+}
+.secondary-button:hover {
+    background-color: var(--border-color);
+    filter: none; /* Override default brightness filter */
+}
+
 /* ============================================== */
 /* PANEL ADMIN                                  */
 /* ============================================== */
@@ -327,7 +339,7 @@ button:disabled { background-color: var(--light-text-color); cursor: not-allowed
     width: 100%;
     margin-top: 20px;
     box-sizing: border-box; 
-    padding: 0 15px; /* Tambahkan padding ke konten tab agar tidak terlalu mepet */
+    padding: 0 15px; 
 }
 .admin-tab-content.active {
     display: block;
@@ -401,7 +413,7 @@ button:disabled { background-color: var(--light-text-color); cursor: not-allowed
     visibility: hidden;
     opacity: 0;
     transition: visibility 0s, opacity 0.3s ease;
-    box-sizing: border-box; /* Pastikan padding dihitung dalam width */
+    box-sizing: border-box; 
 }
 .modal.is-visible { visibility: visible; opacity: 1; }
 .modal-content {
@@ -434,7 +446,7 @@ button:disabled { background-color: var(--light-text-color); cursor: not-allowed
 .confirm-modal-content {
     text-align: center;
     padding: 20px;
-    max-width: 300px; /* Ukuran lebih kecil untuk konfirmasi */
+    max-width: 300px; 
 }
 .confirm-message {
     font-size: 1.1em;
@@ -449,7 +461,7 @@ button:disabled { background-color: var(--light-text-color); cursor: not-allowed
 }
 .confirm-actions button {
     flex: 1;
-    margin-top: 0; /* Override margin-top default button */
+    margin-top: 0; 
     padding: 10px 15px;
     border-radius: 8px;
     font-weight: 500;
@@ -654,6 +666,104 @@ button:disabled { background-color: var(--light-text-color); cursor: not-allowed
     flex-shrink: 0;
 }
 
+/* ============================================== */
+/* KELOLA DOMAIN (NEW)                          */
+/* ============================================== */
+.domain-section {
+    padding: 15px;
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    background-color: var(--secondary-color);
+    margin-bottom: 20px;
+}
+
+.domain-section h3 {
+    text-align: left;
+    margin-top: 0;
+    margin-bottom: 15px;
+    font-size: 1.1em;
+    color: var(--primary-color);
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 10px;
+}
+
+.domain-section .info-text {
+    font-size: 0.85em;
+    color: var(--light-text-color);
+    text-align: left;
+    margin-bottom: 15px;
+}
+
+.domain-category-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    max-height: 150px;
+    overflow-y: auto;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    background-color: var(--white-color);
+}
+
+.domain-category-list li {
+    padding: 10px 15px;
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.95em;
+    color: var(--text-color);
+}
+
+.domain-category-list li:last-child {
+    border-bottom: none;
+}
+
+.domain-category-list li span {
+    font-weight: 500;
+}
+
+.domain-category-list li .delete-category-btn {
+    background-color: var(--error-color);
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 5px 8px;
+    font-size: 0.8em;
+    cursor: pointer;
+    margin-top: 0; /* Override default button margin */
+    width: auto;
+}
+.domain-category-list li .delete-category-btn:hover {
+    filter: brightness(1.1);
+}
+
+.section-divider {
+    border: 0;
+    height: 1px;
+    background-color: var(--border-color);
+    margin: 30px 0;
+}
+
+/* Domain Success Modal Output */
+.domain-details-output {
+    background-color: var(--secondary-color);
+    padding: 15px;
+    border-radius: 8px;
+    text-align: left;
+    margin-top: 20px;
+    font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace;
+    font-size: 0.9em;
+    color: var(--text-color);
+    word-break: break-all; /* Agar teks panjang tidak keluar */
+}
+.domain-details-output strong {
+    color: var(--primary-color);
+}
+.domain-details-output span {
+    display: block;
+    margin-top: 5px;
+}
 
 /* Media Queries untuk Responsivitas */
 @media (max-width: 768px) {
@@ -665,13 +775,13 @@ button:disabled { background-color: var(--light-text-color); cursor: not-allowed
         padding: 5px 0; 
     }
     .tab-button {
-        margin: 5px auto; /* Pusatkan tombol tab saat dalam mode kolom */
+        margin: 5px auto; 
         padding: 12px 10px;
         font-size: 0.9em;
-        max-width: 90%; /* Batasi lebar agar tidak melewati */
+        max-width: 90%; 
     }
     .admin-tab-content {
-        padding: 0 10px; /* Kurangi padding horizontal di layar kecil */
+        padding: 0 10px; 
     }
     .item-header {
         flex-direction: column;
