@@ -72,7 +72,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     async function initializePage() {
         try {
-            const res = await fetch(`/settings.json?v=${Date.now()}`);
+            const res = await fetch(`data/isi_json/settings.json?v=${Date.now()}`);
             if (res.ok) {
                 siteSettings = await res.json();
             } else {
