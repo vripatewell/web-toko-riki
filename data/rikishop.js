@@ -783,7 +783,7 @@ async function initializeApp() {
         // Sembunyikan spinner, tampilkan centang, dan ubah teks
         spinner.style.display = 'none';
         checkmark.style.display = 'block';
-        loadingStatusText.textContent = '';
+        loadingStatusText.textContent = 'berhasil';
 
         // Tunggu sejenak agar pengguna melihat centang
         setTimeout(() => {
