@@ -758,8 +758,8 @@ async function initializeApp() {
     try {
         const timestamp = new Date().getTime();
         const [productsResponse, settingsResponse] = await Promise.all([
-            fetch(`products.json?v=${timestamp}`),
-            fetch(`settings.json?v=${timestamp}`)
+            fetch(`data/isi_json/products.json?v=${timestamp}`),
+            fetch(`data/isi_json/settings.json?v=${timestamp}`)
         ]);
 
         if (!productsResponse.ok) throw new Error(`Gagal memuat produk: ${productsResponse.status}`);
