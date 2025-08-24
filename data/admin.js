@@ -277,7 +277,7 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
         try {
-            const res = await fetch(`/products.json?v=${new Date().getTime()}`);
+            const res = await fetch(`data/isi_json/products.json?v=${new Date().getTime()}`);
             if (!res.ok) throw new Error(`Gagal memuat produk: ${res.status}`);
             const data = await res.json(); 
             const productsInCat = data[category] || [];
