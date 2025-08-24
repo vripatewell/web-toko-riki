@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>404 - Halaman Tidak Ditemukan</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Menggunakan variabel warna agar konsisten dengan tema Anda */
+        :root {
+            --bg-color: #f2f2f7;
+            --text-color: #1d1d1f;
+            --primary-color: #007aff;
+            --light-text-color: #8e8e93;
+        }
+
+        /* Variabel untuk Dark Mode */
+        body.dark-mode {
+            --bg-color: #1c1c1e;
+            --text-color: #f2f2f7;
+            --primary-color: #0a84ff;
+            --light-text-color: #8e8e93;
+        }
+
+        /* Styling dasar */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            display: grid;
+            place-content: center;
+            min-height: 100vh;
+            text-align: center;
+            padding: 20px;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .container {
+            max-width: 500px;
+        }
+
+        h1 {
+            font-size: 6rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        p {
+            font-size: 1.2rem;
+            color: var(--light-text-color);
+            margin-bottom: 2rem;
+        }
+
+        .back-link {
+            display: inline-block;
+            padding: 12px 24px;
+            background-color: var(--primary-color);
+            color: #fff;
+            text-decoration: none;
+            border-radius: 10px;
+            font-weight: 600;
+            transition: transform 0.2s ease, filter 0.2s ease;
+        }
+
+        .back-link:hover {
+            transform: scale(1.05);
+            filter: brightness(1.1);
+        }
+
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 4.5rem;
+            }
+            p {
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>404</h1>
+        <p>Maaf, halaman yang Anda cari tidak dapat ditemukan atau telah dipindahkan.</p>
+        <a href="/" class="back-link">Kembali ke Halaman Utama</a>
+    </div>
+
+    <script>
+        // Script singkat untuk menyesuaikan tema (dark/light mode)
+        // dengan tema yang tersimpan dari halaman domain Anda.
+        const savedTheme = localStorage.getItem('domain-theme') || 'light-mode';
+        if (savedTheme === 'dark-mode') {
+            document.body.classList.add('dark-mode');
+        }
+    </script>
+
+</body>
+</html>

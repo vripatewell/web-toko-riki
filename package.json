@@ -1,0 +1,20 @@
+{
+  "name": "rikishopreal-project",
+  "version": "1.0.0",
+  "description": "Website toko digital Rikishopreal",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "toko",
+    "digital",
+    "vercel"
+  ],
+  "author": "Riki Shop Real",
+  "license": "ISC",
+  "dependencies": {
+    "@octokit/rest": "^20.0.2",
+    "node-fetch": "^3.3.2"
+  }
+}
