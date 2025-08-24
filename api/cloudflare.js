@@ -85,7 +85,7 @@ export default async function handler(request, response) {
             }
         }
 
-        const domains = await readJsonFromGithub("domains.json");
+        const domains = await readJsonFromGithub("data/isi_json/domains.json");
 
         switch (action) {
             // == AKSI UNTUK PENGGUNA ==
@@ -194,14 +194,14 @@ export default async function handler(request, response) {
                 const { domain, zone, apitoken } = data;
                 if (domains[domain]) throw new Error("Domain ini sudah ada.");
                 domains[domain] = { zone, apitoken };
-                await writeJsonToGithub("domains.json", domains);
+                await writeJsonToGithub("data/isi_json/domains.json", domains);
                 return response.status(200).json({ message: "Domain berhasil ditambahkan." });
             }
             case "deleteRootDomain": {
                 const { domain } = data;
                 if (!domains[domain]) throw new Error("Domain tidak ditemukan.");
                 delete domains[domain];
-                await writeJsonToGithub("domains.json", domains);
+                await writeJsonToGithub("data/isi_json/domains.json", domains);
                 return response.status(200).json({ message: "Domain berhasil dihapus." });
             }
 
