@@ -721,6 +721,43 @@ openMusicPopupBtn.addEventListener('click', (e) => { e.stopPropagation(); musicP
 function closeMusicPlayerPopup() { musicPlayerPopup.classList.remove('active'); musicPlayerOverlay.classList.remove('active'); }
 closeMusicPlayer.addEventListener('click', closeMusicPlayerPopup);
 musicPlayerOverlay.addEventListener('click', closeMusicPlayerPopup);
+loadMediaBtn.addEventListener('click', () => {
+    const mediaLink = mediaLinkInput.value.trim();
+    if (!mediaLink) return showToastNotification("Silakan masukkan link.", "fa-exclamation-circle");
+    console.log('DEBUG: Tombol Putar Musik diklik dengan link:', mediaLink);
+
+    // Hentikan dan bersihkan pemutar musik lama
+    backgroundAudio.pause();
+    backgroundAudio.src = '';
+    if (youtubePlayer && typeof youtubePlayer.destroy === 'function') {
+        youtubePlayer.destroy();
+        youtubePlayer = null;
+    }
+    mediaPlayerContainer.innerHTML = '';
+    customMusicMuted = false;
+    muteAudioBtn.querySelector('i').className = 'fas fa-volume-up';
+
+    const youtubeRegex = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/;
+    const spotifyRegex = /https?:\/\/open\.spotify\.com\/(track|album|playlist)\/([a-zA-Z0-9]+)/;
+    const audioFileRegex = /\.(mp3|wav|ogg|m4a)$/i;
+
+    const youtubeMatch = mediaLink.match(youtubeRegex);
+    const spotifyMatch = mediaLink.match(spotifyRegex);
+    const audioFileMatch = mediaLink.match(audioFileRegex);
+
+    if (youtubeMatch && youtubeMatch[1]) {
+        showToastNotification("Memuat musik YouTube...", "fa-play-circle");
+        createYouTubePlayer(youtubeMatch[1]);
+    } else if (spotifyMatch && spotifyMatch[1] && spotifyMatch[2]) {
+        showToastNotification("Memuat musik Spotify...", "fa-play-circle");
+        createSpotifyPlayer(spotifyMatch[1], spotifyMatch[2]);
+    } else if (audioFileMatch) {
+        showToastNotification("Memuat file audio...", "fa-play-circle");
+        createAudioPlayer(mediaLink);
+    } else {
+        showToastNotification("Link tidak didukung.", "fa-times-circle");
+    }
+});
 
 function createYouTubePlayer(videoId) {
     console.log('DEBUG: Memanggil createYouTubePlayer dengan videoId:', videoId);
@@ -777,48 +814,6 @@ function createAudioPlayer(url) {
     closeMusicPlayerPopup();
 }
 
-// 6. Listener tombol "Putar Musik"
-loadMediaBtn.addEventListener('click', () => {
-    const mediaLink = mediaLinkInput.value.trim();
-    if (!mediaLink) return showToastNotification("Silakan masukkan link.", "fa-exclamation-circle");
-    console.log('DEBUG: Tombol Putar Musik diklik dengan link:', mediaLink);
-
-    // Hentikan dan bersihkan pemutar musik lama
-    backgroundAudio.pause();
-    backgroundAudio.src = '';
-    if (youtubePlayer && typeof youtubePlayer.destroy === 'function') {
-        youtubePlayer.destroy();
-        youtubePlayer = null;
-    }
-    mediaPlayerContainer.innerHTML = '';
-    customMusicMuted = false;
-    muteAudioBtn.querySelector('i').className = 'fas fa-volume-up';
-
-    const youtubeRegex = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/;
-    const spotifyRegex = /https?:\/\/open\.spotify\.com\/(track|album|playlist)\/([a-zA-Z0-9]+)/;
-    const audioFileRegex = /\.(mp3|wav|ogg|m4a)$/i;
-
-    const youtubeMatch = mediaLink.match(youtubeRegex);
-    const spotifyMatch = mediaLink.match(spotifyRegex);
-    const audioFileMatch = mediaLink.match(audioFileRegex);
-
-    if (youtubeMatch && youtubeMatch[1]) {
-        showToastNotification("Memuat musik YouTube...", "fa-play-circle");
-        createYouTubePlayer(youtubeMatch[1]);
-    } else if (spotifyMatch && spotifyMatch[1] && spotifyMatch[2]) {
-        showToastNotification("Memuat musik Spotify...", "fa-play-circle");
-        createSpotifyPlayer(spotifyMatch[1], spotifyMatch[2]);
-    } else if (audioFileMatch) {
-        showToastNotification("Memuat file audio...", "fa-play-circle");
-        createAudioPlayer(mediaLink);
-    } else {
-        showToastNotification("Link tidak didukung.", "fa-times-circle");
-    }
-});
-
-// ==========================================================
-// AKHIR BLOK KODE PEMUTAR MUSIK
-// ==========================================================
 function playBackgroundMusic() { 
     if (backgroundAudio.src && !backgroundAudio.muted && backgroundAudio.paused) { 
         backgroundAudio.play().catch(e => console.log("Autoplay dicegah oleh browser.")); 
