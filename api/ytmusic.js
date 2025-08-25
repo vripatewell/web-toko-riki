@@ -1,4 +1,5 @@
-import fetch from 'node-fetch';
+import yts from 'yt-search';
+import ytdl from '@vreden/youtube_scraper';
 
 // Fungsi untuk mengekstrak ID Video dari berbagai format URL YouTube
 function getYouTubeID(url) {
@@ -17,38 +18,47 @@ export default async function handler(request, response) {
         return response.status(400).json({ message: 'Query pencarian tidak boleh kosong.' });
     }
 
-    // Ganti dengan API Key Anda jika berbeda
-    const RIKI_API_KEY = "rikinew"; 
-    
-    // API URL dari bot WhatsApp Anda yang sudah bekerja
-    const RIKI_API_URL = `https://newapiriki.vercel.app/api/youtube/play?apikey=${RIKI_API_KEY}&query=${encodeURIComponent(query)}`;
-
     try {
-        const apiResponse = await fetch(RIKI_API_URL);
-        const result = await apiResponse.json();
+        let video;
+        const videoId = getYouTubeID(query);
 
-        if (!apiResponse.ok || !result.status || !result.result) {
-            throw new Error(result.message || 'Gagal mengambil data dari Riki API.');
+        if (videoId) {
+            // Jika input adalah URL, cari berdasarkan ID Video untuk mendapatkan detail lengkap
+            video = await yts({ videoId });
+        } else {
+            // Jika input adalah teks, cari berdasarkan teks
+            const searchResults = await yts(query);
+            video = searchResults.videos[0];
+        }
+        
+        if (!video) {
+            return response.status(404).json({ message: 'Video tidak ditemukan.' });
         }
 
-        const data = result.result;
-        
-        // Kita format ulang respons dari API Anda agar cocok dengan frontend
+        const [mp3Result, mp4Result] = await Promise.all([
+            ytdl.ytmp3(video.url),
+            ytdl.ytmp4(video.url)
+        ]);
+
+        if (!mp3Result.status && !mp4Result.status) {
+            throw new Error('Gagal mendapatkan link download.');
+        }
+
         const finalResult = {
-            title: data.title,
-            author: data.author,
-            thumbnail: data.thumb,
-            duration: data.duration,
-            url: data.url,
-            videoId: getYouTubeID(data.url),
-            audioUrl: data.audio_url,
-            videoUrl: data.video_url,
+            title: video.title,
+            author: video.author.name,
+            thumbnail: video.thumbnail,
+            duration: video.timestamp,
+            url: video.url,
+            videoId: video.videoId, // <-- DATA PENTING INI DITAMBAHKAN
+            audioUrl: mp3Result.status ? mp3Result.download.url : null,
+            videoUrl: mp4Result.status ? mp4Result.download.url : null,
         };
         
         response.status(200).json(finalResult);
 
     } catch (error) {
-        console.error("Error saat memanggil Riki API:", error);
-        response.status(500).json({ message: 'Gagal mengambil data dari API, coba lagi nanti.' });
+        console.error("Error pada API ytmusic:", error);
+        response.status(500).json({ message: error.message || 'Terjadi kesalahan di server.' });
     }
 }
