@@ -232,18 +232,16 @@ input:checked + .slider:before { transform: translateX(20px); }
 
 .modal-content {
     background-color: var(--white-color);
-    border-radius: 20px;
-    width: 100%; /* Lebar penuh relatif terhadap parent */
-    max-width: 450px; /* Batas lebar maksimal di layar besar */
-    padding: 30px 25px;
-    box-shadow: 0 10px 30px var(--shadow-color);
+    border-radius: 12px;
+    width: 100%;
+    max-width: 500px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+    animation: slideInTop 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    flex-direction: column;
     position: relative;
-    text-align: center; /* Teks di dalam konten menjadi rata tengah */
-    box-sizing: border-box; /* Padding tidak menambah ukuran total */
-
-    /* Animasi saat muncul */
-    transform: scale(0.95);
-    transition: transform 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+    max-height: 90vh;      /* ▼▼▼ TAMBAHKAN INI ▼▼▼ */
+    overflow-y: auto;      /* ▼▼▼ DAN INI ▼▼▼ */
 }
 
 .modal.is-visible .modal-content {
