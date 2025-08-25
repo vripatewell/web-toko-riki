@@ -37,7 +37,7 @@
         }
         p.subtitle { color: var(--text-secondary); margin-bottom: 30px; }
 .upload-area {
-    border: 2px solid var(--border-color); /* Ganti menjadi solid */
+    border: 2px dashed var(--border-color); /* Kembali ke dashed untuk gaya iOS */
     border-radius: 16px;
     padding: 40px 20px;
     cursor: pointer;
@@ -47,12 +47,18 @@
     justify-content: center;
     align-items: center;
     transition: all 0.3s ease;
-    background-color: transparent; /* Hapus background aneh */
+    background-color: transparent;
+    position: relative; /* Tambahkan ini */
 }
-.upload-area.drag-over {
-    border-color: var(--primary-color); /* Biarkan warna tetap */
-    background-color: rgba(0, 122, 255, 0.05);
-    transform: scale(1.03);
+
+/* Tambahkan pseudo-element untuk ikon awan */
+.upload-area::before {
+    content: '\f0c2'; /* Kode ikon awan dari Font Awesome */
+    font-family: 'Font Awesome 6 Free';
+    font-weight: 900;
+    font-size: 3em;
+    color: var(--primary-color);
+    margin-bottom: 15px;
 }
         .upload-area i { font-size: 3em; color: var(--primary-color); margin-bottom: 15px; }
         .upload-area span { display: block; font-weight: 500; }
@@ -162,7 +168,6 @@
         <p class="subtitle">Pilih atau seret satu atau beberapa gambar untuk diunggah.</p>
         
         <label for="file-input" class="upload-area" id="upload-area">
-            <i class="fas fa-cloud-upload-alt"></i>
             <span id="upload-text">Klik atau seret gambar ke sini</span>
         </label>
         <input type="file" id="file-input" accept="image/*" multiple>
