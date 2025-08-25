@@ -1,134 +1,42 @@
-document.addEventListener('DOMContentLoaded', () => {
-    const uploadArea = document.getElementById('upload-area');
-    const fileInput = document.getElementById('file-input');
-    const previewContainer = document.getElementById('preview-container');
-    const uploadText = document.getElementById('upload-text');
-    const uploadButton = document.getElementById('upload-button');
-    const resultContainer = document.getElementById('result-container');
-    const notification = document.getElementById('notification');
+import { promises as fs } from 'fs';
+import { IncomingForm } from 'formidable';
+// ▼▼▼ INI PERBAIKAN UTAMA: Menggunakan 'import' bukan 'require' ▼▼▼
+import { ImageUploadService } from 'node-upload-images';
 
-    let selectedFiles = [];
-    let notificationTimeout;
+// Menonaktifkan bodyParser bawaan Vercel
+export const config = {
+    api: {
+        bodyParser: false,
+    },
+};
 
-    function showNotification(message, type = 'success') {
-        clearTimeout(notificationTimeout);
-        notification.textContent = message;
-        notification.className = `notification ${type} show`;
-        notificationTimeout = setTimeout(() => {
-            notification.classList.remove('show');
-        }, 3000);
+export default async function handler(request, response) {
+    if (request.method !== 'POST') {
+        return response.status(405).json({ message: 'Metode tidak diizinkan.' });
     }
 
-    uploadArea.addEventListener('click', () => fileInput.click());
+    try {
+        const form = new IncomingForm();
+        const [fields, files] = await form.parse(request);
+        const imageFile = files.image?.[0];
 
-    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-        uploadArea.addEventListener(eventName, e => {
-            e.preventDefault();
-            e.stopPropagation();
-        }, false);
-    });
-    
-    uploadArea.addEventListener('dragenter', () => uploadArea.classList.add('drag-over'));
-    uploadArea.addEventListener('dragleave', () => uploadArea.classList.remove('drag-over'));
-    uploadArea.addEventListener('drop', e => {
-        uploadArea.classList.remove('drag-over');
-        handleFiles(e.dataTransfer.files);
-    });
-
-    fileInput.addEventListener('change', (event) => handleFiles(event.target.files));
-
-    function handleFiles(files) {
-        selectedFiles = Array.from(files).filter(file => file.type.startsWith('image/'));
-        previewContainer.innerHTML = '';
-        if (selectedFiles.length === 0) {
-            uploadText.textContent = 'Klik atau seret gambar ke sini';
-            uploadButton.style.display = 'none';
-            return;
+        if (!imageFile) {
+            return response.status(400).json({ message: 'Tidak ada file gambar yang diunggah.' });
         }
 
-        uploadText.textContent = `${selectedFiles.length} gambar dipilih.`;
-        uploadButton.style.display = 'block';
-        uploadButton.textContent = `Unggah ${selectedFiles.length} Gambar`;
+        const fileContent = await fs.readFile(imageFile.filepath);
 
-        selectedFiles.forEach(file => {
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                const wrapper = document.createElement('div');
-                wrapper.className = 'preview-image-wrapper';
-                const img = document.createElement('img');
-                img.src = e.target.result;
-                img.className = 'preview-image';
-                wrapper.appendChild(img);
-                previewContainer.appendChild(wrapper);
-            };
-            reader.readAsDataURL(file);
-        });
+        // --- Logika Unggah dari Kode Anda ---
+        const service = new ImageUploadService('pixhost.to');
+        const { directLink } = await service.uploadFromBinary(fileContent, imageFile.originalFilename);
+        // --- Akhir Logika Unggah ---
+
+        await fs.unlink(imageFile.filepath);
+
+        response.status(200).json({ link: directLink });
+
+    } catch (error) {
+        console.error("Error pada API tourl:", error);
+        response.status(500).json({ message: 'Terjadi kesalahan saat mengunggah gambar.' });
     }
-
-    uploadButton.addEventListener('click', async () => {
-        if (selectedFiles.length === 0) return;
-
-        uploadButton.disabled = true;
-        resultContainer.style.display = 'block';
-        resultContainer.innerHTML = '<h3>Hasil Unggahan:</h3>';
-        let successCount = 0;
-
-        for (let i = 0; i < selectedFiles.length; i++) {
-            const file = selectedFiles[i];
-            uploadButton.innerHTML = `<span class="spinner"></span> Mengunggah ${i + 1} dari ${selectedFiles.length}...`;
-            
-            const formData = new FormData();
-            formData.append('image', file);
-            
-            try {
-                const response = await fetch('/api/tourl', { method: 'POST', body: formData });
-                const result = await response.json();
-                if (!response.ok) throw new Error(result.message || 'Gagal');
-                addResultItem(result.link, true);
-                successCount++;
-            } catch (error) {
-                addResultItem(`Gagal mengunggah ${file.name}: ${error.message}`, false);
-            }
-        }
-
-        uploadButton.innerHTML = 'Selesai!';
-        if(successCount > 0) {
-            showNotification(`${successCount} gambar berhasil diunggah!`, 'success');
-        } else {
-            showNotification('Semua gambar gagal diunggah.', 'error');
-        }
-        
-        setTimeout(() => {
-            uploadButton.textContent = `Unggah ${selectedFiles.length} Gambar`;
-            uploadButton.disabled = false;
-        }, 2000);
-    });
-    
-    function addResultItem(link, isSuccess) {
-        const itemDiv = document.createElement('div');
-        itemDiv.className = 'result-item';
-        
-        const input = document.createElement('input');
-        input.type = 'text';
-        input.value = link;
-        input.readOnly = true;
-        
-        itemDiv.appendChild(input);
-
-        if (isSuccess) {
-            const button = document.createElement('button');
-            button.textContent = 'Salin';
-            button.onclick = () => {
-                input.select();
-                navigator.clipboard.writeText(input.value);
-                button.textContent = 'Tersalin!';
-                setTimeout(() => { button.textContent = 'Salin'; }, 2000);
-            };
-            itemDiv.appendChild(button);
-        } else {
-            input.style.color = 'var(--error-color)';
-        }
-        
-        resultContainer.appendChild(itemDiv);
-    }
-});
+}
