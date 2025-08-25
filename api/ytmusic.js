@@ -23,7 +23,7 @@ export default async function handler(request, response) {
         const videoId = getYouTubeID(query);
 
         if (videoId) {
-            // Jika input adalah URL, cari berdasarkan ID Video
+            // Jika input adalah URL, cari berdasarkan ID Video untuk mendapatkan detail lengkap
             video = await yts({ videoId });
         } else {
             // Jika input adalah teks, cari berdasarkan teks
@@ -50,6 +50,7 @@ export default async function handler(request, response) {
             thumbnail: video.thumbnail,
             duration: video.timestamp,
             url: video.url,
+            videoId: video.videoId, // <-- DATA PENTING INI DITAMBAHKAN
             audioUrl: mp3Result.status ? mp3Result.download.url : null,
             videoUrl: mp4Result.status ? mp4Result.download.url : null,
         };
