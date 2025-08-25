@@ -1,7 +1,21 @@
 let youtubePlayer;
 let isYouTubeApiReady = false;
 
-// --- Konfigurasi ---
+(function() {
+    const tag = document.createElement('script');
+    tag.src = "https://www.youtube.com/iframe_api";
+    const firstScriptTag = document.getElementsByTagName('script')[0];
+    if (firstScriptTag) {
+        firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+    } else {
+        document.head.appendChild(tag);
+    }
+})();
+
+window.onYouTubeIframeAPIReady = function() {
+    isYouTubeApiReady = true;
+};
+
 const WA_ADMIN_NUMBER = "6285771555374"; // Fallback jika settings.json gagal dimuat
 const WA_SELLER_NUMBER = "6285771555374";
 const CREATOR_USERNAME = "Riki Shop Real";
