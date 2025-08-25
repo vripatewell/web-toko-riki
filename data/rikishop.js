@@ -1,20 +1,34 @@
+// ▼▼▼ GANTI SEMUA FUNGSI MUSIK LAMA DENGAN BLOK LENGKAP INI ▼▼▼
+
+// ==========================================================
+// BLOK KODE PEMUTAR MUSIK (VERSI DEBUG)
+// ==========================================================
+
 let youtubePlayer;
 let isYouTubeApiReady = false;
 
+// 1. Script PENTING untuk memuat YouTube IFrame API
 (function() {
     const tag = document.createElement('script');
     tag.src = "https://www.youtube.com/iframe_api";
     const firstScriptTag = document.getElementsByTagName('script')[0];
     if (firstScriptTag) {
         firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+        console.log('DEBUG: Script YouTube API berhasil disisipkan.');
     } else {
         document.head.appendChild(tag);
+        console.log('DEBUG: Script YouTube API berhasil ditambahkan ke head.');
     }
 })();
 
+// 2. Fungsi ini akan dipanggil otomatis oleh script YouTube setelah siap
 window.onYouTubeIframeAPIReady = function() {
+    console.log('SUCCESS: onYouTubeIframeAPIReady() berhasil dipanggil! API YouTube sudah siap.');
     isYouTubeApiReady = true;
 };
+
+// 3. Fungsi untuk membuat pemutar YouTube
+
 
 const WA_ADMIN_NUMBER = "6285771555374"; // Fallback jika settings.json gagal dimuat
 const WA_SELLER_NUMBER = "6285771555374";
@@ -707,64 +721,67 @@ openMusicPopupBtn.addEventListener('click', (e) => { e.stopPropagation(); musicP
 function closeMusicPlayerPopup() { musicPlayerPopup.classList.remove('active'); musicPlayerOverlay.classList.remove('active'); }
 closeMusicPlayer.addEventListener('click', closeMusicPlayerPopup);
 musicPlayerOverlay.addEventListener('click', closeMusicPlayerPopup);
-// --- FUNGSI BARU UNTUK MEMBUAT PEMUTAR MUSIK ---
 
-// 1. Fungsi untuk membuat pemutar YouTube
 function createYouTubePlayer(videoId) {
+    console.log('DEBUG: Memanggil createYouTubePlayer dengan videoId:', videoId);
+    
+    // Cek secara berkala apakah API sudah siap
+    let checkCount = 0;
+    const maxChecks = 50; // Cek selama 5 detik
     const checkApiReady = setInterval(() => {
+        checkCount++;
         if (isYouTubeApiReady) {
             clearInterval(checkApiReady);
+            console.log('DEBUG: API YouTube terdeteksi siap. Membuat pemutar...');
+            
             if (youtubePlayer && typeof youtubePlayer.destroy === 'function') {
                 youtubePlayer.destroy();
             }
             mediaPlayerContainer.innerHTML = '<div id="youtube-player-embed"></div>';
+            
             youtubePlayer = new YT.Player('youtube-player-embed', {
                 videoId: videoId,
-                playerVars: { 
-                    'autoplay': 1,
-                    'controls': 1,
-                    'rel': 0, 
-                    'showinfo': 0, 
-                    'iv_load_policy': 3 
-                },
+                playerVars: { 'autoplay': 1, 'controls': 1, 'rel': 0 },
                 events: {
-                    'onReady': (event) => { 
+                    'onReady': (event) => {
+                        console.log('SUCCESS: Pemutar YouTube onReady, memulai video.');
                         event.target.playVideo();
-                        closeMusicPlayerPopup(); 
+                        closeMusicPlayerPopup();
+                    },
+                    'onError': (event) => {
+                        console.error('ERROR: Pemutar YouTube error:', event.data);
+                        showToastNotification("Error saat memutar video.", "fa-times-circle");
                     }
                 }
             });
+        } else if (checkCount >= maxChecks) {
+            clearInterval(checkApiReady);
+            console.error('ERROR: Timeout. API YouTube tidak siap setelah 5 detik.');
+            showToastNotification("Gagal memuat API YouTube. Cek koneksi.", "fa-times-circle");
         }
     }, 100);
 }
 
-// 2. Fungsi BARU untuk membuat pemutar Spotify
+// 4. Fungsi untuk membuat pemutar Spotify
 function createSpotifyPlayer(type, id) {
+    console.log('DEBUG: Membuat pemutar Spotify untuk', type, id);
     const spotifyURL = `https://open.spotify.com/embed/${type}/${id}`;
-    mediaPlayerContainer.innerHTML = `
-        <iframe style="border-radius:12px" src="${spotifyURL}" 
-        width="100%" height="352" frameBorder="0" allowfullscreen="" 
-        allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" 
-        loading="lazy"></iframe>
-    `;
+    mediaPlayerContainer.innerHTML = `<iframe style="border-radius:12px" src="${spotifyURL}" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>`;
     closeMusicPlayerPopup();
 }
 
-// 3. Fungsi BARU untuk membuat pemutar Audio HTML5 (untuk MP3, dll)
+// 5. Fungsi untuk membuat pemutar Audio HTML5
 function createAudioPlayer(url) {
-    mediaPlayerContainer.innerHTML = `
-        <audio controls autoplay src="${url}" style="width: 100%;">
-            Browser Anda tidak mendukung elemen audio.
-        </audio>
-    `;
+    console.log('DEBUG: Membuat pemutar audio untuk', url);
+    mediaPlayerContainer.innerHTML = `<audio controls autoplay src="${url}" style="width: 100%;">Browser Anda tidak mendukung elemen audio.</audio>`;
     closeMusicPlayerPopup();
 }
 
-
-// --- LISTENER TOMBOL "PUTAR MUSIK" YANG SUDAH DIPERBARUI ---
+// 6. Listener tombol "Putar Musik"
 loadMediaBtn.addEventListener('click', () => {
     const mediaLink = mediaLinkInput.value.trim();
     if (!mediaLink) return showToastNotification("Silakan masukkan link.", "fa-exclamation-circle");
+    console.log('DEBUG: Tombol Putar Musik diklik dengan link:', mediaLink);
 
     // Hentikan dan bersihkan pemutar musik lama
     backgroundAudio.pause();
@@ -777,7 +794,6 @@ loadMediaBtn.addEventListener('click', () => {
     customMusicMuted = false;
     muteAudioBtn.querySelector('i').className = 'fas fa-volume-up';
 
-    // --- Logika Deteksi Link ---
     const youtubeRegex = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/;
     const spotifyRegex = /https?:\/\/open\.spotify\.com\/(track|album|playlist)\/([a-zA-Z0-9]+)/;
     const audioFileRegex = /\.(mp3|wav|ogg|m4a)$/i;
@@ -791,7 +807,7 @@ loadMediaBtn.addEventListener('click', () => {
         createYouTubePlayer(youtubeMatch[1]);
     } else if (spotifyMatch && spotifyMatch[1] && spotifyMatch[2]) {
         showToastNotification("Memuat musik Spotify...", "fa-play-circle");
-        createSpotifyPlayer(spotifyMatch[1], spotifyMatch[2]); // spotifyMatch[1] = 'track' atau 'album', spotifyMatch[2] = ID
+        createSpotifyPlayer(spotifyMatch[1], spotifyMatch[2]);
     } else if (audioFileMatch) {
         showToastNotification("Memuat file audio...", "fa-play-circle");
         createAudioPlayer(mediaLink);
@@ -799,6 +815,10 @@ loadMediaBtn.addEventListener('click', () => {
         showToastNotification("Link tidak didukung.", "fa-times-circle");
     }
 });
+
+// ==========================================================
+// AKHIR BLOK KODE PEMUTAR MUSIK
+// ==========================================================
 function playBackgroundMusic() { 
     if (backgroundAudio.src && !backgroundAudio.muted && backgroundAudio.paused) { 
         backgroundAudio.play().catch(e => console.log("Autoplay dicegah oleh browser.")); 
