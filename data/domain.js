@@ -332,6 +332,23 @@ saveSubdomainToHistory(historyEntry);
     }
 });
 
+// ▼▼▼ TAMBAHKAN KODE BARU INI DI AKHIR FILE ▼▼▼
+const historyDetailModal = document.getElementById('historyDetailModal');
+historyDetailModal.addEventListener('click', (e) => {
+    if (e.target.classList.contains('copy-btn')) {
+        const textToCopy = e.target.previousElementSibling.textContent;
+        navigator.clipboard.writeText(textToCopy).then(() => {
+            e.target.textContent = 'Tersalin!';
+            showToast('Berhasil disalin!', 'success');
+            setTimeout(() => {
+                e.target.textContent = 'Salin';
+            }, 2000);
+        }).catch(err => {
+            showToast('Gagal menyalin.', 'error');
+        });
+    }
+});
+
     // Panggil inisialisasi halaman saat dokumen siap
     initializePage();
 });
