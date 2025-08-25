@@ -1,4 +1,5 @@
 import yts from 'yt-search';
+// ▼▼▼ MENGGUNAKAN PACKAGE ANDA DENGAN SINTAKS YANG BENAR ▼▼▼
 import ytdl from '@vreden/youtube_scraper';
 
 // Fungsi untuk mengekstrak ID Video dari berbagai format URL YouTube
@@ -23,10 +24,8 @@ export default async function handler(request, response) {
         const videoId = getYouTubeID(query);
 
         if (videoId) {
-            // Jika input adalah URL, cari berdasarkan ID Video untuk mendapatkan detail lengkap
             video = await yts({ videoId });
         } else {
-            // Jika input adalah teks, cari berdasarkan teks
             const searchResults = await yts(query);
             video = searchResults.videos[0];
         }
@@ -41,7 +40,7 @@ export default async function handler(request, response) {
         ]);
 
         if (!mp3Result.status && !mp4Result.status) {
-            throw new Error('Gagal mendapatkan link download.');
+            throw new Error('Gagal mendapatkan link download dari server.');
         }
 
         const finalResult = {
@@ -50,7 +49,7 @@ export default async function handler(request, response) {
             thumbnail: video.thumbnail,
             duration: video.timestamp,
             url: video.url,
-            videoId: video.videoId, // <-- DATA PENTING INI DITAMBAHKAN
+            videoId: video.videoId,
             audioUrl: mp3Result.status ? mp3Result.download.url : null,
             videoUrl: mp4Result.status ? mp4Result.download.url : null,
         };
