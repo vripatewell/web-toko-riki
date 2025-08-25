@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unggah Gambar HD - Rikishopreal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #007aff;
+            --secondary-color: #f2f2f7;
+            --text-color: #1d1d1f;
+            --light-text-color: #8e8e93;
+            --white-color: #fff;
+            --border-color: #d1d1d6;
+            --success-color: #34c759;
+            --error-color: #ff3b30;
+            --animation-duration: 0.4s;
+            --animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        body {
+            font-family: 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--secondary-color);
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .container {
+            background-color: var(--white-color);
+            border-radius: 24px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            padding: 30px 40px;
+            width: 100%;
+            max-width: 550px;
+            text-align: center;
+            animation: fadeIn var(--animation-duration) var(--animation-timing-function);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h1 {
+            color: var(--text-color);
+            margin-top: 0;
+            margin-bottom: 10px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+        }
+
+        p.subtitle {
+            color: var(--light-text-color);
+            margin-bottom: 30px;
+        }
+
+        .upload-area {
+            border: 2px dashed var(--border-color);
+            border-radius: 16px;
+            padding: 40px 20px;
+            cursor: pointer;
+            transition: all var(--animation-duration) var(--animation-timing-function);
+        }
+        .upload-area.drag-over {
+            border-color: var(--primary-color);
+            background-color: #f9f9f9;
+            transform: scale(1.03);
+        }
+        .upload-area i {
+            font-size: 3em;
+            color: var(--primary-color);
+            margin-bottom: 15px;
+        }
+        .upload-area span { display: block; font-weight: 500; }
+        #file-input { display: none; }
+
+        #preview-container {
+            margin-top: 20px;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+            gap: 12px;
+        }
+        .preview-image-wrapper {
+            position: relative;
+            width: 90px;
+            height: 90px;
+        }
+        .preview-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 12px;
+        }
+
+        #upload-button {
+            width: 100%;
+            padding: 15px;
+            margin-top: 25px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            display: none;
+            transition: all var(--animation-duration) var(--animation-timing-function);
+        }
+        #upload-button:disabled { background-color: var(--light-text-color); cursor: not-allowed; }
+        #upload-button:not(:disabled):hover { transform: translateY(-3px); box-shadow: 0 6px 12px rgba(0, 122, 255, 0.3); }
+
+        .spinner {
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-top-color: #fff;
+            border-radius: 50%;
+            display: inline-block;
+            animation: spin 1s linear infinite;
+            margin-right: 10px;
+            vertical-align: middle;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        #result-container { margin-top: 30px; text-align: left; display: none; }
+        #result-container h3 { margin-bottom: 15px; color: var(--text-color); }
+        .result-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+            background-color: var(--secondary-color);
+            padding: 8px;
+            border-radius: 12px;
+            animation: fadeIn 0.5s var(--animation-timing-function);
+        }
+        .result-item input { flex-grow: 1; padding: 10px; border: 1px solid var(--border-color); border-radius: 8px 0 0 8px; background-color: var(--white-color); font-family: monospace; border-right: none; }
+        .result-item button { padding: 10px 15px; border: none; background-color: var(--success-color); color: white; border-radius: 0 8px 8px 0; cursor: pointer; font-weight: 600; }
+
+        .notification {
+            position: fixed;
+            top: 30px;
+            left: 50%;
+            transform: translate(-50%, -150%);
+            background-color: #2c2c2e;
+            color: white;
+            padding: 14px 22px;
+            border-radius: 16px;
+            z-index: 1000;
+            opacity: 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 500;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .notification.success { background-color: var(--success-color); }
+        .notification.error { background-color: var(--error-color); }
+        .notification.show { opacity: 1; transform: translate(-50%, 0); }
+    </style>
+</head>
+<body>
+
+    <div id="notification"></div>
+
+    <div class="container">
+        <h1><i class="fas fa-link"></i> Ubah Gambar Jadi Link</h1>
+        <p class="subtitle">Pilih atau seret satu atau beberapa gambar untuk diunggah.</p>
+        
+        <label for="file-input" class="upload-area" id="upload-area">
+            <i class="fas fa-cloud-upload-alt"></i>
+            <span id="upload-text">Klik atau seret gambar ke sini</span>
+        </label>
+        <input type="file" id="file-input" accept="image/*" multiple>
+        
+        <div id="preview-container"></div>
+        
+        <button id="upload-button">Unggah Gambar</button>
+        
+        <div class="result-container" id="result-container">
+            <h3>Hasil Unggahan:</h3>
+        </div>
+    </div>
+
+    <script src="data/tourl.js"></script>
+</body>
+</html>
