@@ -22,8 +22,8 @@
         body {
             font-family: 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
             background-color: var(--bg-body); color: var(--text-primary); margin: 0;
-            display: flex; justify-content: center; align-items: center; min-height: 100vh;
-            padding: 20px; box-sizing: border-box; transition: background-color 0.3s ease;
+            display: flex; flex-direction: column; justify-content: center; align-items: center; 
+            min-height: 100vh; padding: 20px; box-sizing: border-box; transition: background-color 0.3s ease;
         }
         .container {
             background-color: var(--bg-container); border-radius: 24px; box-shadow: 0 10px 40px var(--shadow-color);
@@ -36,19 +36,20 @@
             align-items: center; justify-content: center; gap: 12px;
         }
         p.subtitle { color: var(--text-secondary); margin-bottom: 30px; }
-        
+
+        /* PERBAIKAN TAMPILAN UPLOAD AREA */
         .upload-area {
-            position: relative;
-    border: 2px dashed var(--border);
-    border-radius: 14px;
-    padding: 40px 20px;
-    cursor: pointer;
-    text-align: center;
+            border: 2px dashed var(--border);
+            border-radius: 20px;
+            padding: 40px 20px;
+            cursor: pointer;
+            text-align: center;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    transition: border-color var(--animation-duration) var(--animation-timing-function), 
+            transition: all 0.3s ease;
+            transition: border-color var(--animation-duration) var(--animation-timing-function), 
                 background-color var(--animation-duration) var(--animation-timing-function),
                 transform 0.1s ease-in-out;
     background-color: rgba(0,0,0,0.01);
@@ -60,8 +61,12 @@
         rgba(0,0,0,0.05) 12px
     );
     background-size: 12px 12px;
-}
-        .upload-area.drag-over { border-color: var(--primary-color); background-color: rgba(0, 122, 255, 0.05); transform: scale(1.03); }
+        }
+        .upload-area.drag-over {
+            border-color: var(--primary-color);
+            background-color: rgba(0, 122, 255, 0.05);
+            transform: scale(1.03);
+        }
         .upload-area i { font-size: 3em; color: var(--primary-color); margin-bottom: 15px; }
         .upload-area span { display: block; font-weight: 500; }
         #file-input { display: none; }
@@ -84,10 +89,37 @@
             position: fixed; top: 20px; right: 20px; background-color: var(--bg-container); color: var(--text-primary);
             border: 1px solid var(--border-color); border-radius: 50px; padding: 8px; width: 40px; height: 40px;
             cursor: pointer; font-size: 1.2em; display: flex; align-items: center; justify-content: center;
-            box-shadow: 0 4px 10px var(--shadow-color);
+            box-shadow: 0 4px 10px var(--shadow-color); z-index: 1001;
         }
         
-        /* Popup Styles */
+        /* FOOTER BARU */
+        .footer {
+            margin-top: 30px;
+            text-align: center;
+            font-size: 0.9em;
+            color: var(--text-secondary);
+        }
+        .footer a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: color 0.3s ease, text-shadow 0.3s ease;
+        }
+        .footer a:hover {
+            color: var(--primary-color);
+            text-shadow: 0 0 10px var(--primary-color); /* EFEK MENYALA */
+        }
+        .footer .fab.fa-youtube {
+            color: #ff0000; /* Warna khas YouTube */
+        }
+        .footer a:hover .fab.fa-youtube {
+            text-shadow: 0 0 10px #ff0000; /* EFEK MENYALA MERAH */
+        }
+        
+        /* GAYA POPUP (TETAP SAMA) */
         .popup-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.6);
             display: none; justify-content: center; align-items: center; z-index: 1000; opacity: 0;
@@ -143,6 +175,14 @@
         <button id="upload-button">Unggah Gambar</button>
     </div>
 
+    <div class="footer">
+        Powered by <a href="https://web-toko-riki.vercel.app/" target="_blank" style="margin-left: 5px;">Riki Shop</a>
+        <span style="margin: 0 10px;">|</span>
+        <a href="https://www.youtube.com/@Riki_botz" target="_blank">
+            <i class="fab fa-youtube"></i> Subscribe
+        </a>
+    </div>
+
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const body = document.body;
@@ -155,14 +195,12 @@
 
             let selectedFiles = [];
 
-            // Dark Mode Toggle
             darkModeToggle.addEventListener('click', () => {
                 body.classList.toggle('dark-mode');
                 const isDarkMode = body.classList.contains('dark-mode');
                 darkModeToggle.querySelector('i').className = isDarkMode ? 'fas fa-sun' : 'fas fa-moon';
             });
 
-            // Drag and Drop & File Selection
             ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
                 uploadArea.addEventListener(eventName, e => { e.preventDefault(); e.stopPropagation(); });
             });
@@ -197,7 +235,6 @@
                 });
             }
 
-            // Upload Logic
             uploadButton.addEventListener('click', async () => {
                 if (selectedFiles.length === 0) return;
                 uploadButton.disabled = true;
@@ -220,7 +257,6 @@
                     }
                 }
 
-                // Tampilkan Popup Setelah SEMUA Selesai
                 if (successfulLinks.length > 0) {
                     showSuccessPopup(successfulLinks);
                 }
@@ -228,7 +264,6 @@
                     alert(`Gagal mengunggah: ${failedFiles.join(', ')}`);
                 }
                 
-                // Reset UI
                 resetUI();
             });
             
@@ -260,7 +295,7 @@
                 `;
                 
                 document.body.appendChild(popupOverlay);
-                setTimeout(() => popupOverlay.classList.add('show'), 10); // Trigger transition
+                setTimeout(() => popupOverlay.classList.add('show'), 10);
 
                 popupOverlay.querySelector('#close-popup-button').onclick = () => popupOverlay.classList.remove('show');
                 popupOverlay.querySelectorAll('.copy-btn-popup').forEach(button => {
