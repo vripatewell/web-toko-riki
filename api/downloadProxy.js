@@ -8,29 +8,27 @@ export default async function handler(request, response) {
     }
 
     try {
-        // Validasi untuk keamanan: hanya izinkan download dari domain TikTok
-        const allowedDomain = 'tiktokcdn.com';
+        // ▼▼▼ PERUBAHAN DI SINI ▼▼▼
+        // Izinkan download dari TikTok dan Google Video (server YouTube)
+        const allowedDomains = ['tiktokcdn.com', 'googlevideo.com'];
         const urlHost = new URL(url).hostname;
-        if (!urlHost.endsWith(allowedDomain)) {
+
+        if (!allowedDomains.some(domain => urlHost.endsWith(domain))) {
             return response.status(403).json({ message: 'Domain tidak diizinkan.' });
         }
+        // ▲▲▲ AKHIR PERUBAHAN ▲▲▲
 
         const externalResponse = await fetch(url);
-
         if (!externalResponse.ok) {
             throw new Error(`Gagal mengambil file: Status ${externalResponse.status}`);
         }
         
-        // Atur header agar browser melakukan download
         response.setHeader('Content-Disposition', `attachment; filename="${filename || 'download'}"`);
-        
-        // Ambil tipe konten dari respons asli (misal: video/mp4)
         const contentType = externalResponse.headers.get('content-type');
         if (contentType) {
             response.setHeader('Content-Type', contentType);
         }
         
-        // Alirkan file langsung ke pengguna
         externalResponse.body.pipe(response);
 
     } catch (error) {
