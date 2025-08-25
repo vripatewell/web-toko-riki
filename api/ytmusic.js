@@ -1,8 +1,7 @@
 import yts from 'yt-search';
-// ▼▼▼ MENGGUNAKAN PACKAGE ANDA DENGAN SINTAKS YANG BENAR ▼▼▼
-import ytdl from '@vreden/youtube_scraper';
+import fetch from 'node-fetch'; // <-- Pustaka untuk memanggil API Anda
 
-// Fungsi untuk mengekstrak ID Video dari berbagai format URL YouTube
+// Fungsi ini tetap kita pakai untuk membedakan link dan judul
 function getYouTubeID(url) {
     const regex = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/;
     const match = url.match(regex);
@@ -19,7 +18,12 @@ export default async function handler(request, response) {
         return response.status(400).json({ message: 'Query pencarian tidak boleh kosong.' });
     }
 
+    // Ganti dengan apikey Anda
+    const APIKEY = "rikinew"; 
+    const API_BASE_URL = "https://newapiriki.vercel.app/download";
+
     try {
+        // Langkah 1: Cari video menggunakan yt-search (tetap diperlukan untuk dapat URL jika inputnya judul)
         let video;
         const videoId = getYouTubeID(query);
 
@@ -34,15 +38,18 @@ export default async function handler(request, response) {
             return response.status(404).json({ message: 'Video tidak ditemukan.' });
         }
 
-        const [mp3Result, mp4Result] = await Promise.all([
-            ytdl.ytmp3(video.url),
-            ytdl.ytmp4(video.url)
+        // Langkah 2: Panggil API Anda sendiri secara paralel untuk MP3 dan MP4
+        const videoUrlEncoded = encodeURIComponent(video.url);
+        
+        const [mp3Response, mp4Response] = await Promise.all([
+            fetch(`${API_BASE_URL}/ytmp3?apikey=${APIKEY}&url=${videoUrlEncoded}`),
+            fetch(`${API_BASE_URL}/ytmp4?apikey=${APIKEY}&url=${videoUrlEncoded}`)
         ]);
 
-        if (!mp3Result.status && !mp4Result.status) {
-            throw new Error('Gagal mendapatkan link download dari server.');
-        }
+        const mp3Result = await mp3Response.json();
+        const mp4Result = await mp4Response.json();
 
+        // Langkah 3: Siapkan data untuk dikirim kembali ke website Anda
         const finalResult = {
             title: video.title,
             author: video.author.name,
@@ -50,14 +57,15 @@ export default async function handler(request, response) {
             duration: video.timestamp,
             url: video.url,
             videoId: video.videoId,
-            audioUrl: mp3Result.status ? mp3Result.download.url : null,
-            videoUrl: mp4Result.status ? mp4Result.download.url : null,
+            // Ambil link download dari hasil API Anda
+            audioUrl: mp3Result.status ? mp3Result.result.download : null,
+            videoUrl: mp4Result.status ? mp4Result.result.download : null,
         };
         
         response.status(200).json(finalResult);
 
     } catch (error) {
-        console.error("Error pada API ytmusic:", error);
-        response.status(500).json({ message: error.message || 'Terjadi kesalahan di server.' });
+        console.error("Error saat memanggil API eksternal:", error);
+        response.status(500).json({ message: 'Gagal memproses permintaan melalui API.' });
     }
 }
