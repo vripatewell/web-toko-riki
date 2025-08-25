@@ -3,31 +3,10 @@
 // ==========================================================
 // BLOK KODE PEMUTAR MUSIK (VERSI DEBUG)
 // ==========================================================
-
 let youtubePlayer;
 let isYouTubeApiReady = false;
-
-// 1. Script PENTING untuk memuat YouTube IFrame API
-(function() {
-    const tag = document.createElement('script');
-    tag.src = "https://www.youtube.com/iframe_api";
-    const firstScriptTag = document.getElementsByTagName('script')[0];
-    if (firstScriptTag) {
-        firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-        console.log('DEBUG: Script YouTube API berhasil disisipkan.');
-    } else {
-        document.head.appendChild(tag);
-        console.log('DEBUG: Script YouTube API berhasil ditambahkan ke head.');
-    }
-})();
-
-// 2. Fungsi ini akan dipanggil otomatis oleh script YouTube setelah siap
-window.onYouTubeIframeAPIReady = function() {
-    console.log('SUCCESS: onYouTubeIframeAPIReady() berhasil dipanggil! API YouTube sudah siap.');
-    isYouTubeApiReady = true;
-};
-
-// 3. Fungsi untuk membuat pemutar YouTube
+function onYouTubeIframeAPIReady() { isYouTubeApiReady = true; }
+(function() { const tag = document.createElement('script'); tag.src = "https://www.youtube.com/iframe_api"; const firstScriptTag = document.getElementsByTagName('script')[0]; firstScriptTag.parentNode.insertBefore(tag, firstScriptTag); })();
 
 
 const WA_ADMIN_NUMBER = "6285771555374"; // Fallback jika settings.json gagal dimuat
