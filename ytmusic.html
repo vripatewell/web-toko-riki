@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>YouTube Music Downloader - Rikishopreal</title>
+    <title>YouTube Downloader - Rikishopreal</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
     
@@ -28,8 +28,9 @@
         }
         .container {
             background-color: var(--bg-container); border-radius: 24px; box-shadow: 0 10px 40px var(--shadow-color);
-            padding: 30px 40px; width: 100%; max-width: 500px; text-align: center;
+            padding: 30px 25px; width: 100%; max-width: 500px; text-align: center;
             animation: fadeIn 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            box-sizing: border-box;
         }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
         h1 { color: var(--text-primary); margin: 0 0 10px; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 12px; }
@@ -58,8 +59,13 @@
             cursor: pointer; font-size: 1.2em; display: flex; align-items: center; justify-content: center;
             box-shadow: 0 4px 10px var(--shadow-color); z-index: 1001;
         }
-        .footer { margin-top: 30px; text-align: center; font-size: 0.9em; color: var(--text-secondary); width: 100%; max-width: 500px; }
-        /* ... (CSS footer & animasi tangan tetap sama) ... */
+        .footer { margin-top: 30px; text-align: center; font-size: 0.9em; color: var(--text-secondary); width: 100%; max-width: 500px; border-top: 1px solid var(--border-color); padding-top: 20px; }
+        .footer a { color: var(--text-secondary); text-decoration: none; font-weight: 600; display: inline-flex; align-items: center; gap: 8px; transition: color 0.3s ease, text-shadow 0.3s ease; }
+        .footer a:hover { color: var(--primary-color); text-shadow: 0 0 8px var(--primary-color); }
+        .footer .fab.fa-youtube { color: #ff0000; }
+        .footer a:hover .fab.fa-youtube { text-shadow: 0 0 8px #ff0000; }
+        .glow-text { text-shadow: 0 0 5px rgba(0, 122, 255, 0.6); }
+        .glow-youtube { text-shadow: 0 0 5px rgba(255, 0, 0, 0.6); }
         .popup-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.6);
             display: none; justify-content: center; align-items: center; z-index: 1000; opacity: 0;
@@ -75,11 +81,17 @@
         .popup-thumbnail { width: 120px; height: 120px; border-radius: 12px; object-fit: cover; margin: 0 auto 15px; }
         .popup-title { font-size: 1.2em; font-weight: 600; margin: 0; }
         .popup-author { font-size: 0.9em; color: var(--text-secondary); margin-bottom: 15px; }
-        .popup-audio-player { width: 100%; margin-top: 15px; }
+        .popup-player { width: 100%; margin-top: 15px; border-radius: 12px; overflow: hidden; }
+        .popup-player iframe { width: 100%; border: none; aspect-ratio: 16/9; }
+        .popup-player audio { width: 100%; }
         .popup-buttons { display: flex; flex-direction: column; gap: 10px; margin-top: 20px; }
         .popup-button { display: block; padding: 12px; border: none; border-radius: 10px; color: white; font-weight: 600; text-decoration: none; text-align: center; transition: transform 0.2s ease; }
-        .popup #close-popup-button { /* ... (CSS tombol tutup tetap sama) ... */ }
-        .toast-notification { /* ... (CSS notifikasi tetap sama) ... */ }
+        .popup-button:hover { transform: scale(1.03); }
+        .popup #close-popup-button { width: 100%; margin-top: 15px; padding: 12px; font-weight: 600; font-size: 1em; border-radius: 10px; cursor: pointer; border: none; background-color: var(--secondary-color); color: var(--text-secondary); border: 1px solid var(--border-color); }
+        .toast-notification { position: fixed; top: 20px; left: 50%; transform: translate(-50%, -150%); padding: 12px 20px; background-color: #333; color: white; border-radius: 25px; font-size: 0.9em; font-weight: 500; z-index: 9999; display: flex; align-items: center; gap: 10px; box-shadow: 0 5px 20px rgba(0,0,0,0.2); transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.5s ease; opacity: 0; pointer-events: none; }
+        .toast-notification.show { opacity: 1; transform: translate(-50%, 0); }
+        .toast-notification.success { background-color: var(--success-color); }
+        .toast-notification.error { background-color: var(--error-color); }
     </style>
 </head>
 <body class="light-mode">
@@ -107,8 +119,25 @@
             const toastContainer = document.getElementById('toast-container');
             let toastTimeout;
 
-            function showToast(message, type = 'success') { /* ... (fungsi showToast tetap sama) ... */ }
-            darkModeToggle.addEventListener('click', () => { /* ... (logika dark mode tetap sama) ... */ });
+            function showToast(message, type = 'success') {
+                if(toastTimeout) clearTimeout(toastTimeout);
+                toastContainer.innerHTML = '';
+                const toast = document.createElement('div');
+                toast.className = `toast-notification ${type}`;
+                const iconClass = type === 'success' ? 'fa-check-circle' : 'fa-times-circle';
+                toast.innerHTML = `<i class="fas ${iconClass}"></i> ${message}`;
+                toastContainer.appendChild(toast);
+                setTimeout(() => toast.classList.add('show'), 10);
+                toastTimeout = setTimeout(() => {
+                    toast.classList.remove('show');
+                    toast.addEventListener('transitionend', () => toast.remove());
+                }, 3000);
+            }
+            darkModeToggle.addEventListener('click', () => {
+                body.classList.toggle('dark-mode');
+                const isDarkMode = body.classList.contains('dark-mode');
+                darkModeToggle.querySelector('i').className = isDarkMode ? 'fas fa-sun' : 'fas fa-moon';
+            });
 
             searchBtn.addEventListener('click', async () => {
                 const query = queryInput.value.trim();
@@ -130,7 +159,9 @@
                     if (!response.ok) throw new Error(result.message);
                     
                     showToast('Berhasil ditemukan!', 'success');
-                    showResultPopup(result);
+                    // Kirim informasi apakah input adalah URL ke fungsi popup
+                    const isUrl = query.includes('youtube.com') || query.includes('youtu.be');
+                    showResultPopup(result, isUrl);
 
                 } catch (error) {
                     showToast(error.message, 'error');
@@ -140,7 +171,7 @@
                 }
             });
 
-            function showResultPopup(data) {
+            function showResultPopup(data, isUrlInput) {
                 const existingPopup = document.getElementById('result-popup');
                 if(existingPopup) existingPopup.remove();
 
@@ -148,6 +179,17 @@
                 popupOverlay.id = 'result-popup';
                 popupOverlay.className = 'popup-overlay';
                 
+                let playerHTML = '';
+                // LOGIKA BARU: Pilih pemutar berdasarkan tipe input
+                if (isUrlInput) {
+                    // Jika input adalah URL, tampilkan pemutar video iframe
+                    playerHTML = `<div class="popup-player"><iframe src="https://www.youtube.com/embed/${data.videoId}?autoplay=1" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>`;
+                } else {
+                    // Jika input adalah judul lagu, tampilkan pemutar audio
+                    const audioProxyUrl = data.audioUrl ? `/api/downloadProxy?url=${encodeURIComponent(data.audioUrl)}&filename=${encodeURIComponent(data.title)}.mp3` : null;
+                    playerHTML = audioProxyUrl ? `<div class="popup-player"><audio controls autoplay class="popup-audio-player" src="${audioProxyUrl}"></audio></div>` : '';
+                }
+
                 let buttonsHTML = '';
                 if(data.audioUrl) {
                     const audioProxy = `/api/downloadProxy?url=${encodeURIComponent(data.audioUrl)}&filename=${encodeURIComponent(data.title)}.mp3`;
@@ -163,7 +205,7 @@
                         <img src="${data.thumbnail}" alt="Thumbnail" class="popup-thumbnail">
                         <h3 class="popup-title">${data.title}</h3>
                         <p class="popup-author">oleh ${data.author} - ${data.duration}</p>
-                        <audio controls class="popup-audio-player" src="${data.audioUrl}"></audio>
+                        ${playerHTML}
                         <div class="popup-buttons">${buttonsHTML}</div>
                         <button id="close-popup-button">Tutup</button>
                     </div>
@@ -171,7 +213,10 @@
                 document.body.appendChild(popupOverlay);
                 setTimeout(() => popupOverlay.classList.add('show'), 10);
                 
-                popupOverlay.querySelector('#close-popup-button').onclick = () => popupOverlay.classList.remove('show');
+                popupOverlay.querySelector('#close-popup-button').onclick = () => {
+                    popupOverlay.classList.remove('show');
+                    setTimeout(() => popupOverlay.remove(), 300);
+                };
             }
         });
     </script>
