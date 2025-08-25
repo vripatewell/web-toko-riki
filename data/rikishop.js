@@ -1,7 +1,5 @@
 let youtubePlayer;
 let isYouTubeApiReady = false;
-function onYouTubeIframeAPIReady() { isYouTubeApiReady = true; }
-(function() { const tag = document.createElement('script'); tag.src = "https://www.youtube.com/iframe_api"; const firstScriptTag = document.getElementsByTagName('script')[0]; firstScriptTag.parentNode.insertBefore(tag, firstScriptTag); })();
 
 // --- Konfigurasi ---
 const WA_ADMIN_NUMBER = "6285771555374"; // Fallback jika settings.json gagal dimuat
@@ -695,38 +693,9 @@ openMusicPopupBtn.addEventListener('click', (e) => { e.stopPropagation(); musicP
 function closeMusicPlayerPopup() { musicPlayerPopup.classList.remove('active'); musicPlayerOverlay.classList.remove('active'); }
 closeMusicPlayer.addEventListener('click', closeMusicPlayerPopup);
 musicPlayerOverlay.addEventListener('click', closeMusicPlayerPopup);
-loadMediaBtn.addEventListener('click', () => {
-    const mediaLink = mediaLinkInput.value.trim();
-    if (!mediaLink) return showToastNotification("Silakan masukkan link.", "fa-exclamation-circle");
-    
-    backgroundAudio.pause();
-    backgroundAudio.src = '';
-    if (youtubePlayer && typeof youtubePlayer.destroy === 'function') {
-        youtubePlayer.destroy();
-        youtubePlayer = null;
-    }
-    mediaPlayerContainer.innerHTML = '';
-    customMusicMuted = false;
+// --- FUNGSI BARU UNTUK MEMBUAT PEMUTAR MUSIK ---
 
-    try {
-        let videoId = null;
-        if (mediaLink.includes('youtu.be') || mediaLink.includes('youtube.com')) {
-            const url = new URL(mediaLink);
-            videoId = url.hostname === 'youtu.be' ? url.pathname.substring(1) : url.searchParams.get('v');
-        }
-
-        if (videoId) {
-            createYouTubePlayer(videoId);
-            showToastNotification("Memuat video...", "fa-play-circle");
-            muteAudioBtn.querySelector('i').className = 'fas fa-volume-up';
-        } else {
-            showToastNotification("Link YouTube tidak valid atau tidak didukung.", "fa-times-circle");
-        }
-    } catch (error) { 
-        console.error("Error parsing link:", error);
-        showToastNotification("Format link tidak dikenal.", "fa-times-circle"); 
-    }
-});
+// 1. Fungsi untuk membuat pemutar YouTube
 function createYouTubePlayer(videoId) {
     const checkApiReady = setInterval(() => {
         if (isYouTubeApiReady) {
@@ -737,15 +706,85 @@ function createYouTubePlayer(videoId) {
             mediaPlayerContainer.innerHTML = '<div id="youtube-player-embed"></div>';
             youtubePlayer = new YT.Player('youtube-player-embed', {
                 videoId: videoId,
-                playerVars: { 'autoplay': 1, 'controls': 0, 'rel': 0, 'showinfo': 0, 'iv_load_policy': 3 },
+                playerVars: { 
+                    'autoplay': 1,
+                    'controls': 1,
+                    'rel': 0, 
+                    'showinfo': 0, 
+                    'iv_load_policy': 3 
+                },
                 events: {
-                    'onReady': (event) => { event.target.playVideo(); },
-                    'onStateChange': (event) => { if (event.data === YT.PlayerState.PLAYING) { closeMusicPlayerPopup(); } }
+                    'onReady': (event) => { 
+                        event.target.playVideo();
+                        closeMusicPlayerPopup(); 
+                    }
                 }
             });
         }
     }, 100);
 }
+
+// 2. Fungsi BARU untuk membuat pemutar Spotify
+function createSpotifyPlayer(type, id) {
+    const spotifyURL = `https://open.spotify.com/embed/${type}/${id}`;
+    mediaPlayerContainer.innerHTML = `
+        <iframe style="border-radius:12px" src="${spotifyURL}" 
+        width="100%" height="352" frameBorder="0" allowfullscreen="" 
+        allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" 
+        loading="lazy"></iframe>
+    `;
+    closeMusicPlayerPopup();
+}
+
+// 3. Fungsi BARU untuk membuat pemutar Audio HTML5 (untuk MP3, dll)
+function createAudioPlayer(url) {
+    mediaPlayerContainer.innerHTML = `
+        <audio controls autoplay src="${url}" style="width: 100%;">
+            Browser Anda tidak mendukung elemen audio.
+        </audio>
+    `;
+    closeMusicPlayerPopup();
+}
+
+
+// --- LISTENER TOMBOL "PUTAR MUSIK" YANG SUDAH DIPERBARUI ---
+loadMediaBtn.addEventListener('click', () => {
+    const mediaLink = mediaLinkInput.value.trim();
+    if (!mediaLink) return showToastNotification("Silakan masukkan link.", "fa-exclamation-circle");
+
+    // Hentikan dan bersihkan pemutar musik lama
+    backgroundAudio.pause();
+    backgroundAudio.src = '';
+    if (youtubePlayer && typeof youtubePlayer.destroy === 'function') {
+        youtubePlayer.destroy();
+        youtubePlayer = null;
+    }
+    mediaPlayerContainer.innerHTML = '';
+    customMusicMuted = false;
+    muteAudioBtn.querySelector('i').className = 'fas fa-volume-up';
+
+    // --- Logika Deteksi Link ---
+    const youtubeRegex = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/;
+    const spotifyRegex = /https?:\/\/open\.spotify\.com\/(track|album|playlist)\/([a-zA-Z0-9]+)/;
+    const audioFileRegex = /\.(mp3|wav|ogg|m4a)$/i;
+
+    const youtubeMatch = mediaLink.match(youtubeRegex);
+    const spotifyMatch = mediaLink.match(spotifyRegex);
+    const audioFileMatch = mediaLink.match(audioFileRegex);
+
+    if (youtubeMatch && youtubeMatch[1]) {
+        showToastNotification("Memuat musik YouTube...", "fa-play-circle");
+        createYouTubePlayer(youtubeMatch[1]);
+    } else if (spotifyMatch && spotifyMatch[1] && spotifyMatch[2]) {
+        showToastNotification("Memuat musik Spotify...", "fa-play-circle");
+        createSpotifyPlayer(spotifyMatch[1], spotifyMatch[2]); // spotifyMatch[1] = 'track' atau 'album', spotifyMatch[2] = ID
+    } else if (audioFileMatch) {
+        showToastNotification("Memuat file audio...", "fa-play-circle");
+        createAudioPlayer(mediaLink);
+    } else {
+        showToastNotification("Link tidak didukung.", "fa-times-circle");
+    }
+});
 function playBackgroundMusic() { 
     if (backgroundAudio.src && !backgroundAudio.muted && backgroundAudio.paused) { 
         backgroundAudio.play().catch(e => console.log("Autoplay dicegah oleh browser.")); 
