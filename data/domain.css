@@ -136,6 +136,43 @@ button:disabled { background-color: var(--light-text-color); cursor: not-allowed
 }
 .admin-form { padding: 25px; border-radius: 16px; background-color: var(--white-color); box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
 
+/* CSS BARU UNTUK PANDUAN */
+.admin-header .header-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.panduan-container {
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.panduan-step {
+    background-color: var(--secondary-color);
+    padding: 15px;
+    border-radius: 10px;
+    border-left: 4px solid var(--primary-color);
+}
+
+.panduan-step h3 {
+    border-bottom: none;
+    padding-bottom: 0;
+    margin-bottom: 8px;
+    font-size: 1em;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.panduan-step p {
+    text-align: left;
+    font-size: 0.9em;
+    margin-bottom: 0;
+    line-height: 1.6;
+}
+
 /* Elemen Spesifik Halaman Domain */
 .apikey-actions a { color: var(--primary-color); text-decoration: none; font-size: 0.9em; margin-top: 15px; display: inline-block; }
 .proxy-toggle { display: flex; justify-content: space-between; align-items: center; margin-top: 20px; background-color: var(--secondary-color); padding: 15px; border-radius: 10px; }

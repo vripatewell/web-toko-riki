@@ -19,6 +19,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const subdomainHistoryContainer = document.getElementById('subdomain-history-container');
     const modals = document.querySelectorAll('.modal');
     const apiKeyPriceListContainer = document.getElementById('api-key-price-list-container');
+    const openPanduanBtn = document.getElementById('openPanduanBtn');
+    const panduanModal = document.getElementById('panduanModal');
 
     const API_URL = '/api/cloudflare';
     let validatedApiKey = null;
@@ -33,6 +35,12 @@ document.addEventListener('DOMContentLoaded', () => {
             themeSwitchBtn.innerHTML = `<i class="fas ${iconClass}"></i>`;
         }
     }
+    
+    if(openPanduanBtn) {
+    openPanduanBtn.addEventListener('click', () => {
+        openModal(panduanModal);
+    });
+}
     
     if(themeSwitchBtn) {
         themeSwitchBtn.addEventListener('click', () => {
