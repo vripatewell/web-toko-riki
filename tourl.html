@@ -1,81 +1,44 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Ubah Gambar Jadi Link - Rikishopreal</title>
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
-<style>
-:root {
---primary-color: #007aff;
---secondary-color: #f2f2f7;
---text-color: #1d1d1f;
---light-text-color: #8e8e93;
---white-color: #fff;
---border-color: #d1d1d6;
---success-color: #34c759;
---error-color: #ff3b30;
---animation-duration: 0.3s;
---animation-timing-function: ease-in-out;
---bg-body: var(--white-color);
---bg-container: #f9f9f9;
---text-primary: var(--text-color);
---text-secondary: var(--light-text-color);
---border: var(--border-color);
-}
-
-    body.dark-mode {
-        --bg-body: #121212;
-        --bg-container: #1e1e1e;
-        --text-primary: #fff;
-        --text-secondary: #a7a7a7;
-        --border: #333;
-    }
-
-    body {
-        font-family: 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
-        background-color: var(--bg-body);
-        color: var(--text-primary);
-        margin: 0;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        min-height: 100vh;
-        padding: 20px;
-        box-sizing: border-box;
-        transition: background-color var(--animation-duration) var(--animation-timing-function), color var(--animation-duration) var(--animation-timing-function);
-    }
-
-    .container {
-        background-color: var(--bg-container);
-        border-radius: 16px;
-        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-        padding: 30px;
-        width: 100%;
-        max-width: 400px;
-        text-align: center;
-        transition: background-color var(--animation-duration) var(--animation-timing-function), box-shadow var(--animation-duration) var(--animation-timing-function);
-    }
-
-    h1 {
-        color: var(--text-primary);
-        margin-top: 0;
-        margin-bottom: 15px;
-        font-weight: 700;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 10px;
-    }
-
-    p.subtitle {
-        color: var(--text-secondary);
-        margin-bottom: 25px;
-    }
-
-.upload-area {
-    position: relative;
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ubah Gambar Jadi Link - Rikishopreal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+    
+    <style>
+        :root {
+            --primary-color: #007aff; --secondary-color: #f2f2f7; --text-color-light: #1d1d1f;
+            --light-text-color: #8e8e93; --white-color: #fff; --border-color-light: #d1d1d6;
+            --success-color: #34c759; --error-color: #ff3b30; --shadow-light: rgba(0, 0, 0, 0.1);
+            --bg-body: var(--secondary-color); --bg-container: var(--white-color); --text-primary: var(--text-color-light);
+            --text-secondary: var(--light-text-color); --border-color: var(--border-color-light); --shadow-color: var(--shadow-light);
+        }
+        body.dark-mode {
+            --bg-body: #000000; --bg-container: #1c1c1e; --text-primary: #f5f5f7;
+            --text-secondary: #8e8e93; --border-color: #3a3a3c; --shadow-color: rgba(0, 0, 0, 0.4);
+        }
+        body {
+            font-family: 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--bg-body); color: var(--text-primary); margin: 0;
+            display: flex; justify-content: center; align-items: center; min-height: 100vh;
+            padding: 20px; box-sizing: border-box; transition: background-color 0.3s ease;
+        }
+        .container {
+            background-color: var(--bg-container); border-radius: 24px; box-shadow: 0 10px 40px var(--shadow-color);
+            padding: 30px 40px; width: 100%; max-width: 500px; text-align: center;
+            animation: fadeIn 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        h1 {
+            color: var(--text-primary); margin: 0 0 10px; font-weight: 700; display: flex;
+            align-items: center; justify-content: center; gap: 12px;
+        }
+        p.subtitle { color: var(--text-secondary); margin-bottom: 30px; }
+        
+        .upload-area {
+            position: relative;
     border: 2px dashed var(--border);
     border-radius: 14px;
     padding: 40px 20px;
@@ -98,407 +61,230 @@
     );
     background-size: 12px 12px;
 }
-
-.upload-area i {
-    font-size: 2.8em;
-    color: var(--primary-color);
-    margin-bottom: 12px;
-}
-
-.upload-area span {
-    display: block;
-    font-weight: 500;
-    color: var(--text-secondary);
-}
-    #file-input { display: none; }
-
-    #preview-container {
-        margin-top: 15px;
-        display: flex;
-        gap: 10px;
-        overflow-x: auto;
-    }
-    .preview-image-wrapper {
-        position: relative;
-        width: 60px;
-        height: 60px;
-    }
-    .preview-image {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        border-radius: 8px;
-    }
-
-    #upload-button {
-        width: 100%;
-        padding: 12px;
-        margin-top: 20px;
-        background-color: var(--primary-color);
-        color: white;
-        border: none;
-        border-radius: 10px;
-        font-size: 1em;
-        font-weight: 600;
-        cursor: pointer;
-        display: none;
-        transition: background-color var(--animation-duration) var(--animation-timing-function), transform 0.1s ease-in-out;
-    }
-    #upload-button:disabled { background-color: var(--light-text-color); cursor: not-allowed; }
-    #upload-button:not(:disabled):hover { transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0, 122, 255, 0.2); }
-
-    .spinner {
-        width: 18px;
-        height: 18px;
-        border: 2.5px solid rgba(255, 255, 255, 0.3);
-        border-top-color: #fff;
-        border-radius: 50%;
-        display: inline-block;
-        animation: spin 1s linear infinite;
-        margin-right: 8px;
-        vertical-align: middle;
-    }
-    @keyframes spin { to { transform: rotate(360deg); } }
-
-    .result-container {
-        margin-top: 20px;
-        text-align: left;
-    }
-    .result-container h3 {
-        color: var(--text-primary);
-        margin-bottom: 10px;
-        font-size: 1.1em;
-    }
-    .result-item {
-        display: flex;
-        align-items: center;
-        margin-bottom: 8px;
-        background-color: var(--bg-container);
-        padding: 8px;
-        border-radius: 8px;
-        border: 1px solid var(--border);
-        transition: background-color var(--animation-duration) var(--animation-timing-function), border-color var(--animation-duration) var(--animation-timing-function);
-    }
-    .result-item input {
-        flex-grow: 1;
-        padding: 8px;
-        border: none;
-        border-radius: 6px 0 0 6px;
-        background-color: transparent;
-        color: var(--text-primary);
-        font-family: monospace;
-        font-size: 0.9em;
-    }
-    .result-item button {
-        padding: 8px 12px;
-        border: none;
-        background-color: var(--success-color);
-        color: white;
-        border-radius: 0 6px 6px 0;
-        cursor: pointer;
-        font-weight: 500;
-        font-size: 0.9em;
-        transition: background-color var(--animation-duration) var(--animation-timing-function), transform 0.1s ease-in-out;
-    }
-    .result-item button:hover {
-        transform: scale(1.05);
-        background-color: #2e7d32;
-    }
-
-    .dark-mode-toggle {
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        background-color: var(--bg-container);
-        color: var(--text-primary);
-        border: 1px solid var(--border);
-        border-radius: 20px;
-        padding: 8px 12px;
-        cursor: pointer;
-        font-size: 0.9em;
-        display: flex;
-        align-items: center;
-        gap: 5px;
-        transition: background-color var(--animation-duration) var(--animation-timing-function), color var(--animation-duration) var(--animation-timing-function), border-color var(--animation-duration) var(--animation-timing-function);
-    }
-    .dark-mode-toggle i {
-        font-size: 1.1em;
-    }
-
-    .popup-overlay {
-        display: none;
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background-color: rgba(0, 0, 0, 0.5);
-        justify-content: center;
-        align-items: center;
-        z-index: 1000;
-    }
-
-    .popup {
-        background-color: var(--bg-container);
-        color: var(--text-primary);
-        border-radius: 12px;
-        padding: 20px;
-        text-align: center;
-        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-        max-width: 90%;
-        transition: background-color var(--animation-duration) var(--animation-timing-function), color var(--animation-duration) var(--animation-timing-function);
-    }
-
-    .popup h3 {
-        margin-top: 0;
-        margin-bottom: 10px;
-    }
-
-    .popup input {
-        width: calc(100% - 20px);
-        padding: 10px;
-        margin-bottom: 15px;
-        border: 1px solid var(--border);
-        border-radius: 8px;
-        background-color: transparent;
-        color: var(--text-primary);
-        font-family: monospace;
-    }
-
-    .popup button {
-        background-color: var(--primary-color);
-        color: white;
-        border: none;
-        border-radius: 8px;
-        padding: 10px 20px;
-        cursor: pointer;
-        font-weight: 500;
-        transition: background-color var(--animation-duration) var(--animation-timing-function), transform 0.1s ease-in-out;
-    }
-
-    .popup button:hover {
-        transform: scale(1.05);
-        background-color: #0056b3;
-    }
-
-    .popup .close-button {
-        background-color: var(--error-color);
-    }
-    .popup .close-button:hover {
-        background-color: #c62828;
-    }
-
-</style>
+        .upload-area.drag-over { border-color: var(--primary-color); background-color: rgba(0, 122, 255, 0.05); transform: scale(1.03); }
+        .upload-area i { font-size: 3em; color: var(--primary-color); margin-bottom: 15px; }
+        .upload-area span { display: block; font-weight: 500; }
+        #file-input { display: none; }
+        #preview-container { margin-top: 20px; display: grid; grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); gap: 12px; }
+        .preview-image { width: 100%; height: 80px; object-fit: cover; border-radius: 12px; }
+        #upload-button {
+            width: 100%; padding: 15px; margin-top: 25px; background-color: var(--primary-color); color: white;
+            border: none; border-radius: 12px; font-size: 1.1em; font-weight: 600; cursor: pointer; display: none;
+            transition: all 0.3s ease;
+        }
+        #upload-button:disabled { background-color: var(--light-text-color); cursor: not-allowed; }
+        #upload-button:not(:disabled):hover { transform: translateY(-3px); box-shadow: 0 6px 12px rgba(0, 122, 255, 0.3); }
+        .spinner {
+            width: 20px; height: 20px; border: 3px solid rgba(255, 255, 255, 0.3); border-top-color: #fff;
+            border-radius: 50%; display: inline-block; animation: spin 1s linear infinite;
+            margin-right: 10px; vertical-align: middle;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .dark-mode-toggle {
+            position: fixed; top: 20px; right: 20px; background-color: var(--bg-container); color: var(--text-primary);
+            border: 1px solid var(--border-color); border-radius: 50px; padding: 8px; width: 40px; height: 40px;
+            cursor: pointer; font-size: 1.2em; display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 4px 10px var(--shadow-color);
+        }
+        
+        /* Popup Styles */
+        .popup-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.6);
+            display: none; justify-content: center; align-items: center; z-index: 1000; opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .popup-overlay.show { display: flex; opacity: 1; }
+        .popup {
+            background-color: var(--bg-container); color: var(--text-primary); border-radius: 20px;
+            padding: 25px 30px; text-align: center; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            width: 90%; max-width: 500px; animation: popIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        @keyframes popIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
+        .popup .icon { font-size: 3em; color: var(--success-color); margin-bottom: 15px; }
+        .popup h3 { margin: 0 0 15px; font-size: 1.4em; }
+        .popup-results-container { max-height: 250px; overflow-y: auto; margin-top: 20px; text-align: left; }
+        .popup-results-container .result-item {
+            display: flex; align-items: center; margin-bottom: 10px; background-color: var(--bg-body);
+            padding: 8px; border-radius: 12px;
+        }
+        .popup-results-container .result-item input {
+            flex-grow: 1; padding: 10px; border: 1px solid var(--border-color); border-radius: 8px 0 0 8px;
+            background-color: var(--bg-container); color: var(--text-primary); font-family: monospace; border-right: none;
+        }
+        .popup-results-container .result-item button {
+            padding: 10px 15px; border: none; background-color: var(--primary-color); color: white;
+            border-radius: 0 8px 8px 0; cursor: pointer; font-weight: 600;
+        }
+        .popup #close-popup-button {
+            width: 100%; margin-top: 20px; padding: 12px; font-weight: 600; font-size: 1em;
+            border-radius: 10px; cursor: pointer; border: none; background-color: var(--secondary-color);
+            color: var(--text-secondary); border: 1px solid var(--border-color);
+        }
+    </style>
 </head>
 <body class="light-mode">
 
-<button id="dark-mode-toggle" class="dark-mode-toggle">
-    <i class="fas fa-moon"></i> <span id="theme-text">Gelap</span>
-</button>
+    <button id="dark-mode-toggle" class="dark-mode-toggle" aria-label="Ganti Tema">
+        <i class="fas fa-moon"></i>
+    </button>
 
-<div class="container">
-    <h1><i class="fas fa-link"></i> Ubah Gambar Jadi Link</h1>
-    <p class="subtitle">Pilih atau seret satu atau beberapa gambar untuk diunggah.</p>
-
-    <label for="file-input" class="upload-area" id="upload-area">
-        <i class="fas fa-cloud-upload-alt"></i>
-        <span id="upload-text">Klik atau seret gambar ke sini</span>
-    </label>
-    <input type="file" id="file-input" accept="image/*" multiple>
-
-    <div id="preview-container"></div>
-
-    <button id="upload-button">Unggah Gambar</button>
-
-    <div class="result-container" id="result-container">
-        <h3>Hasil Unggahan:</h3>
+    <div class="container">
+        <h1><i class="fas fa-link"></i> Ubah Gambar Jadi Link</h1>
+        <p class="subtitle">Pilih atau seret satu atau beberapa gambar untuk diunggah.</p>
+        
+        <label for="file-input" class="upload-area" id="upload-area">
+            <i class="fas fa-cloud-upload-alt"></i>
+            <span id="upload-text">Klik atau seret gambar ke sini</span>
+        </label>
+        <input type="file" id="file-input" accept="image/*" multiple>
+        
+        <div id="preview-container"></div>
+        
+        <button id="upload-button">Unggah Gambar</button>
     </div>
-</div>
 
-<div id="upload-success-popup" class="popup-overlay">
-    <div class="popup">
-        <h3>Berhasil Diunggah!</h3>
-        <input type="text" id="popup-link" readonly>
-        <button id="copy-link-button"><i class="fas fa-copy"></i> Salin Link</button>
-        <button id="close-popup-button" class="close-button"><i class="fas fa-times"></i> Tutup</button>
-    </div>
-</div>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const body = document.body;
+            const darkModeToggle = document.getElementById('dark-mode-toggle');
+            const uploadArea = document.getElementById('upload-area');
+            const fileInput = document.getElementById('file-input');
+            const previewContainer = document.getElementById('preview-container');
+            const uploadText = document.getElementById('upload-text');
+            const uploadButton = document.getElementById('upload-button');
 
-<script>
-    document.addEventListener('DOMContentLoaded', () => {
-        const body = document.body;
-        const darkModeToggle = document.getElementById('dark-mode-toggle');
-        const themeText = document.getElementById('theme-text');
-        const uploadArea = document.getElementById('upload-area');
-        const fileInput = document.getElementById('file-input');
-        const previewContainer = document.getElementById('preview-container');
-        const uploadText = document.getElementById('upload-text');
-        const uploadButton = document.getElementById('upload-button');
-        const resultContainer = document.getElementById('result-container');
-        const uploadSuccessPopup = document.getElementById('upload-success-popup');
-        const popupLinkInput = document.getElementById('popup-link');
-        const copyLinkButton = document.getElementById('copy-link-button');
-        const closePopupButton = document.getElementById('close-popup-button');
+            let selectedFiles = [];
 
-        let selectedFiles = [];
-
-        // Dark Mode Toggle
-        darkModeToggle.addEventListener('click', () => {
-            body.classList.toggle('dark-mode');
-            const isDarkMode = body.classList.contains('dark-mode');
-            themeText.textContent = isDarkMode ? 'Terang' : 'Gelap';
-            darkModeToggle.querySelector('i').classList.toggle('fa-sun', isDarkMode);
-            darkModeToggle.querySelector('i').classList.toggle('fa-moon', !isDarkMode);
-        });
-
-        // Drag and Drop
-        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-            uploadArea.addEventListener(eventName, e => {
-                e.preventDefault();
-                e.stopPropagation();
+            // Dark Mode Toggle
+            darkModeToggle.addEventListener('click', () => {
+                body.classList.toggle('dark-mode');
+                const isDarkMode = body.classList.contains('dark-mode');
+                darkModeToggle.querySelector('i').className = isDarkMode ? 'fas fa-sun' : 'fas fa-moon';
             });
-        });
-        uploadArea.addEventListener('dragenter', () => uploadArea.classList.add('drag-over'));
-        uploadArea.addEventListener('dragleave', () => uploadArea.classList.remove('drag-over'));
-        uploadArea.addEventListener('drop', e => {
-            uploadArea.classList.remove('drag-over');
-            handleFiles(e.dataTransfer.files);
-        });
 
-        fileInput.addEventListener('change', (event) => handleFiles(event.target.files));
+            // Drag and Drop & File Selection
+            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                uploadArea.addEventListener(eventName, e => { e.preventDefault(); e.stopPropagation(); });
+            });
+            uploadArea.addEventListener('dragenter', () => uploadArea.classList.add('drag-over'));
+            uploadArea.addEventListener('dragleave', () => uploadArea.classList.remove('drag-over'));
+            uploadArea.addEventListener('drop', e => {
+                uploadArea.classList.remove('drag-over');
+                handleFiles(e.dataTransfer.files);
+            });
+            fileInput.addEventListener('change', (event) => handleFiles(event.target.files));
 
-        function handleFiles(files) {
-            selectedFiles = Array.from(files).filter(file => file.type.startsWith('image/'));
-            previewContainer.innerHTML = '';
-            if (selectedFiles.length === 0) {
-                uploadText.textContent = 'Klik atau seret gambar ke sini';
+            function handleFiles(files) {
+                selectedFiles = Array.from(files).filter(file => file.type.startsWith('image/'));
+                previewContainer.innerHTML = '';
+                if (selectedFiles.length === 0) {
+                    uploadText.innerHTML = '<i class="fas fa-cloud-upload-alt"></i><span>Klik atau seret gambar ke sini</span>';
+                    uploadButton.style.display = 'none';
+                    return;
+                }
+                uploadText.textContent = `${selectedFiles.length} gambar dipilih.`;
+                uploadButton.style.display = 'block';
+                uploadButton.textContent = `Unggah ${selectedFiles.length} Gambar`;
+                selectedFiles.forEach(file => {
+                    const reader = new FileReader();
+                    reader.onload = e => {
+                        const img = document.createElement('img');
+                        img.src = e.target.result;
+                        img.className = 'preview-image';
+                        previewContainer.appendChild(img);
+                    };
+                    reader.readAsDataURL(file);
+                });
+            }
+
+            // Upload Logic
+            uploadButton.addEventListener('click', async () => {
+                if (selectedFiles.length === 0) return;
+                uploadButton.disabled = true;
+                let successfulLinks = [];
+                let failedFiles = [];
+
+                for (let i = 0; i < selectedFiles.length; i++) {
+                    const file = selectedFiles[i];
+                    uploadButton.innerHTML = `<span class="spinner"></span> Mengunggah ${i + 1} dari ${selectedFiles.length}...`;
+                    const formData = new FormData();
+                    formData.append('image', file);
+                    try {
+                        const response = await fetch('/api/tourl', { method: 'POST', body: formData });
+                        const result = await response.json();
+                        if (!response.ok) throw new Error(result.message || 'Gagal');
+                        successfulLinks.push(result.link);
+                    } catch (error) {
+                        failedFiles.push(file.name);
+                        console.error(`Gagal mengunggah ${file.name}:`, error);
+                    }
+                }
+
+                // Tampilkan Popup Setelah SEMUA Selesai
+                if (successfulLinks.length > 0) {
+                    showSuccessPopup(successfulLinks);
+                }
+                if (failedFiles.length > 0) {
+                    alert(`Gagal mengunggah: ${failedFiles.join(', ')}`);
+                }
+                
+                // Reset UI
+                resetUI();
+            });
+            
+            function showSuccessPopup(links) {
+                const existingPopup = document.getElementById('multi-upload-success-popup');
+                if (existingPopup) existingPopup.remove();
+
+                const popupOverlay = document.createElement('div');
+                popupOverlay.id = 'multi-upload-success-popup';
+                popupOverlay.className = 'popup-overlay';
+
+                let linksHTML = '';
+                links.forEach(link => {
+                    linksHTML += `
+                        <div class="result-item">
+                            <input type="text" value="${link}" readonly>
+                            <button class="copy-btn-popup">Salin</button>
+                        </div>
+                    `;
+                });
+
+                popupOverlay.innerHTML = `
+                    <div class="popup">
+                        <div class="icon"><i class="fas fa-check-circle"></i></div>
+                        <h3>${links.length} Gambar Berhasil Diunggah!</h3>
+                        <div class="popup-results-container">${linksHTML}</div>
+                        <button id="close-popup-button">Tutup</button>
+                    </div>
+                `;
+                
+                document.body.appendChild(popupOverlay);
+                setTimeout(() => popupOverlay.classList.add('show'), 10); // Trigger transition
+
+                popupOverlay.querySelector('#close-popup-button').onclick = () => popupOverlay.classList.remove('show');
+                popupOverlay.querySelectorAll('.copy-btn-popup').forEach(button => {
+                    button.onclick = (e) => {
+                        const input = e.target.previousElementSibling;
+                        input.select();
+                        navigator.clipboard.writeText(input.value);
+                        e.target.textContent = 'Tersalin!';
+                        setTimeout(() => { e.target.textContent = 'Salin'; }, 2000);
+                    };
+                });
+            }
+
+            function resetUI() {
+                uploadButton.innerHTML = 'Unggah Gambar';
+                uploadButton.disabled = false;
                 uploadButton.style.display = 'none';
-                return;
+                previewContainer.innerHTML = '';
+                uploadText.innerHTML = '<i class="fas fa-cloud-upload-alt"></i><span>Klik atau seret gambar ke sini</span>';
+                selectedFiles = [];
+                fileInput.value = '';
             }
-
-            uploadText.textContent = `${selectedFiles.length} gambar dipilih.`;
-            uploadButton.style.display = 'block';
-            uploadButton.textContent = `Unggah ${selectedFiles.length} Gambar`;
-
-            selectedFiles.forEach(file => {
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    const wrapper = document.createElement('div');
-                    wrapper.className = 'preview-image-wrapper';
-                    const img = document.createElement('img');
-                    img.src = e.target.result;
-                    img.className = 'preview-image';
-                    wrapper.appendChild(img);
-                    previewContainer.appendChild(wrapper);
-                };
-                reader.readAsDataURL(file);
-            });
-        }
-
-uploadButton.addEventListener('click', async () => {
-    if (selectedFiles.length === 0) return;
-
-    uploadButton.disabled = true;
-    let successfulLinks = []; // Siapkan array kosong untuk menampung link yang berhasil
-
-    for (let i = 0; i < selectedFiles.length; i++) {
-        const file = selectedFiles[i];
-        uploadButton.innerHTML = `<span class="spinner"></span> Mengunggah ${i + 1} dari ${selectedFiles.length}...`;
-        
-        const formData = new FormData();
-        formData.append('image', file);
-        
-        try {
-            const response = await fetch('/api/tourl', { method: 'POST', body: formData });
-            const result = await response.json();
-            if (!response.ok) {
-                throw new Error(result.message || 'Gagal');
-            }
-            // Jika berhasil, tambahkan link ke array
-            successfulLinks.push(result.link);
-
-        } catch (error) {
-            // Jika gagal, kita bisa tampilkan notifikasi atau log
-            console.error(`Gagal mengunggah ${file.name}:`, error);
-            showNotification(`Gagal mengunggah ${file.name}`, 'error');
-        }
-    }
-
-    // --- Logika Baru: Tampilkan Popup Setelah SEMUA Selesai ---
-    if (successfulLinks.length > 0) {
-        // Hapus popup lama jika ada, lalu buat yang baru
-        const existingPopup = document.getElementById('multi-upload-success-popup');
-        if (existingPopup) existingPopup.remove();
-
-        // Buat elemen popup baru
-        const popupOverlay = document.createElement('div');
-        popupOverlay.id = 'multi-upload-success-popup';
-        popupOverlay.className = 'popup-overlay show';
-        
-        let linksHTML = '';
-        successfulLinks.forEach(link => {
-            linksHTML += `
-                <div class="result-item">
-                    <input type="text" value="${link}" readonly>
-                    <button class="copy-btn-popup">Salin</button>
-                </div>
-            `;
         });
+    </script>
 
-        popupOverlay.innerHTML = `
-            <div class="popup">
-                <div class="icon"><i class="fas fa-check-circle"></i></div>
-                <h3>${successfulLinks.length} Gambar Berhasil Diunggah!</h3>
-                <div class="popup-results-container">
-                    ${linksHTML}
-                </div>
-                <button id="close-popup-button" style="margin-top: 20px; width: 100%;">Tutup</button>
-            </div>
-        `;
-        
-        document.body.appendChild(popupOverlay);
-
-        // Tambahkan fungsi untuk tombol tutup dan salin di popup baru
-        popupOverlay.querySelector('#close-popup-button').onclick = () => popupOverlay.remove();
-        popupOverlay.querySelectorAll('.copy-btn-popup').forEach(button => {
-            button.onclick = (e) => {
-                const input = e.target.previousElementSibling;
-                input.select();
-                navigator.clipboard.writeText(input.value);
-                e.target.textContent = 'Tersalin!';
-                setTimeout(() => { e.target.textContent = 'Salin'; }, 2000);
-            };
-        });
-    }
-
-            uploadButton.innerHTML = 'Unggah Gambar';
-            uploadButton.disabled = false;
-            selectedFiles = [];
-            uploadText.textContent = 'Klik atau seret gambar ke sini';
-            previewContainer.innerHTML = '';
-            uploadButton.style.display = 'none';
-        });
-
-        copyLinkButton.addEventListener('click', () => {
-            popupLinkInput.select();
-            document.execCommand('copy');
-            showNotification('Link berhasil disalin!');
-        });
-
-        closePopupButton.addEventListener('click', () => {
-            uploadSuccessPopup.style.display = 'none';
-        });
-
-        function showNotification(message) {
-            const notificationDiv = document.createElement('div');
-            notificationDiv.classList.add('notification');
-            notificationDiv.textContent = message;
-            document.body.appendChild(notificationDiv);
-            setTimeout(() => {
-                notificationDiv.remove();
-            }, 3000);
-        }
-    });
-</script>
 </body>
 </html>
