@@ -8,7 +8,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
     
     <style>
-        /* ... (Semua CSS Anda yang sudah benar, tidak perlu diubah) ... */
         :root {
             --primary-color: #007aff; --secondary-color: #f2f2f7; --text-color-light: #1d1d1f;
             --light-text-color: #8e8e93; --white-color: #fff; --border-color-light: #d1d1d6;
@@ -179,22 +178,23 @@
                 popupOverlay.id = 'result-popup';
                 popupOverlay.className = 'popup-overlay';
                 
-                let playerHTML = '';
-                const audioProxyUrl = data.audioUrl ? `/api/downloadProxy?url=${encodeURIComponent(data.audioUrl)}&filename=${encodeURIComponent(data.title)}.mp3` : null;
+                const audioStreamUrl = data.audioUrl ? `/api/downloadProxy?url=${encodeURIComponent(data.audioUrl)}&filename=${encodeURIComponent(data.title)}.mp3` : null;
                 
+                let playerHTML = '';
                 if (isUrlInput && data.videoId) {
                     playerHTML = `<div class="popup-player"><iframe src="https://www.youtube.com/embed/${data.videoId}?autoplay=1" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>`;
-                } else if (audioProxyUrl) {
-                    playerHTML = `<div class="popup-player"><audio controls autoplay class="popup-audio-player" src="${audioProxyUrl}"></audio></div>`;
+                } else if (audioStreamUrl) {
+                    playerHTML = `<div class="popup-player"><audio controls autoplay class="popup-audio-player" src="${audioStreamUrl}"></audio></div>`;
                 }
 
                 let buttonsHTML = '';
-                if(audioProxyUrl) {
-                    buttonsHTML += `<a href="${audioProxyUrl}" class="popup-button" style="background-color: var(--warning-color); color: var(--text-primary);"><i class="fas fa-music"></i> Download MP3</a>`;
+                const audioDownloadUrl = audioStreamUrl ? `${audioStreamUrl}&download=true` : null;
+                if(audioDownloadUrl) {
+                    buttonsHTML += `<a href="${audioDownloadUrl}" class="popup-button" style="background-color: var(--warning-color); color: var(--text-primary);"><i class="fas fa-music"></i> Download MP3</a>`;
                 }
-                const videoProxyUrl = data.videoUrl ? `/api/downloadProxy?url=${encodeURIComponent(data.videoUrl)}&filename=${encodeURIComponent(data.title)}.mp4` : null;
-                if(videoProxyUrl) {
-                    buttonsHTML += `<a href="${videoProxyUrl}" class="popup-button" style="background-color: var(--success-color);"><i class="fas fa-video"></i> Download MP4</a>`;
+                const videoDownloadUrl = data.videoUrl ? `/api/downloadProxy?url=${encodeURIComponent(data.videoUrl)}&filename=${encodeURIComponent(data.title)}.mp4&download=true` : null;
+                if(videoDownloadUrl) {
+                    buttonsHTML += `<a href="${videoDownloadUrl}" class="popup-button" style="background-color: var(--success-color);"><i class="fas fa-video"></i> Download MP4</a>`;
                 }
 
                 popupOverlay.innerHTML = `
