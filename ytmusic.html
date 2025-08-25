@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YouTube Music Downloader - Rikishopreal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+    
+    <style>
+        :root {
+            --primary-color: #007aff; --secondary-color: #f2f2f7; --text-color-light: #1d1d1f;
+            --light-text-color: #8e8e93; --white-color: #fff; --border-color-light: #d1d1d6;
+            --success-color: #34c759; --error-color: #ff3b30; --warning-color: #ff9500;
+            --shadow-light: rgba(0, 0, 0, 0.1); --bg-body: var(--secondary-color);
+            --bg-container: var(--white-color); --text-primary: var(--text-color-light);
+            --text-secondary: var(--light-text-color); --border-color: var(--border-color-light); --shadow-color: var(--shadow-light);
+        }
+        body.dark-mode {
+            --bg-body: #000000; --bg-container: #1c1c1e; --text-primary: #f5f5f7;
+            --text-secondary: #8e8e93; --border-color: #3a3a3c; --shadow-color: rgba(0, 0, 0, 0.4);
+        }
+        body {
+            font-family: 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--bg-body); color: var(--text-primary); margin: 0;
+            display: flex; flex-direction: column; justify-content: center; align-items: center; 
+            min-height: 100vh; padding: 20px; box-sizing: border-box; transition: background-color 0.3s ease;
+        }
+        .container {
+            background-color: var(--bg-container); border-radius: 24px; box-shadow: 0 10px 40px var(--shadow-color);
+            padding: 30px 40px; width: 100%; max-width: 500px; text-align: center;
+            animation: fadeIn 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        h1 { color: var(--text-primary); margin: 0 0 10px; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 12px; }
+        p.subtitle { color: var(--text-secondary); margin-bottom: 30px; }
+        .input-group { display: flex; margin-bottom: 20px; }
+        #yt-query {
+            flex-grow: 1; padding: 14px; border: 1px solid var(--border-color);
+            border-radius: 12px 0 0 12px; background-color: var(--bg-body);
+            color: var(--text-primary); font-size: 1em; border-right: none;
+        }
+        #search-btn {
+            padding: 14px 20px; border: none; background-color: var(--primary-color); color: white;
+            border-radius: 0 12px 12px 0; cursor: pointer; font-weight: 600; font-size: 1em;
+            display: flex; align-items: center; justify-content: center; transition: background-color 0.2s ease;
+        }
+        #search-btn:disabled { background-color: var(--light-text-color); cursor: not-allowed; }
+        .spinner {
+            width: 20px; height: 20px; border: 3px solid rgba(255, 255, 255, 0.3);
+            border-top-color: #fff; border-radius: 50%; display: block;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .dark-mode-toggle {
+            position: fixed; top: 20px; right: 20px; background-color: var(--bg-container); color: var(--text-primary);
+            border: 1px solid var(--border-color); border-radius: 50px; padding: 8px; width: 40px; height: 40px;
+            cursor: pointer; font-size: 1.2em; display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 4px 10px var(--shadow-color); z-index: 1001;
+        }
+        .footer { margin-top: 30px; text-align: center; font-size: 0.9em; color: var(--text-secondary); width: 100%; max-width: 500px; }
+        /* ... (CSS footer & animasi tangan tetap sama) ... */
+        .popup-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.6);
+            display: none; justify-content: center; align-items: center; z-index: 1000; opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .popup-overlay.show { display: flex; opacity: 1; }
+        .popup {
+            background-color: var(--bg-container); color: var(--text-primary); border-radius: 20px;
+            padding: 25px; text-align: center; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            width: 90%; max-width: 450px; animation: popIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        @keyframes popIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
+        .popup-thumbnail { width: 120px; height: 120px; border-radius: 12px; object-fit: cover; margin: 0 auto 15px; }
+        .popup-title { font-size: 1.2em; font-weight: 600; margin: 0; }
+        .popup-author { font-size: 0.9em; color: var(--text-secondary); margin-bottom: 15px; }
+        .popup-audio-player { width: 100%; margin-top: 15px; }
+        .popup-buttons { display: flex; flex-direction: column; gap: 10px; margin-top: 20px; }
+        .popup-button { display: block; padding: 12px; border: none; border-radius: 10px; color: white; font-weight: 600; text-decoration: none; text-align: center; transition: transform 0.2s ease; }
+        .popup #close-popup-button { /* ... (CSS tombol tutup tetap sama) ... */ }
+        .toast-notification { /* ... (CSS notifikasi tetap sama) ... */ }
+    </style>
+</head>
+<body class="light-mode">
+    <div id="toast-container"></div>
+    <button id="dark-mode-toggle" class="dark-mode-toggle" aria-label="Ganti Tema"><i class="fas fa-moon"></i></button>
+
+    <div class="container">
+        <h1><i class="fab fa-youtube"></i> YouTube Downloader</h1>
+        <p class="subtitle">Cari judul lagu atau tempelkan link YouTube untuk mengunduh.</p>
+        <div class="input-group">
+            <input type="text" id="yt-query" placeholder="Judul lagu atau link YouTube...">
+            <button id="search-btn"><i class="fas fa-search"></i></button>
+        </div>
+        <div class="footer">
+             Powered by <a href="https://web-toko-riki.vercel.app/" target="_blank"><span class="glow-text">Riki Shop</span></a> | <a href="https://www.youtube.com/@Riki_botz" target="_blank"><i class="fab fa-youtube glow-youtube"></i> Subscribe</a>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const body = document.body;
+            const darkModeToggle = document.getElementById('dark-mode-toggle');
+            const queryInput = document.getElementById('yt-query');
+            const searchBtn = document.getElementById('search-btn');
+            const toastContainer = document.getElementById('toast-container');
+            let toastTimeout;
+
+            function showToast(message, type = 'success') { /* ... (fungsi showToast tetap sama) ... */ }
+            darkModeToggle.addEventListener('click', () => { /* ... (logika dark mode tetap sama) ... */ });
+
+            searchBtn.addEventListener('click', async () => {
+                const query = queryInput.value.trim();
+                if (!query) {
+                    showToast('Silakan masukkan judul atau link.', 'error');
+                    return;
+                }
+                const originalBtnContent = searchBtn.innerHTML;
+                searchBtn.innerHTML = '<span class="spinner"></span>';
+                searchBtn.disabled = true;
+                
+                try {
+                    const response = await fetch('/api/ytmusic', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ query: query })
+                    });
+                    const result = await response.json();
+                    if (!response.ok) throw new Error(result.message);
+                    
+                    showToast('Berhasil ditemukan!', 'success');
+                    showResultPopup(result);
+
+                } catch (error) {
+                    showToast(error.message, 'error');
+                } finally {
+                    searchBtn.innerHTML = originalBtnContent;
+                    searchBtn.disabled = false;
+                }
+            });
+
+            function showResultPopup(data) {
+                const existingPopup = document.getElementById('result-popup');
+                if(existingPopup) existingPopup.remove();
+
+                const popupOverlay = document.createElement('div');
+                popupOverlay.id = 'result-popup';
+                popupOverlay.className = 'popup-overlay';
+                
+                let buttonsHTML = '';
+                if(data.audioUrl) {
+                    const audioProxy = `/api/downloadProxy?url=${encodeURIComponent(data.audioUrl)}&filename=${encodeURIComponent(data.title)}.mp3`;
+                    buttonsHTML += `<a href="${audioProxy}" class="popup-button" style="background-color: var(--warning-color); color: var(--text-primary);"><i class="fas fa-music"></i> Download MP3</a>`;
+                }
+                if(data.videoUrl) {
+                    const videoProxy = `/api/downloadProxy?url=${encodeURIComponent(data.videoUrl)}&filename=${encodeURIComponent(data.title)}.mp4`;
+                    buttonsHTML += `<a href="${videoProxy}" class="popup-button" style="background-color: var(--success-color);"><i class="fas fa-video"></i> Download MP4</a>`;
+                }
+
+                popupOverlay.innerHTML = `
+                    <div class="popup">
+                        <img src="${data.thumbnail}" alt="Thumbnail" class="popup-thumbnail">
+                        <h3 class="popup-title">${data.title}</h3>
+                        <p class="popup-author">oleh ${data.author} - ${data.duration}</p>
+                        <audio controls class="popup-audio-player" src="${data.audioUrl}"></audio>
+                        <div class="popup-buttons">${buttonsHTML}</div>
+                        <button id="close-popup-button">Tutup</button>
+                    </div>
+                `;
+                document.body.appendChild(popupOverlay);
+                setTimeout(() => popupOverlay.classList.add('show'), 10);
+                
+                popupOverlay.querySelector('#close-popup-button').onclick = () => popupOverlay.classList.remove('show');
+            }
+        });
+    </script>
+</body>
+</html>

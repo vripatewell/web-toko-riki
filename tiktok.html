@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0">
     <title>TikTok Downloader - Rikishopreal</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
@@ -21,22 +21,32 @@
             --text-secondary: #8e8e93; --border-color: #3a3a3c; --shadow-color: rgba(0, 0, 0, 0.4);
         }
         body {
-            font-family: 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
-            background-color: var(--bg-body); color: var(--text-primary); margin: 0;
-            display: flex; flex-direction: column; justify-content: center; align-items: center; 
-            min-height: 100vh; padding: 20px; box-sizing: border-box; transition: background-color 0.3s ease;
-        }
-       .container {
+    font-family: 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
+    background-color: var(--bg-body);
+    color: var(--text-primary);
+    margin: 0;
+    
+    /* ▼▼▼ INI KUNCI UTAMANYA ▼▼▼ */
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* Menengahkan secara vertikal */
+    align-items: center;     /* Menengahkan secara horizontal */
+    
+    min-height: 100vh;
+    padding: 20px;
+    box-sizing: border-box;
+    transition: background-color 0.3s ease;
+}
+.container {
     background-color: var(--bg-container);
     border-radius: 24px;
     box-shadow: 0 10px 40px var(--shadow-color);
-    /* ▼▼▼ PERUBAHAN UTAMA ADA DI SINI ▼▼▼ */
-    padding: 30px 25px; /* Padding horizontal dikurangi agar tidak mentok */
+    padding: 30px 25px; /* Pastikan padding kiri-kanan adalah 25px */
     width: 100%;
     max-width: 500px;
     text-align: center;
     animation: fadeIn 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-    box-sizing: border-box; /* Ditambahkan agar padding tidak menambah lebar */
+    box-sizing: border-box; /* Pastikan ini ada */
 }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
         h1 { color: var(--text-primary); margin: 0 0 10px; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 12px; }
