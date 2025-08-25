@@ -17,6 +17,6 @@
     "@octokit/rest": "^20.0.2",
     "formidable": "^3.5.1",
     "node-fetch": "^3.3.2",
-    "node-upload-images": "^1.2.0"
+    "node-upload-images": "^1.0.1"
   }
 }
