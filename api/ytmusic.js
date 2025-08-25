@@ -1,6 +1,13 @@
 import yts from 'yt-search';
 import ytdl from '@vreden/youtube_scraper';
 
+// Fungsi untuk mengekstrak ID Video dari berbagai format URL YouTube
+function getYouTubeID(url) {
+    const regex = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/;
+    const match = url.match(regex);
+    return match ? match[1] : null;
+}
+
 export default async function handler(request, response) {
     if (request.method !== 'POST') {
         return response.status(405).json({ message: 'Metode tidak diizinkan.' });
@@ -12,15 +19,22 @@ export default async function handler(request, response) {
     }
 
     try {
-        // Cari video berdasarkan query atau URL
-        const searchResults = await yts(query);
-        const video = searchResults.videos[0];
+        let video;
+        const videoId = getYouTubeID(query);
 
+        if (videoId) {
+            // Jika input adalah URL, cari berdasarkan ID Video
+            video = await yts({ videoId });
+        } else {
+            // Jika input adalah teks, cari berdasarkan teks
+            const searchResults = await yts(query);
+            video = searchResults.videos[0];
+        }
+        
         if (!video) {
             return response.status(404).json({ message: 'Video tidak ditemukan.' });
         }
 
-        // Ambil link download MP3 dan MP4 secara bersamaan
         const [mp3Result, mp4Result] = await Promise.all([
             ytdl.ytmp3(video.url),
             ytdl.ytmp4(video.url)
@@ -30,7 +44,6 @@ export default async function handler(request, response) {
             throw new Error('Gagal mendapatkan link download.');
         }
 
-        // Siapkan data untuk dikirim kembali ke frontend
         const finalResult = {
             title: video.title,
             author: video.author.name,
