@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
     
     <style>
+        /* ... (Semua CSS Anda yang sudah benar, tidak perlu diubah) ... */
         :root {
             --primary-color: #007aff; --secondary-color: #f2f2f7; --text-color-light: #1d1d1f;
             --light-text-color: #8e8e93; --white-color: #fff; --border-color-light: #d1d1d6;
@@ -159,7 +160,6 @@
                     if (!response.ok) throw new Error(result.message);
                     
                     showToast('Berhasil ditemukan!', 'success');
-                    // Kirim informasi apakah input adalah URL ke fungsi popup
                     const isUrl = query.includes('youtube.com') || query.includes('youtu.be');
                     showResultPopup(result, isUrl);
 
@@ -180,24 +180,21 @@
                 popupOverlay.className = 'popup-overlay';
                 
                 let playerHTML = '';
-                // LOGIKA BARU: Pilih pemutar berdasarkan tipe input
-                if (isUrlInput) {
-                    // Jika input adalah URL, tampilkan pemutar video iframe
+                const audioProxyUrl = data.audioUrl ? `/api/downloadProxy?url=${encodeURIComponent(data.audioUrl)}&filename=${encodeURIComponent(data.title)}.mp3` : null;
+                
+                if (isUrlInput && data.videoId) {
                     playerHTML = `<div class="popup-player"><iframe src="https://www.youtube.com/embed/${data.videoId}?autoplay=1" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>`;
-                } else {
-                    // Jika input adalah judul lagu, tampilkan pemutar audio
-                    const audioProxyUrl = data.audioUrl ? `/api/downloadProxy?url=${encodeURIComponent(data.audioUrl)}&filename=${encodeURIComponent(data.title)}.mp3` : null;
-                    playerHTML = audioProxyUrl ? `<div class="popup-player"><audio controls autoplay class="popup-audio-player" src="${audioProxyUrl}"></audio></div>` : '';
+                } else if (audioProxyUrl) {
+                    playerHTML = `<div class="popup-player"><audio controls autoplay class="popup-audio-player" src="${audioProxyUrl}"></audio></div>`;
                 }
 
                 let buttonsHTML = '';
-                if(data.audioUrl) {
-                    const audioProxy = `/api/downloadProxy?url=${encodeURIComponent(data.audioUrl)}&filename=${encodeURIComponent(data.title)}.mp3`;
-                    buttonsHTML += `<a href="${audioProxy}" class="popup-button" style="background-color: var(--warning-color); color: var(--text-primary);"><i class="fas fa-music"></i> Download MP3</a>`;
+                if(audioProxyUrl) {
+                    buttonsHTML += `<a href="${audioProxyUrl}" class="popup-button" style="background-color: var(--warning-color); color: var(--text-primary);"><i class="fas fa-music"></i> Download MP3</a>`;
                 }
-                if(data.videoUrl) {
-                    const videoProxy = `/api/downloadProxy?url=${encodeURIComponent(data.videoUrl)}&filename=${encodeURIComponent(data.title)}.mp4`;
-                    buttonsHTML += `<a href="${videoProxy}" class="popup-button" style="background-color: var(--success-color);"><i class="fas fa-video"></i> Download MP4</a>`;
+                const videoProxyUrl = data.videoUrl ? `/api/downloadProxy?url=${encodeURIComponent(data.videoUrl)}&filename=${encodeURIComponent(data.title)}.mp4` : null;
+                if(videoProxyUrl) {
+                    buttonsHTML += `<a href="${videoProxyUrl}" class="popup-button" style="background-color: var(--success-color);"><i class="fas fa-video"></i> Download MP4</a>`;
                 }
 
                 popupOverlay.innerHTML = `
@@ -206,7 +203,7 @@
                         <h3 class="popup-title">${data.title}</h3>
                         <p class="popup-author">oleh ${data.author} - ${data.duration}</p>
                         ${playerHTML}
-                        <div class="popup-buttons">${buttonsHTML}</div>
+                        <div class="popup-buttons">${buttonsHTML || '<p>Tidak ada link download tersedia.</p>'}</div>
                         <button id="close-popup-button">Tutup</button>
                     </div>
                 `;
