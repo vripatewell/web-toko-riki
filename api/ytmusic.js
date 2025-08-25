@@ -1,5 +1,6 @@
 import yts from 'yt-search';
-import ytdl from 'ytdl-core';
+// ▼▼▼ MENGGUNAKAN PACKAGE ANDA DENGAN SINTAKS YANG BENAR ▼▼▼
+import ytdl from '@vreden/youtube_scraper';
 
 // Fungsi untuk mengekstrak ID Video dari berbagai format URL YouTube
 function getYouTubeID(url) {
@@ -19,41 +20,44 @@ export default async function handler(request, response) {
     }
 
     try {
-        let videoInfo;
+        let video;
         const videoId = getYouTubeID(query);
 
         if (videoId) {
-            videoInfo = await yts({ videoId });
+            video = await yts({ videoId });
         } else {
             const searchResults = await yts(query);
-            videoInfo = searchResults.videos[0];
+            video = searchResults.videos[0];
         }
         
-        if (!videoInfo) {
+        if (!video) {
             return response.status(404).json({ message: 'Video tidak ditemukan.' });
         }
 
-        // Dapatkan info lengkap termasuk format download menggunakan ytdl-core
-        const info = await ytdl.getInfo(videoInfo.url);
+        const [mp3Result, mp4Result] = await Promise.all([
+            ytdl.ytmp3(video.url),
+            ytdl.ytmp4(video.url)
+        ]);
 
-        const audioFormat = ytdl.chooseFormat(info.formats, { quality: 'highestaudio', filter: 'audioonly' });
-        const videoFormat = ytdl.chooseFormat(info.formats, { quality: 'highestvideo', filter: 'videoandaudio' });
+        if (!mp3Result.status && !mp4Result.status) {
+            throw new Error('Gagal mendapatkan link download dari server.');
+        }
 
         const finalResult = {
-            title: videoInfo.title,
-            author: videoInfo.author.name,
-            thumbnail: videoInfo.thumbnail,
-            duration: videoInfo.timestamp,
-            url: videoInfo.url,
-            videoId: videoInfo.videoId,
-            audioUrl: audioFormat ? audioFormat.url : null,
-            videoUrl: videoFormat ? videoFormat.url : null,
+            title: video.title,
+            author: video.author.name,
+            thumbnail: video.thumbnail,
+            duration: video.timestamp,
+            url: video.url,
+            videoId: video.videoId,
+            audioUrl: mp3Result.status ? mp3Result.download.url : null,
+            videoUrl: mp4Result.status ? mp4Result.download.url : null,
         };
         
         response.status(200).json(finalResult);
 
     } catch (error) {
         console.error("Error pada API ytmusic:", error);
-        response.status(500).json({ message: 'Gagal memproses permintaan YouTube.' });
+        response.status(500).json({ message: error.message || 'Terjadi kesalahan di server.' });
     }
 }
