@@ -395,32 +395,81 @@
             });
         }
 
-        uploadButton.addEventListener('click', async () => {
-            if (selectedFiles.length === 0) return;
+uploadButton.addEventListener('click', async () => {
+    if (selectedFiles.length === 0) return;
 
-            uploadButton.disabled = true;
-            uploadButton.innerHTML = '<span class="spinner"></span> Mengunggah...';
-            resultContainer.innerHTML = ''; // Clear previous results
+    uploadButton.disabled = true;
+    let successfulLinks = []; // Siapkan array kosong untuk menampung link yang berhasil
 
-            for (const file of selectedFiles) {
-                const formData = new FormData();
-                formData.append('image', file);
-
-                try {
-                    const response = await fetch('/api/tourl', { method: 'POST', body: formData });
-                    const result = await response.json();
-                    if (!response.ok) {
-                        throw new Error(result.message || 'Gagal mengunggah.');
-                    }
-                    popupLinkInput.value = result.link;
-                    uploadSuccessPopup.style.display = 'flex';
-                } catch (error) {
-                    const errorDiv = document.createElement('div');
-                    errorDiv.className = 'result-item';
-                    errorDiv.innerHTML = `<input type="text" value="Gagal: ${file.name} - ${error.message}" readonly style="color: var(--error-color);">`;
-                    resultContainer.appendChild(errorDiv);
-                }
+    for (let i = 0; i < selectedFiles.length; i++) {
+        const file = selectedFiles[i];
+        uploadButton.innerHTML = `<span class="spinner"></span> Mengunggah ${i + 1} dari ${selectedFiles.length}...`;
+        
+        const formData = new FormData();
+        formData.append('image', file);
+        
+        try {
+            const response = await fetch('/api/tourl', { method: 'POST', body: formData });
+            const result = await response.json();
+            if (!response.ok) {
+                throw new Error(result.message || 'Gagal');
             }
+            // Jika berhasil, tambahkan link ke array
+            successfulLinks.push(result.link);
+
+        } catch (error) {
+            // Jika gagal, kita bisa tampilkan notifikasi atau log
+            console.error(`Gagal mengunggah ${file.name}:`, error);
+            showNotification(`Gagal mengunggah ${file.name}`, 'error');
+        }
+    }
+
+    // --- Logika Baru: Tampilkan Popup Setelah SEMUA Selesai ---
+    if (successfulLinks.length > 0) {
+        // Hapus popup lama jika ada, lalu buat yang baru
+        const existingPopup = document.getElementById('multi-upload-success-popup');
+        if (existingPopup) existingPopup.remove();
+
+        // Buat elemen popup baru
+        const popupOverlay = document.createElement('div');
+        popupOverlay.id = 'multi-upload-success-popup';
+        popupOverlay.className = 'popup-overlay show';
+        
+        let linksHTML = '';
+        successfulLinks.forEach(link => {
+            linksHTML += `
+                <div class="result-item">
+                    <input type="text" value="${link}" readonly>
+                    <button class="copy-btn-popup">Salin</button>
+                </div>
+            `;
+        });
+
+        popupOverlay.innerHTML = `
+            <div class="popup">
+                <div class="icon"><i class="fas fa-check-circle"></i></div>
+                <h3>${successfulLinks.length} Gambar Berhasil Diunggah!</h3>
+                <div class="popup-results-container">
+                    ${linksHTML}
+                </div>
+                <button id="close-popup-button" style="margin-top: 20px; width: 100%;">Tutup</button>
+            </div>
+        `;
+        
+        document.body.appendChild(popupOverlay);
+
+        // Tambahkan fungsi untuk tombol tutup dan salin di popup baru
+        popupOverlay.querySelector('#close-popup-button').onclick = () => popupOverlay.remove();
+        popupOverlay.querySelectorAll('.copy-btn-popup').forEach(button => {
+            button.onclick = (e) => {
+                const input = e.target.previousElementSibling;
+                input.select();
+                navigator.clipboard.writeText(input.value);
+                e.target.textContent = 'Tersalin!';
+                setTimeout(() => { e.target.textContent = 'Salin'; }, 2000);
+            };
+        });
+    }
 
             uploadButton.innerHTML = 'Unggah Gambar';
             uploadButton.disabled = false;
