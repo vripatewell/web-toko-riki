@@ -26,17 +26,17 @@
             display: flex; flex-direction: column; justify-content: center; align-items: center; 
             min-height: 100vh; padding: 20px; box-sizing: border-box; transition: background-color 0.3s ease;
         }
-        .container {
+       .container {
     background-color: var(--bg-container);
     border-radius: 24px;
     box-shadow: 0 10px 40px var(--shadow-color);
     /* ▼▼▼ PERUBAHAN UTAMA ADA DI SINI ▼▼▼ */
-    padding: 30px 25px; /* Padding horizontal dikurangi dari 40px menjadi 25px */
+    padding: 30px 25px; /* Padding horizontal dikurangi agar tidak mentok */
     width: 100%;
     max-width: 500px;
     text-align: center;
     animation: fadeIn 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-    box-sizing: border-box; /* Tambahkan ini untuk perhitungan padding yang lebih baik */
+    box-sizing: border-box; /* Ditambahkan agar padding tidak menambah lebar */
 }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
         h1 { color: var(--text-primary); margin: 0 0 10px; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 12px; }
@@ -184,9 +184,9 @@
         </div>
         
         <div class="footer">
-            Powered by <a href="https://web-toko-riki.vercel.app/" target="_blank" style="margin-left: 5px;"><span class="glow-text">Riki Shop</span></a>
+            Powered by <a href="https://toko.rikishop.my.id" target="_blank" style="margin-left: 5px;"><span class="glow-text">Riki Shop</span></a>
             <span style="margin: 0 10px;">|</span>
-            <a href="https://www.youtube.com/@Riki_botz" target="_blank">
+            <a href="https://www.youtube.com/@rikishopreal" target="_blank">
                 <i class="fab fa-youtube glow-youtube"></i> Subscribe
             </a>
         </div>
