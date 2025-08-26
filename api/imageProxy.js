@@ -8,16 +8,19 @@ export default async function handler(request, response) {
     }
 
     try {
-        // Validasi keamanan dasar: pastikan URL adalah domain TikTok
+        // ▼▼▼ PERBAIKAN: Izinkan beberapa domain ▼▼▼
+        const allowedDomains = ['tiktokcdn.com', 'rapidcdn.app', 'cdninstagram.com'];
         const urlHost = new URL(url).hostname;
-        if (!urlHost.endsWith('tiktokcdn.com') && !urlHost.endsWith('tiktok.com')) {
+        const isAllowed = allowedDomains.some(domain => urlHost.endsWith(domain));
+
+        if (!isAllowed) {
              return response.status(403).send('Domain not allowed.');
         }
+        // ▲▲▲ AKHIR PERBAIKAN ▲▲▲
 
         const externalResponse = await fetch(url, {
             headers: {
-                // Menyamarkan request seolah-olah dari browser biasa
-                'Referer': 'https://www.tiktok.com/',
+                'Referer': 'https://www.instagram.com/',
                 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36'
             }
         });
@@ -29,7 +32,6 @@ export default async function handler(request, response) {
         const contentType = externalResponse.headers.get('content-type');
         response.setHeader('Content-Type', contentType || 'image/jpeg');
         
-        // Alirkan gambar langsung ke browser
         externalResponse.body.pipe(response);
 
     } catch (error) {
