@@ -8,8 +8,8 @@ export default async function handler(request, response) {
     }
 
     try {
-        // ▼▼▼ PERBAIKAN: Izinkan beberapa domain ▼▼▼
-        const allowedDomains = ['tiktokcdn.com', 'rapidcdn.app', 'cdninstagram.com'];
+        // ▼▼▼ PERBAIKAN: Tambahkan domain '123tokyo.xyz' ▼▼▼
+        const allowedDomains = ['tiktokcdn.com', 'rapidcdn.app', 'cdninstagram.com', '123tokyo.xyz'];
         const urlHost = new URL(url).hostname;
         const isAllowed = allowedDomains.some(domain => urlHost.endsWith(domain));
         
