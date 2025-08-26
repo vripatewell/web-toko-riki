@@ -1,42 +1,57 @@
-import ytdl from '@vreden/youtube_scraper';
-import fetch from 'node-fetch';
+import yts from 'yt-search';
+import ytdl from 'ytdl-core';
+
+function getYouTubeID(url) {
+    const regex = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/;
+    const match = url.match(regex);
+    return match ? match[1] : null;
+}
 
 export default async function handler(request, response) {
     if (request.method !== 'POST') {
         return response.status(405).json({ message: 'Metode tidak diizinkan.' });
     }
 
-    const { url, format } = request.body;
-    if (!url || !format || !['ytmp3', 'ytmp4'].includes(format)) {
-        return response.status(400).json({ message: 'Parameter URL dan format tidak valid.' });
+    const { query } = request.body;
+    if (!query) {
+        return response.status(400).json({ message: 'Query pencarian tidak boleh kosong.' });
     }
 
     try {
-        const downloadResult = format === 'ytmp3' ? await ytdl.ytmp3(url) : await ytdl.ytmp4(url);
+        let videoInfo;
+        const videoId = getYouTubeID(query);
 
-        if (!downloadResult.status || !downloadResult.download.url) {
-            throw new Error('Gagal mendapatkan link download dari server sumber.');
+        if (videoId) {
+            videoInfo = await yts({ videoId });
+        } else {
+            const searchResults = await yts(query);
+            videoInfo = searchResults.videos[0];
         }
 
-        const title = downloadResult.title || 'youtube_download';
-        const filename = `${title}.${format.replace('ytm', '')}`;
-        const externalFileUrl = downloadResult.download.url;
-        const externalResponse = await fetch(externalFileUrl);
-
-        if (!externalResponse.ok) {
-            throw new Error(`Gagal mengambil file: Status ${externalResponse.status}`);
+        if (!videoInfo) {
+            return response.status(404).json({ message: 'Video tidak ditemukan.' });
         }
 
-        response.setHeader('Content-Disposition', `attachment; filename="${encodeURIComponent(filename)}"`);
-        const contentType = externalResponse.headers.get('content-type');
-        if (contentType) {
-            response.setHeader('Content-Type', contentType);
-        }
+        const info = await ytdl.getInfo(videoInfo.url);
 
-        externalResponse.body.pipe(response);
+        const audioFormat = ytdl.chooseFormat(info.formats, { quality: 'highestaudio', filter: 'audioonly' });
+        const videoFormat = ytdl.chooseFormat(info.formats, { quality: 'highestvideo', filter: 'videoandaudio' });
+
+        const finalResult = {
+            title: videoInfo.title,
+            author: videoInfo.author.name,
+            thumbnail: videoInfo.thumbnail,
+            duration: videoInfo.timestamp,
+            url: videoInfo.url,
+            videoId: videoInfo.videoId,
+            audioUrl: audioFormat ? audioFormat.url : null,
+            videoUrl: videoFormat ? videoFormat.url : null,
+        };
+
+        response.status(200).json(finalResult);
 
     } catch (error) {
-        console.error("Error pada API yt-download:", error);
-        response.status(500).json({ message: error.message || 'Terjadi kesalahan di server.' });
+        console.error("Error pada API ytmusic:", error);
+        response.status(500).json({ message: 'Gagal memproses permintaan YouTube.' });
     }
 }
