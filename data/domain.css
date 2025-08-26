@@ -330,3 +330,64 @@ input:checked + .slider:before { transform: translateX(20px); }
     background-color: var(--primary-color); /* Warna biru primer */
     color: white;
 }
+
+/* ========================= */
+/* RESPONSIVE FIX            */
+/* ========================= */
+
+/* Untuk layar kecil (HP < 480px) */
+@media (max-width: 480px) {
+  .page-container {
+    padding: 15px;
+  }
+  .form-card {
+    padding: 20px 15px;
+    border-radius: 15px;
+  }
+  .admin-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  h2 {
+    font-size: 1.2em;
+  }
+  p {
+    font-size: 0.85em;
+  }
+  button {
+    font-size: 0.9em;
+    padding: 12px;
+  }
+  input, select {
+    font-size: 0.9em;
+    padding: 10px 12px;
+  }
+  .modal-content {
+    max-width: 100%;
+    border-radius: 10px;
+  }
+}
+
+/* Untuk tablet (481px – 768px) */
+@media (max-width: 768px) {
+  .form-card {
+    padding: 25px 20px;
+  }
+  .admin-header h2 {
+    font-size: 1.3em;
+  }
+  .modal-content {
+    max-width: 90%;
+  }
+}
+
+/* Untuk desktop besar (lebih dari 1200px) */
+@media (min-width: 1200px) {
+  .page-container {
+    max-width: 800px;
+  }
+  .form-card {
+    max-width: 600px;
+  }
+}
