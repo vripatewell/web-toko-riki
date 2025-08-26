@@ -274,79 +274,84 @@
 
             // ▼▼▼ GANTI FUNGSI LAMA DENGAN YANG INI ▼▼▼
 function showResultPopup(result) {
-    const existingPopup = document.getElementById('download-popup');
-    if (existingPopup) existingPopup.remove();
+  const existingPopup = document.getElementById('download-popup');
+  if (existingPopup) existingPopup.remove();
 
-    const popupOverlay = document.createElement('div');
-    popupOverlay.id = 'download-popup';
-    popupOverlay.className = 'popup-overlay';
+  const popupOverlay = document.createElement('div');
+  popupOverlay.id = 'download-popup';
+  popupOverlay.className = 'popup-overlay';
 
-    let contentHTML = '';
-    let buttonsHTML = '';
-    const title = result.description ? (result.description.substring(0, 50) + '...') : 'Hasil Ditemukan';
+  let contentHTML = '';
+  let buttonsHTML = '';
+  const title = result.description ? (result.description.substring(0, 50) + '...') : 'Hasil Ditemukan';
 
-    if (result.video_nowm) { // Jika hasilnya video
-        contentHTML = `<video src="${result.video_nowm}" controls class="popup-video"></video>`;
-        
-        // --- PERUBAHAN DI SINI ---
-        const videoProxyUrl = `/api/downloadProxy?url=${encodeURIComponent(result.video_nowm)}&filename=tiktok_video.mp4`;
-        buttonsHTML += `<a href="${videoProxyUrl}" class="popup-button btn-download-popup-video"><i class="fas fa-video"></i> Download Video</a>`;
-
-        if (result.audio_url) {
-            const audioProxyUrl = `/api/downloadProxy?url=${encodeURIComponent(result.audio_url)}&filename=tiktok_audio.mp3`;
-            buttonsHTML += `<a href="${audioProxyUrl}" class="popup-button btn-download-popup-audio"><i class="fas fa-music"></i> Download Audio</a>`;
-        }
-
-    } else if (result.slides && result.slides.length > 0) { // Jika hasilnya foto slideshow
-        contentHTML = '<div class="popup-images">';
-        result.slides.forEach(imgUrl => {
-            contentHTML += `<img src="${imgUrl}" alt="TikTok Slide">`;
-        });
-        contentHTML += '</div>';
-        buttonsHTML += `<button id="downloadAllImagesBtn" class="popup-button btn-download-all-images"><i class="fas fa-images"></i> Download Semua Foto (${result.slides.length})</button>`;
-    } else {
-        contentHTML = '<p>Konten tidak ditemukan atau tidak didukung.</p>';
+  if (result.video_nowm) {
+    // --- VIDEO (sudah jalan, jangan ubah) ---
+    contentHTML = `<video src="${result.video_nowm}" controls class="popup-video"></video>`;
+    const videoProxyUrl = `/api/downloadProxy?url=${encodeURIComponent(result.video_nowm)}&filename=${Date.now()}_${Math.random().toString(36).substring(2, 8)}.mp4`;
+    buttonsHTML += `<a href="${videoProxyUrl}" class="popup-button btn-download-popup-video"><i class="fas fa-video"></i> Download Video</a>`;
+    if (result.audio_url) {
+      const audioProxyUrl = `/api/downloadProxy?url=${encodeURIComponent(result.audio_url)}&filename=${Date.now()}_${Math.random().toString(36).substring(2, 8)}.mp3`;
+      buttonsHTML += `<a href="${audioProxyUrl}" class="popup-button btn-download-popup-audio"><i class="fas fa-music"></i> Download Audio</a>`;
     }
 
-    popupOverlay.innerHTML = `
-        <div class="popup">
-            <h3>${title}</h3>
-            <div class="popup-content">${contentHTML}</div>
-            <div class="popup-buttons">${buttonsHTML}</div>
-            <button id="close-popup-button">Tutup</button>
+  } else if (result.slides && result.slides.length > 0) {
+    // --- SLIDESHOW FOTO ---
+    contentHTML = '<div class="popup-images">';
+    result.slides.forEach((imgUrl, index) => {
+      const proxyUrl = `/api/downloadProxy?url=${encodeURIComponent(imgUrl)}&filename=${Date.now()}_${Math.random().toString(36).substring(2, 8)}.jpg`;
+      contentHTML += `
+        <div style="display:flex;flex-direction:column;align-items:center">
+          <img src="${imgUrl}" alt="TikTok Slide">
+          <a href="${proxyUrl}" class="popup-button" style="margin-top:5px;background:#007aff"><i class="fas fa-download"></i> Foto ${index + 1}</a>
         </div>
-    `;
+      `;
+    });
+    contentHTML += '</div>';
+    buttonsHTML += `<button id="downloadAllImagesBtn" class="popup-button btn-download-all-images"><i class="fas fa-images"></i> Download Semua Foto (${result.slides.length})</button>`;
 
-    document.body.appendChild(popupOverlay);
-    setTimeout(() => popupOverlay.classList.add('show'), 10);
+  } else if (result.photo) {
+    // --- 1 FOTO (post foto tunggal) ---
+    const proxyUrl = `/api/downloadProxy?url=${encodeURIComponent(result.photo)}&filename=${Date.now()}_${Math.random().toString(36).substring(2, 8)}.jpg`;
+    contentHTML = `<img src="${result.photo}" alt="TikTok Photo" style="max-width:100%;border-radius:12px">`;
+    buttonsHTML += `<a href="${proxyUrl}" class="popup-button btn-download-all-images"><i class="fas fa-image"></i> Download Foto</a>`;
 
-    // Event Listeners untuk popup
-    const closeBtn = popupOverlay.querySelector('#close-popup-button');
-    if (closeBtn) closeBtn.onclick = () => popupOverlay.classList.remove('show');
-    popupOverlay.onclick = e => { if (e.target === popupOverlay) popupOverlay.classList.remove('show'); };
+  } else {
+    contentHTML = '<p>Konten tidak ditemukan atau tidak didukung.</p>';
+  }
 
-    const downloadAllBtn = document.getElementById('downloadAllImagesBtn');
-    if (downloadAllBtn) {
-        downloadAllBtn.onclick = () => {
-            downloadAllBtn.textContent = 'Mengunduh...';
-            showToast('Download semua foto dimulai...', 'success');
-            
-            // --- PERUBAHAN DI SINI JUGA ---
-            result.slides.forEach((url, index) => {
-                const proxyUrl = `/api/downloadProxy?url=${encodeURIComponent(url)}&filename=tiktok_slide_${index + 1}.jpeg`;
-                // Buat link tak terlihat dan klik untuk men-download
-                const link = document.createElement('a');
-                link.href = proxyUrl;
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-            });
+  popupOverlay.innerHTML = `
+    <div class="popup">
+      <h3>${title}</h3>
+      <div class="popup-content">${contentHTML}</div>
+      <div class="popup-buttons">${buttonsHTML}</div>
+      <button id="close-popup-button">Tutup</button>
+    </div>
+  `;
+  document.body.appendChild(popupOverlay);
+  setTimeout(() => popupOverlay.classList.add('show'), 10);
 
-            setTimeout(() => {
-                downloadAllBtn.textContent = `Download Semua Foto (${result.slides.length})`;
-            }, 2000);
-        };
-    }
+  // Event close
+  const closeBtn = popupOverlay.querySelector('#close-popup-button');
+  if (closeBtn) closeBtn.onclick = () => popupOverlay.remove();
+  popupOverlay.onclick = e => { if (e.target === popupOverlay) popupOverlay.remove(); };
+
+  // Event download semua foto
+  const downloadAllBtn = document.getElementById('downloadAllImagesBtn');
+  if (downloadAllBtn) {
+    downloadAllBtn.onclick = () => {
+      downloadAllBtn.textContent = 'Mengunduh...';
+      result.slides.forEach(url => {
+        const proxyUrl = `/api/downloadProxy?url=${encodeURIComponent(url)}&filename=${Date.now()}_${Math.random().toString(36).substring(2, 8)}.jpg`;
+        const a = document.createElement('a');
+        a.href = proxyUrl;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+      });
+      setTimeout(() => { downloadAllBtn.textContent = `Download Semua Foto (${result.slides.length})`; }, 1500);
+    };
+  }
 }
             
             // Animasi tangan (jika ada footer)
