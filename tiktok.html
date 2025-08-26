@@ -59,7 +59,6 @@
             box-shadow: 0 4px 10px var(--shadow-color); z-index: 1001;
         }
         
-        /* ▼▼▼ CSS FOOTER & ANIMASI DIKEMBALIKAN ▼▼▼ */
         .footer { margin-top: 30px; text-align: center; font-size: 0.9em; color: var(--text-secondary); width: 100%; max-width: 500px; }
         .footer a { color: var(--text-secondary); text-decoration: none; font-weight: 600; display: inline-flex; align-items: center; gap: 8px; transition: color 0.3s ease, text-shadow 0.3s ease; }
         .footer a:hover { color: var(--primary-color); text-shadow: 0 0 8px var(--primary-color); }
@@ -79,7 +78,6 @@
             30%, 70% { transform: translateX(-50%) translateY(0); opacity: 1; }
             80% { transform: translateX(-50%) translateY(10px); opacity: 0; }
         }
-        /* ▲▲▲ CSS FOOTER SELESAI ▲▲▲ */
 
         /* GAYA POPUP */
         .popup-overlay {
@@ -124,7 +122,6 @@
             color: var(--text-secondary);
         }
 
-        /* NOTIFIKASI GAYA IPHONE (TOAST) */
         #toast-container { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 9999; }
         .toast-notification {
             padding: 12px 20px; background-color: #333; color: white; border-radius: 25px;
@@ -158,7 +155,7 @@
                 <i class="fab fa-youtube glow-youtube"></i> Subscribe
             </a>
         </div>
-        </div>
+    </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
@@ -166,11 +163,9 @@
             const darkModeToggle = document.getElementById('dark-mode-toggle');
             const urlInput = document.getElementById('tiktok-url');
             const downloadBtn = document.getElementById('download-btn');
-            const toastContainer = document.getElementById('toast-container');
-            let toastTimeout;
-
+            
             function showToast(message, type = 'success') {
-                if(toastTimeout) clearTimeout(toastTimeout);
+                const toastContainer = document.getElementById('toast-container');
                 const toast = document.createElement('div');
                 toast.className = `toast-notification ${type}`;
                 const iconClass = type === 'success' ? 'fa-check-circle' : 'fa-times-circle';
@@ -178,30 +173,25 @@
                 toastContainer.innerHTML = '';
                 toastContainer.appendChild(toast);
                 setTimeout(() => toast.classList.add('show'), 10);
-                toastTimeout = setTimeout(() => {
+                setTimeout(() => {
                     toast.classList.remove('show');
                     toast.addEventListener('transitionend', () => toast.remove());
                 }, 3000);
             }
-
             darkModeToggle.addEventListener('click', () => {
                 body.classList.toggle('dark-mode');
                 const isDarkMode = body.classList.contains('dark-mode');
                 darkModeToggle.querySelector('i').className = isDarkMode ? 'fas fa-sun' : 'fas fa-moon';
                 localStorage.setItem('darkMode', isDarkMode);
             });
-            
             if (localStorage.getItem('darkMode') === 'true') {
                  body.classList.add('dark-mode');
                  darkModeToggle.querySelector('i').className = 'fas fa-sun';
             }
-
+            
             downloadBtn.addEventListener('click', async () => {
                 const tiktokUrl = urlInput.value.trim();
-                if (!tiktokUrl) {
-                    showToast('Silakan masukkan URL TikTok.', 'error');
-                    return;
-                }
+                if (!tiktokUrl) return showToast('Silakan masukkan URL TikTok.', 'error');
                 const originalBtnContent = downloadBtn.innerHTML;
                 downloadBtn.innerHTML = '<span class="spinner"></span>';
                 downloadBtn.disabled = true;
@@ -235,37 +225,32 @@
                 let buttonsHTML = '';
                 const title = result.description ? (result.description.substring(0, 50) + '...') : 'Hasil Ditemukan';
 
-                const generateProxyUrl = (url, extension) => {
-                    const filename = `${Date.now()}_${Math.random().toString(36).substring(2, 8)}.${extension}`;
-                    return `/api/downloadProxy?url=${encodeURIComponent(url)}&filename=${filename}`;
-                };
+                const generateProxyUrl = (url, ext) => `/api/downloadProxy?url=${encodeURIComponent(url)}&filename=${Date.now()}.${ext}`;
 
                 if (result.slides && result.slides.length > 0) {
                     contentHTML = '<div class="popup-images">';
                     result.slides.forEach((imgUrl, index) => {
-                        // ▼▼▼ PERBAIKAN FOTO TIDAK MUNCUL ▼▼▼
+                        const displayUrl = `/api/imageProxy?url=${encodeURIComponent(imgUrl)}`;
                         contentHTML += `
                             <div class="image-slide">
-                                <img src="${imgUrl}" alt="TikTok Slide ${index + 1}" referrerpolicy="no-referrer">
-                                <a href="${generateProxyUrl(imgUrl, 'jpg')}" class="popup-button btn-download-single-image" style="width:100%"><i class="fas fa-download"></i> Download Foto ${index + 1}</a>
+                                <img src="${displayUrl}" alt="TikTok Slide ${index + 1}">
+                                <a href="${generateProxyUrl(imgUrl, 'jpg')}" class="popup-button btn-download-single-image" style="width:100%"><i class="fas fa-download"></i> Foto ${index + 1}</a>
                             </div>
                         `;
-                        // ▲▲▲ referrer ditambahkan ▲▲▲
                     });
                     contentHTML += '</div>';
-                    buttonsHTML += `<button id="downloadAllImagesBtn" class="popup-button btn-download-all-images"><i class="fas fa-images"></i> Download Semua Foto (${result.slides.length})</button>`;
+                    buttonsHTML += `<button id="downloadAllImagesBtn" class="popup-button btn-download-all-images"><i class="fas fa-images"></i> Semua Foto (${result.slides.length})</button>`;
                 
                 } else if (result.photo) {
-                    // ▼▼▼ PERBAIKAN FOTO TIDAK MUNCUL ▼▼▼
-                    contentHTML = `<div style="text-align:center;"><img src="${result.photo}" alt="TikTok Photo" style="max-width:100%;border-radius:12px" referrerpolicy="no-referrer"></div>`;
-                    // ▲▲▲ referrer ditambahkan ▲▲▲
+                    const displayUrl = `/api/imageProxy?url=${encodeURIComponent(result.photo)}`;
+                    contentHTML = `<div style="text-align:center;"><img src="${displayUrl}" alt="TikTok Photo" style="max-width:100%;border-radius:12px"></div>`;
                     buttonsHTML += `<a href="${generateProxyUrl(result.photo, 'jpg')}" class="popup-button btn-download-all-images"><i class="fas fa-image"></i> Download Foto</a>`;
                 
                 } else if (result.video_nowm) {
                     contentHTML = `<video src="${result.video_nowm}" controls class="popup-video"></video>`;
-                    buttonsHTML += `<a href="${generateProxyUrl(result.video_nowm, 'mp4')}" class="popup-button btn-download-popup-video"><i class="fas fa-video"></i> Download Video</a>`;
+                    buttonsHTML += `<a href="${generateProxyUrl(result.video_nowm, 'mp4')}" class="popup-button btn-download-popup-video"><i class="fas fa-video"></i> Video</a>`;
                     if (result.audio_url) {
-                        buttonsHTML += `<a href="${generateProxyUrl(result.audio_url, 'mp3')}" class="popup-button btn-download-popup-audio"><i class="fas fa-music"></i> Download Audio</a>`;
+                        buttonsHTML += `<a href="${generateProxyUrl(result.audio_url, 'mp3')}" class="popup-button btn-download-popup-audio"><i class="fas fa-music"></i> Audio</a>`;
                     }
                 } else {
                     contentHTML = '<p>Konten tidak ditemukan atau tidak didukung.</p>';
@@ -287,8 +272,7 @@
                     popupOverlay.addEventListener('transitionend', () => popupOverlay.remove());
                 };
                 popupOverlay.querySelector('#close-popup-button').onclick = close;
-                popupOverlay.onclick = e => { if (e.target === popupOverlay) close(); };
-
+                
                 const downloadAllBtn = document.getElementById('downloadAllImagesBtn');
                 if (downloadAllBtn) {
                     downloadAllBtn.onclick = async () => {
@@ -314,7 +298,6 @@
                 }
             }
             
-            // ▼▼▼ JAVASCRIPT ANIMASI TANGAN DIKEMBALIKAN ▼▼▼
             const footer = document.querySelector('.footer');
             if(footer) {
                 const youtubeLink = footer.querySelector('a[href*="youtube.com"]');
@@ -325,7 +308,6 @@
                     youtubeLink.appendChild(hand);
                 }
             }
-            // ▲▲▲ JAVASCRIPT ANIMASI SELESAI ▲▲▲
         });
     </script>
 </body>
