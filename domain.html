@@ -7,13 +7,62 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="data/domain.css">
+
+    <style>
+        .draggable-back-button {
+            position: fixed;
+            bottom: 30px;
+            left: 20px;
+            width: 55px;
+            height: 55px;
+            background-color: var(--primary-color);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.2);
+            cursor: grab;
+            z-index: 2002;
+            text-decoration: none;
+            font-size: 1.4em;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            touch-action: none; /* Mencegah scrolling halaman saat tombol digeser di mobile */
+        }
+        .draggable-back-button.is-dragging {
+            cursor: grabbing;
+            transform: scale(1.1);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+        }
+        /* Tombol Tema Gelap di Halaman Login API Key */
+        .form-card.login-card .theme-switch {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            width: 40px; 
+            height: 40px;
+            border-radius: 50%;
+            background-color: var(--secondary-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 2px 5px var(--shadow-color); 
+        }
+    </style>
 </head>
 <body class="light-mode">
+    <a href="index.html" class="draggable-back-button" id="draggableBackButton">
+        <i class="fas fa-arrow-left"></i>
+    </a>
+
     <div id="toast-container"></div>
 
     <div class="page-container">
         <div id="apikey-screen">
             <div class="form-card login-card">
+                <div class="theme-switch" id="themeSwitchBtnLogin"><i class="fas fa-moon"></i></div>
+
                 <div class="login-header">
                     <img src="logo.jpg" alt="Rikishopreal" class="profile-pic">
                     <h2>Layanan Subdomain</h2>
@@ -33,72 +82,119 @@
             <header class="admin-header">
                 <img src="logo.jpg" alt="Rikishopreal" class="profile-pic">
                 <h2>Buat Subdomain</h2>
-                <div class="theme-switch" id="themeSwitchBtn"><i class="fas fa-moon"></i></div>
+                <div class="header-actions">
+                    <div class="theme-switch" id="openPanduanBtn"><i class="fas fa-question-circle"></i></div>
+                    <div class="theme-switch" id="themeSwitchBtn"><i class="fas fa-moon"></i></div>
+                </div>
             </header>
-
             <form class="admin-form" id="createDomainForm">
                 <label for="subdomain-name">Nama Subdomain:</label>
                 <input type="text" id="subdomain-name" placeholder="contoh: tokosaya">
-                
                 <label for="root-domain">Pilih Domain Utama:</label>
-                <select id="root-domain"></select>
-
+                <div class="select-wrapper"><select id="root-domain"></select></div>
                 <label for="record-type">Tipe Record:</label>
                 <select id="record-type">
                     <option value="A">IP Address (Untuk VPS/Panel)</option>
                     <option value="CNAME">CNAME (Untuk Vercel/Lainnya)</option>
                 </select>
-
-                <div id="ip-input-section">
-                    <label for="ip-address">IP Address VPS/Panel:</label>
-                    <input type="text" id="ip-address" placeholder="contoh: 103.123.45.67">
-                </div>
-
-                <div id="cname-input-section" style="display: none;">
-                    <label for="cname-target">Target CNAME:</label>
-                    <input type="text" id="cname-target" placeholder="contoh: cname.vercel-dns.com">
-                </div>
-
-                <div class="proxy-toggle">
-                    <label for="proxy-status">Status Proxy (Orange Cloud):</label>
-                    <label class="switch">
-                        <input type="checkbox" id="proxy-status" checked>
-                        <span class="slider round"></span>
-                    </label>
-                </div>
-                
+                <div id="ip-input-section"><label for="ip-address">IP Address VPS/Panel:</label><input type="text" id="ip-address" placeholder="contoh: 103.123.45.67"></div>
+                <div id="cname-input-section" style="display: none;"><label for="cname-target">Target CNAME:</label><input type="text" id="cname-target" placeholder="contoh: cname.vercel-dns.com"></div>
+                <div class="proxy-toggle"><label for="proxy-status">Status Proxy (Orange Cloud):</label><label class="switch"><input type="checkbox" id="proxy-status" checked><span class="slider round"></span></label></div>
                 <button type="button" id="create-domain-btn">Buat Domain</button>
             </form>
-            
             <div class="admin-form" style="margin-top: 30px;">
                 <h3><i class="fas fa-history"></i> Riwayat Subdomain Anda</h3>
-                <div id="subdomain-history-container">
-                    <p>Belum ada subdomain yang dibuat.</p>
-                </div>
+                <div id="subdomain-history-container"><p>Belum ada subdomain yang dibuat.</p></div>
             </div>
         </div>
     </div>
 
-    <div id="success-popup" class="modal">
-        <div class="modal-content confirm-modal-content">
-            <i class="fas fa-check-circle success-icon"></i>
-            <h2>Berhasil Dibuat!</h2>
-            <div id="result-container"></div>
-            <button id="close-popup-btn">Selesai</button>
-        </div>
-    </div>
+    <div id="success-popup" class="modal"><div class="modal-content confirm-modal-content"><i class="fas fa-check-circle success-icon"></i><h2>Berhasil Dibuat!</h2><div id="result-container"></div><button id="close-popup-btn">Selesai</button></div></div>
+    <div id="buyApiKeyModal" class="modal"><div class="modal-content"><span class="close-button">&times;</span><h2>Harga API Key</h2><p>Silakan pilih durasi yang Anda inginkan dan hubungi admin.</p><div id="api-key-price-list-container"><p>Memuat daftar harga...</p></div></div></div>
+    <div id="historyDetailModal" class="modal"><div class="modal-content"><span class="close-button">&times;</span><h2>Detail Subdomain</h2><div id="history-detail-container"></div></div></div>
+    <div id="panduanModal" class="modal"><div class="modal-content"><span class="close-button">&times;</span><h2 style="margin-bottom: 20px;"><i class="fas fa-book-open"></i> Panduan Penggunaan</h2><div class="panduan-container">...</div></div></div>
 
-  <div id="buyApiKeyModal" class="modal">
-    <div class="modal-content">
-         <span class="close-button">&times;</span>
-        <h2>Harga API Key</h2>
-        <p>Silakan pilih durasi yang Anda inginkan dan hubungi admin.</p>
-        <div id="api-key-price-list-container">
-            <p>Memuat daftar harga...</p>
-        </div>
-    </div>
-</div>
 
     <script src="data/domain.js"></script>
+    <script>
+        // JAVASCRIPT BARU UNTUK FITUR TOMBOL GESER & TEMA
+        document.addEventListener('DOMContentLoaded', () => {
+            const backButton = document.getElementById('draggableBackButton');
+            let isDragging = false;
+            let isClick = true;
+            let offsetX, offsetY;
+
+            function moveAt(pageX, pageY) {
+                // Batasi pergerakan di dalam layar
+                let newX = pageX - offsetX;
+                let newY = pageY - offsetY;
+                
+                const screenWidth = document.documentElement.clientWidth;
+                const screenHeight = document.documentElement.clientHeight;
+
+                if (newX < 0) newX = 0;
+                if (newY < 0) newY = 0;
+                if (newX > screenWidth - backButton.offsetWidth) newX = screenWidth - backButton.offsetWidth;
+                if (newY > screenHeight - backButton.offsetHeight) newY = screenHeight - backButton.offsetHeight;
+
+                backButton.style.left = newX + 'px';
+                backButton.style.top = newY + 'px';
+            }
+
+            function onMouseDown(event) {
+                isClick = true;
+                isDragging = true;
+                backButton.classList.add('is-dragging');
+
+                offsetX = event.clientX - backButton.getBoundingClientRect().left;
+                offsetY = event.clientY - backButton.getBoundingClientRect().top;
+                
+                document.addEventListener('mousemove', onMouseMove);
+                document.addEventListener('mouseup', onMouseUp);
+            }
+            
+            function onMouseMove(event) {
+                if (isDragging) {
+                    isClick = false; // Jika mouse bergerak, itu bukan klik
+                    moveAt(event.pageX, event.pageY);
+                }
+            }
+            
+            function onMouseUp() {
+                isDragging = false;
+                backButton.classList.remove('is-dragging');
+                
+                // Animasi "jatuh" ke bawah
+                backButton.style.top = (document.documentElement.clientHeight - backButton.offsetHeight - 30) + 'px';
+
+                document.removeEventListener('mousemove', onMouseMove);
+                document.removeEventListener('mouseup', onMouseUp);
+            }
+
+            // Mencegah navigasi saat memulai drag
+            backButton.addEventListener('mousedown', onMouseDown);
+            backButton.ondragstart = () => false;
+
+            // Jika tidak ada pergerakan (hanya klik), lakukan navigasi
+            backButton.addEventListener('click', (e) => {
+                if (!isClick) {
+                    e.preventDefault();
+                }
+            });
+
+            // Logika untuk tombol tema gelap di halaman login
+            const themeSwitchLogin = document.getElementById('themeSwitchBtnLogin');
+            if(themeSwitchLogin) {
+                 themeSwitchLogin.addEventListener('click', () => {
+                     document.body.classList.toggle('dark-mode');
+                     const isDarkMode = document.body.classList.contains('dark-mode');
+                     const allIcons = document.querySelectorAll('.theme-switch i, .header-actions .theme-switch i');
+                     allIcons.forEach(icon => {
+                         icon.className = isDarkMode ? 'fas fa-sun' : 'fas fa-moon';
+                     });
+                 });
+            }
+        });
+    </script>
 </body>
 </html>
