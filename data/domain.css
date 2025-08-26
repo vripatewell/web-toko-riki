@@ -203,26 +203,21 @@ input:checked + .slider:before { transform: translateX(20px); }
 /* MODAL POPUP (CENTERED & RESPONSIVE)            */
 /* ============================================== */
 .modal {
-    position: fixed; /* Tetap di layar bahkan saat di-scroll */
+    position: fixed;
     z-index: 2000;
     left: 0;
     top: 0;
     width: 100%;
     height: 100%;
-    overflow: auto; /* Memungkinkan scroll jika kontennya panjang */
-    background-color: rgba(0, 0, 0, 0.6); /* Latar belakang gelap transparan */
-    
-    /* Kunci untuk centering: */
-    display: flex;
-    justify-content: center; /* Tengah secara horizontal */
-    align-items: center;     /* Tengah secara vertikal */
-    
-    padding: 20px; /* Jarak dari tepi layar untuk perangkat kecil */
-    box-sizing: border-box; /* Padding tidak menambah ukuran total */
-    
+    background-color: rgba(0,0,0,0.6);
+    display: flex; /* Menggunakan flexbox untuk menengahkan */
+    align-items: center; /* Menengahkan secara vertikal */
+    justify-content: center; /* Menengahkan secara horizontal */
+    padding: 20px;
     visibility: hidden;
     opacity: 0;
-    transition: opacity 0.3s ease, visibility 0.3s ease;
+    transition: visibility 0s 0.3s, opacity 0.3s ease;
+    box-sizing: border-box;
 }
 
 .modal.is-visible {
