@@ -581,26 +581,3 @@ button.add-new-btn {
         margin-bottom: 5px;
     }
 }
-
-.back-button {
-    position: absolute;
-    top: 20px;
-    left: 20px;
-    background-color: var(--secondary-color);
-    color: var(--text-color);
-    border: 1px solid var(--border-color);
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    text-decoration: none;
-    font-size: 1.2em;
-    transition: all 0.2s ease;
-    z-index: 10;
-}
-.back-button:hover {
-    background-color: var(--primary-color);
-    color: white;
-}

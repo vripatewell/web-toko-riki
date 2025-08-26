@@ -357,6 +357,23 @@ historyDetailModal.addEventListener('click', (e) => {
     }
 });
 
+        document.addEventListener('DOMContentLoaded', () => {
+            const floatingBackButton = document.getElementById('floatingBackButton');
+            if (floatingBackButton) {
+                floatingBackButton.addEventListener('click', function(event) {
+                    if (!this.classList.contains('is-active')) {
+                        event.preventDefault();
+                        this.classList.add('is-active');
+                    }
+                });
+                document.addEventListener('click', function(event) {
+                    if (!floatingBackButton.contains(event.target)) {
+                        floatingBackButton.classList.remove('is-active');
+                    }
+                });
+            }
+        });
+
     // Panggil inisialisasi halaman saat dokumen siap
     initializePage();
 });

@@ -333,25 +333,35 @@ input:checked + .slider:before { transform: translateX(20px); }
     color: white;
 }
 
-.back-button {
-    position: absolute;
-    top: 20px;
-    left: 20px;
-    background-color: var(--secondary-color);
-    color: var(--text-color);
-    border: 1px solid var(--border-color);
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    text-decoration: none;
-    font-size: 1.2em;
-    transition: all 0.2s ease;
-    z-index: 10;
-}
-.back-button:hover {
-    background-color: var(--primary-color);
-    color: white;
-}
+        .floating-back-button {
+            position: fixed;
+            top: 25px;
+            left: 0;
+            width: 120px;
+            height: 45px;
+            background-color: var(--white-color);
+            color: var(--text-color);
+            border: 1px solid var(--border-color);
+            border-left: none;
+            border-radius: 0 25px 25px 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            font-size: 1em;
+            font-weight: 500;
+            z-index: 2001; /* Di atas konten, di bawah modal */
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            transform: translateX(-80px);
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .floating-back-button.is-active {
+            transform: translateX(0);
+        }
+        .floating-back-button i {
+            margin-right: 8px;
+            transition: margin-right 0.3s ease;
+        }
+        .floating-back-button.is-active i {
+            margin-right: 12px;
+        }
