@@ -1,5 +1,5 @@
 /* ============================================== */
-/* VARIABLE DAN FONT                              */
+/* VARIABLE DAN FONT                            */
 /* ============================================== */
 :root {
     --primary-color: #007aff;
@@ -22,7 +22,6 @@ body.dark-mode {
     --shadow-color: rgba(0, 0, 0, 0.5);
 }
 
-/* Animasi */
 @keyframes fadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
 @keyframes fadeOut { from { opacity: 1; transform: translateY(0); } to { opacity: 0; transform: translateY(-100%); } }
 
@@ -199,47 +198,59 @@ input:checked + .slider:before { transform: translateX(20px); }
 .modal {
     position: fixed;
     z-index: 2000;
-    inset: 0; /* ganti left, top, width, height dengan shorthand */
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 16px;
-    background-color: rgba(0, 0, 0, 0.6);
-
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.6);
+    display: flex; /* Menggunakan flexbox untuk menengahkan */
+    align-items: center; /* Menengahkan secara vertikal */
+    justify-content: center; /* Menengahkan secara horizontal */
+    padding: 20px;
     visibility: hidden;
     opacity: 0;
-    transition: opacity 0.3s ease, visibility 0.3s ease;
+    transition: visibility 0s 0.3s, opacity 0.3s ease;
     box-sizing: border-box;
 }
+/* ▲▲▲ AKHIR DARI KODE YANG DIPERBAIKI ▲▲▲ */
 
-.modal.is-visible {
-    visibility: visible;
-    opacity: 1;
+.modal.is-visible { 
+    visibility: visible; 
+    opacity: 1; 
+    transition-delay: 0s;
 }
 
 .modal-content {
     background-color: var(--white-color);
-    border-radius: 12px;
-    width: 100%;
-    max-width: 500px;
-
-    /* ini kunci biar tetap center */
-    max-height: 90vh;
-    overflow-y: auto;
-
-    box-shadow: 0 5px 20px rgba(0,0,0,0.2);
-    display: flex;
-    flex-direction: column;
+    border-radius: 20px;
+    width: 100%; 
+    max-width: 500px; 
+    box-shadow: 0 10px 30px var(--shadow-color);
+    padding: 30px 25px;
     position: relative;
+    transform: scale(0.9);
+    transition: transform 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+    box-sizing: border-box; 
+    max-height: 90vh; 
+    overflow-y: auto; 
+    text-align: center; /* Pastikan konten di dalam modal juga rata tengah */
 }
-.modal.is-visible .modal-content { transform: scale(1); }
+
+.modal.is-visible .modal-content { 
+    transform: scale(1); 
+}
 .modal .close-button {
-    position: absolute;
-    top: 15px; right: 20px;
     font-size: 1.8rem;
-    cursor: pointer;
+    font-weight: 300;
     color: var(--light-text-color);
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    cursor: pointer;
+    transition: transform 0.2s;
 }
+.modal .close-button:hover { transform: rotate(90deg); }
+
 .success-icon {
     font-size: 4em;
     color: var(--success-color);
