@@ -25,16 +25,40 @@
             display: flex; justify-content: center; align-items: center; 
             min-height: 100vh; padding: 20px; box-sizing: border-box; transition: background-color 0.3s ease;
         }
-        .container {
-            background-color: var(--bg-container); border-radius: 24px; box-shadow: 0 10px 40px var(--shadow-color);
-            padding: 30px 40px; width: 100%; max-width: 500px; text-align: center;
-            animation: fadeIn 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-        }
+.container {
+    position: relative; /* Diperlukan untuk tombol kembali */
+    background-color: var(--bg-container); border-radius: 24px; box-shadow: 0 10px 40px var(--shadow-color);
+    padding: 30px 40px; width: 100%; max-width: 500px; text-align: center;
+    animation: fadeIn 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.back-button {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    background-color: var(--bg-body);
+    color: var(--text-secondary);
+    border: 1px solid var(--border-color);
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    font-size: 1.2em;
+    transition: all 0.2s ease;
+}
+.back-button:hover {
+    background-color: var(--primary-color);
+    color: white;
+    border-color: var(--primary-color);
+}
         @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
         h1 {
-            color: var(--text-primary); margin: 0 0 10px; font-weight: 700; display: flex;
-            align-items: center; justify-content: center; gap: 12px;
-        }
+    margin-top: 30px; /* Beri sedikit ruang dari tombol kembali */
+    color: var(--text-primary); margin: 0 0 10px; font-weight: 700; display: flex;
+    align-items: center; justify-content: center; gap: 12px;
+}
         p.subtitle { color: var(--text-secondary); margin-bottom: 30px; }
 .upload-area {
     border: 2px dashed var(--border-color); /* Kembali ke dashed untuk gaya iOS */
@@ -164,6 +188,9 @@
     </button>
 
     <div class="container">
+    <a href="index.html" class="back-button" aria-label="Kembali ke Beranda">
+        <i class="fas fa-arrow-left"></i>
+    </a>
         <h1><i class="fas fa-link"></i> Ubah Gambar Jadi Link</h1>
         <p class="subtitle">Pilih atau seret satu atau beberapa gambar untuk diunggah.</p>
         

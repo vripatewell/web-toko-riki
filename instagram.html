@@ -29,14 +29,37 @@
             min-height: 100vh; padding: 20px; box-sizing: border-box; transition: background-color 0.3s ease;
         }
         .container {
-            background-color: var(--bg-container); border-radius: 24px; box-shadow: 0 10px 40px var(--shadow-color);
-            padding: 30px 25px; width: 100%; max-width: 500px; text-align: center;
-            animation: fadeIn 0.5s cubic-bezier(0.4, 0, 0.2, 1); box-sizing: border-box;
-        }
+    position: relative; /* Diperlukan untuk tombol kembali */
+    background-color: var(--bg-container); border-radius: 24px; box-shadow: 0 10px 40px var(--shadow-color);
+    padding: 30px 25px; width: 100%; max-width: 500px; text-align: center;
+    animation: fadeIn 0.5s cubic-bezier(0.4, 0, 0.2, 1); box-sizing: border-box;
+}
+.back-button {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    background-color: var(--bg-body);
+    color: var(--text-secondary);
+    border: 1px solid var(--border-color);
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    font-size: 1.2em;
+    transition: all 0.2s ease;
+}
+.back-button:hover {
+    background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+    color: white;
+    border-color: transparent;
+}
         /* AKHIR DARI KODE RESPONSIVE */
         
         @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-        h1 { color: var(--text-primary); margin: 0 0 10px; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 12px; }
+        h1 { margin-top: 30px; color: var(--text-primary); margin: 0 0 10px; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 12px; }
         p.subtitle { color: var(--text-secondary); margin-bottom: 30px; }
         .input-group { display: flex; margin-bottom: 20px; }
         #insta-url {
@@ -132,6 +155,9 @@
     <button id="dark-mode-toggle" class="dark-mode-toggle" aria-label="Ganti Tema"><i class="fas fa-moon"></i></button>
 
     <div class="container">
+    <a href="index.html" class="back-button" aria-label="Kembali ke Beranda">
+        <i class="fas fa-arrow-left"></i>
+    </a>
         <h1><i class="fab fa-instagram"></i> Instagram Downloader</h1>
         <p class="subtitle">Tempelkan link foto, video, atau reels Instagram untuk mengunduh.</p>
         <div class="input-group">
