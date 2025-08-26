@@ -232,6 +232,14 @@ input:checked + .slider:before { transform: translateX(20px); }
     flex-direction: column;
     position: relative;
 }
+.modal.is-visible .modal-content { transform: scale(1); }
+.modal .close-button {
+    position: absolute;
+    top: 15px; right: 20px;
+    font-size: 1.8rem;
+    cursor: pointer;
+    color: var(--light-text-color);
+}
 .success-icon {
     font-size: 4em;
     color: var(--success-color);
