@@ -110,6 +110,7 @@ button:disabled { background-color: var(--light-text-color); cursor: not-allowed
     border: 1px solid var(--border-color);
     animation: fadeIn 0.5s ease-out forwards;
     margin: 0 auto;
+    position: relative; /* Ini penting untuk posisi tombol tema */
 }
 .login-header { margin-bottom: 25px; text-align: center; }
 .login-header .profile-pic {
@@ -122,6 +123,7 @@ button:disabled { background-color: var(--light-text-color); cursor: not-allowed
 #domain-creator-screen {
     width: 100%;
     animation: fadeIn 0.5s ease-out forwards;
+    position: relative; /* Ini penting untuk posisi tombol tema */
 }
 .admin-header {
     display: flex; justify-content: space-between; align-items: center;
