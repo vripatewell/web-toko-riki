@@ -137,8 +137,9 @@
             const toastContainer = document.getElementById('toast-container');
             let toastTimeout;
 
+            // --- FUNGSI NOTIFIKASI GAYA IPHONE ---
             function showToast(message, type = 'success') {
-                 if(toastTimeout) clearTimeout(toastTimeout);
+                if(toastTimeout) clearTimeout(toastTimeout);
                 toastContainer.innerHTML = '';
                 const toast = document.createElement('div');
                 toast.className = `toast-notification ${type}`;
@@ -151,12 +152,15 @@
                     toast.addEventListener('transitionend', () => toast.remove());
                 }, 3000);
             }
+
+            // --- LOGIKA DARK MODE ---
             darkModeToggle.addEventListener('click', () => {
                 body.classList.toggle('dark-mode');
                 const isDarkMode = body.classList.contains('dark-mode');
                 darkModeToggle.querySelector('i').className = isDarkMode ? 'fas fa-sun' : 'fas fa-moon';
             });
 
+            // --- LOGIKA TOMBOL DOWNLOAD ---
             downloadBtn.addEventListener('click', async () => {
                 const url = urlInput.value.trim();
                 const format = formatSelect.value;
@@ -188,10 +192,11 @@
                     a.href = downloadUrl;
                     
                     const contentDisposition = response.headers.get('content-disposition');
-                    let filename = `youtube_download.${format.replace('ytm', '')}`;
+                    let filename = `youtube_download.${format.replace('ytm', '')}`; // Default
                     if (contentDisposition) {
                         const filenameMatch = contentDisposition.match(/filename="(.+?)"/);
                         if (filenameMatch && filenameMatch.length > 1) {
+                            // Decode URI component untuk handle spasi dan karakter spesial
                             filename = decodeURIComponent(filenameMatch[1]);
                         }
                     }
@@ -212,7 +217,7 @@
                 }
             });
 
-            // Animasi tangan
+            // --- LOGIKA ANIMASI TANGAN ---
             const youtubeLink = document.querySelector('.footer a[href*="youtube.com"]');
             if (youtubeLink) {
                 const hand = document.createElement('div');
