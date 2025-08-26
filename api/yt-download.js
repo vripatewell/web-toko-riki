@@ -1,57 +1,53 @@
-import yts from 'yt-search';
-import ytdl from 'ytdl-core';
+// /api/yt-download.js
+import ytdl from '@vreden/youtube_scraper';
+import fetch from 'node-fetch';
 
-function getYouTubeID(url) {
-    const regex = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/;
-    const match = url.match(regex);
-    return match ? match[1] : null;
-}
+export default async function handler(req, res) {
+  if (req.method !== 'POST') {
+    return res.status(405).json({ message: 'Metode tidak diizinkan.' });
+  }
 
-export default async function handler(request, response) {
-    if (request.method !== 'POST') {
-        return response.status(405).json({ message: 'Metode tidak diizinkan.' });
+  try {
+    const { url, format } = req.body || {};
+    if (!url || !format || !['ytmp3', 'ytmp4'].includes(format)) {
+      return res.status(400).json({ message: 'Parameter URL dan format tidak valid.' });
     }
 
-    const { query } = request.body;
-    if (!query) {
-        return response.status(400).json({ message: 'Query pencarian tidak boleh kosong.' });
+    // Panggil library
+    const downloadResult = format === 'ytmp3' ? await ytdl.ytmp3(url) : await ytdl.ytmp4(url);
+
+    if (!downloadResult || downloadResult.status !== 'ok' && !downloadResult.download?.url) {
+      // beberapa versi library bisa mengembalikan struktur beda, kita cek aman
+      throw new Error('Gagal mendapatkan link download dari sumber.');
     }
 
-    try {
-        let videoInfo;
-        const videoId = getYouTubeID(query);
+    const titleRaw = (downloadResult.title || 'youtube_download').toString();
+    // sanitize filename
+    const title = titleRaw.replace(/[\\\/:*?"<>|]+/g, '').trim() || 'youtube_download';
+    const ext = format === 'ytmp3' ? 'mp3' : 'mp4';
+    const filename = `${title}.${ext}`;
 
-        if (videoId) {
-            videoInfo = await yts({ videoId });
-        } else {
-            const searchResults = await yts(query);
-            videoInfo = searchResults.videos[0];
-        }
+    const externalUrl = downloadResult.download?.url || downloadResult.url || null;
+    if (!externalUrl) throw new Error('URL file eksternal tidak ditemukan.');
 
-        if (!videoInfo) {
-            return response.status(404).json({ message: 'Video tidak ditemukan.' });
-        }
+    const externalRes = await fetch(externalUrl);
+    if (!externalRes.ok) throw new Error(`Gagal mengambil file: Status ${externalRes.status}`);
 
-        const info = await ytdl.getInfo(videoInfo.url);
+    // Set headers supaya browser mengunduh file
+    res.setHeader('Content-Disposition', `attachment; filename="${encodeURIComponent(filename)}"`);
+    const contentType = externalRes.headers.get('content-type') || (ext === 'mp3' ? 'audio/mpeg' : 'video/mp4');
+    res.setHeader('Content-Type', contentType);
 
-        const audioFormat = ytdl.chooseFormat(info.formats, { quality: 'highestaudio', filter: 'audioonly' });
-        const videoFormat = ytdl.chooseFormat(info.formats, { quality: 'highestvideo', filter: 'videoandaudio' });
-
-        const finalResult = {
-            title: videoInfo.title,
-            author: videoInfo.author.name,
-            thumbnail: videoInfo.thumbnail,
-            duration: videoInfo.timestamp,
-            url: videoInfo.url,
-            videoId: videoInfo.videoId,
-            audioUrl: audioFormat ? audioFormat.url : null,
-            videoUrl: videoFormat ? videoFormat.url : null,
-        };
-
-        response.status(200).json(finalResult);
-
-    } catch (error) {
-        console.error("Error pada API ytmusic:", error);
-        response.status(500).json({ message: 'Gagal memproses permintaan YouTube.' });
+    // stream body ke response (node-fetch Readable stream)
+    if (externalRes.body && typeof externalRes.body.pipe === 'function') {
+      externalRes.body.pipe(res);
+    } else {
+      // fallback: buffer seluruh konten (untuk lingkungan yang tidak support streaming)
+      const buffer = await externalRes.arrayBuffer();
+      res.send(Buffer.from(buffer));
     }
+  } catch (err) {
+    console.error('Error pada API yt-download:', err);
+    res.status(500).json({ message: err.message || 'Terjadi kesalahan di server.' });
+  }
 }
