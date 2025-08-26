@@ -22,13 +22,14 @@ body.dark-mode {
     --shadow-color: rgba(0, 0, 0, 0.5);
 }
 
+/* Animasi */
 @keyframes fadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
 @keyframes fadeOut { from { opacity: 1; transform: translateY(0); } to { opacity: 0; transform: translateY(-100%); } }
 
 /* Layout Dasar */
 body {
     font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-    font-weight: 450;
+    font-weight: 450; /* Menambah sedikit ketebalan */
     background-color: var(--secondary-color);
     margin: 0;
     color: var(--text-color);
@@ -53,6 +54,7 @@ body {
     padding: 20px;
     box-sizing: border-box;
 }
+
 
 /* Elemen Umum (Tombol, Input, dll) */
 h2, p { text-align: center; }
@@ -139,18 +141,21 @@ button:disabled { background-color: var(--light-text-color); cursor: not-allowed
     display: flex;
     gap: 10px;
 }
+
 .panduan-container {
     text-align: left;
     display: flex;
     flex-direction: column;
     gap: 15px;
 }
+
 .panduan-step {
     background-color: var(--secondary-color);
     padding: 15px;
     border-radius: 10px;
     border-left: 4px solid var(--primary-color);
 }
+
 .panduan-step h3 {
     border-bottom: none;
     padding-bottom: 0;
@@ -160,6 +165,7 @@ button:disabled { background-color: var(--light-text-color); cursor: not-allowed
     align-items: center;
     gap: 8px;
 }
+
 .panduan-step p {
     text-align: left;
     font-size: 0.9em;
@@ -192,65 +198,62 @@ input:checked + .slider:before { transform: translateX(20px); }
 .toast.error { background-color: rgba(255, 59, 48, 0.9); color: white; }
 .toast.fade-out { animation: fadeOut 0.5s ease forwards; }
 
+/* [PERBAIKAN] Modal */
 /* ============================================== */
 /* MODAL POPUP (CENTERED & RESPONSIVE)            */
 /* ============================================== */
 .modal {
-    position: fixed;
+    position: fixed; /* Tetap di layar bahkan saat di-scroll */
     z-index: 2000;
     left: 0;
     top: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0,0,0,0.6);
-    display: flex; /* Menggunakan flexbox untuk menengahkan */
-    align-items: center; /* Menengahkan secara vertikal */
-    justify-content: center; /* Menengahkan secara horizontal */
-    padding: 20px;
+    overflow: auto; /* Memungkinkan scroll jika kontennya panjang */
+    background-color: rgba(0, 0, 0, 0.6); /* Latar belakang gelap transparan */
+    
+    /* Kunci untuk centering: */
+    display: flex;
+    justify-content: center; /* Tengah secara horizontal */
+    align-items: center;     /* Tengah secara vertikal */
+    
+    padding: 20px; /* Jarak dari tepi layar untuk perangkat kecil */
+    box-sizing: border-box; /* Padding tidak menambah ukuran total */
+    
     visibility: hidden;
     opacity: 0;
-    transition: visibility 0s 0.3s, opacity 0.3s ease;
-    box-sizing: border-box;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
 }
-/* ▲▲▲ AKHIR DARI KODE YANG DIPERBAIKI ▲▲▲ */
 
-.modal.is-visible { 
-    visibility: visible; 
-    opacity: 1; 
-    transition-delay: 0s;
+.modal.is-visible {
+    visibility: visible;
+    opacity: 1;
 }
 
 .modal-content {
     background-color: var(--white-color);
-    border-radius: 20px;
-    width: 100%; 
-    max-width: 500px; 
-    box-shadow: 0 10px 30px var(--shadow-color);
-    padding: 30px 25px;
+    border-radius: 12px;
+    width: 100%;
+    max-width: 500px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+    animation: slideInTop 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    flex-direction: column;
     position: relative;
-    transform: scale(0.9);
-    transition: transform 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.28);
-    box-sizing: border-box; 
-    max-height: 90vh; 
-    overflow-y: auto; 
-    text-align: center; /* Pastikan konten di dalam modal juga rata tengah */
 }
 
-.modal.is-visible .modal-content { 
-    transform: scale(1); 
+.modal.is-visible .modal-content {
+    transform: scale(1);
 }
+
 .modal .close-button {
-    font-size: 1.8rem;
-    font-weight: 300;
-    color: var(--light-text-color);
     position: absolute;
     top: 15px;
     right: 20px;
+    font-size: 1.8rem;
     cursor: pointer;
-    transition: transform 0.2s;
+    color: var(--light-text-color);
 }
-.modal .close-button:hover { transform: rotate(90deg); }
-
 .success-icon {
     font-size: 4em;
     color: var(--success-color);
@@ -269,9 +272,13 @@ input:checked + .slider:before { transform: translateX(20px); }
 
 /* Daftar Harga API Key di Modal */
 #api-key-price-list-container .price-item {
-    display: flex; justify-content: space-between; align-items: center;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     background-color: var(--secondary-color);
-    padding: 12px 15px; border-radius: 10px; margin-bottom: 10px;
+    padding: 12px 15px;
+    border-radius: 10px;
+    margin-bottom: 10px;
 }
 .price-info { text-align: left; }
 .tier-name { font-weight: 500; font-size: 1.05em; }
@@ -290,22 +297,28 @@ input:checked + .slider:before { transform: translateX(20px); }
 }
 
 /* CSS BARU UNTUK STYLING DROPDOWN */
-.select-wrapper { position: relative; width: 100%; }
+.select-wrapper {
+    position: relative;
+    width: 100%;
+}
+
 .select-wrapper::after {
-    content: '\f078';
+    content: '\f078'; /* Kode ikon panah ke bawah dari Font Awesome */
     font-family: 'Font Awesome 6 Free';
     font-weight: 900;
     position: absolute;
-    top: 50%; right: 15px;
+    top: 50%;
+    right: 15px;
     transform: translateY(-50%);
     pointer-events: none;
     color: var(--light-text-color);
 }
+
 .select-wrapper select {
     -webkit-appearance: none;
     -moz-appearance: none;
     appearance: none;
-    padding-right: 40px;
+    padding-right: 40px; /* Memberi ruang untuk ikon panah */
 }
 
 /* CSS BARU UNTUK TOMBOL DETAIL */
@@ -314,42 +327,6 @@ input:checked + .slider:before { transform: translateX(20px); }
     margin: 0;
     padding: 8px 15px;
     font-size: 0.85em;
-    background-color: var(--primary-color);
+    background-color: var(--primary-color); /* Warna biru primer */
     color: white;
-}
-
-/* ========================= */
-/* FIX RESPONSIVE            */
-/* ========================= */
-@media (max-width: 480px) {
-  .page-container { padding: 15px; }
-  .form-card, .admin-form, .panduan-step, .modal-content {
-    max-width: 100% !important;
-    width: 100% !important;
-    margin: 0 auto;
-    padding: 15px !important;
-    border-radius: 10px;
-  }
-  .modal-content {
-    max-height: 90vh;
-    overflow-y: auto;
-  }
-  .admin-header { flex-direction: column; align-items: flex-start; gap: 10px; }
-  h2 { font-size: 1.2em; }
-  p { font-size: 0.85em; }
-  button { font-size: 0.9em; padding: 12px; }
-  input, select { font-size: 0.9em; padding: 10px; }
-  .panduan-step h3 { font-size: 0.95em; }
-  .panduan-step p { font-size: 0.85em; }
-}
-
-@media (max-width: 768px) {
-  .form-card { padding: 25px 20px; max-width: 90%; }
-  .admin-header h2 { font-size: 1.3em; }
-  .modal-content { max-width: 95%; }
-}
-
-@media (min-width: 1200px) {
-  .page-container { max-width: 800px; }
-  .form-card { max-width: 600px; }
 }
