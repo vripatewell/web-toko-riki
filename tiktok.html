@@ -79,22 +79,21 @@
         .popup-content { margin-top: 20px; text-align: center; }
         .popup-video { width: 100%; max-height: 400px; border-radius: 12px; }
 
-        /* ▼▼▼ INI CSS UNTUK GALERI FOTO YANG BISA DIGESER ▼▼▼ */
         .popup-images {
             display: flex;
             overflow-x: auto;
-            scroll-snap-type: x mandatory; /* Kunci utama untuk snapping */
-            -webkit-overflow-scrolling: touch; /* Scrolling mulus di iOS */
+            scroll-snap-type: x mandatory;
+            -webkit-overflow-scrolling: touch;
             gap: 15px;
             padding: 10px 0;
-            scrollbar-width: none; /* Sembunyikan scrollbar di Firefox */
+            scrollbar-width: none;
         }
         .popup-images::-webkit-scrollbar {
-            display: none; /* Sembunyikan scrollbar di Chrome/Safari */
+            display: none;
         }
         .image-slide {
-            flex: 0 0 100%; /* Setiap item mengisi 100% lebar container */
-            scroll-snap-align: center; /* Posisi item di tengah saat di-snap */
+            flex: 0 0 100%;
+            scroll-snap-align: center;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -107,7 +106,6 @@
             object-fit: contain;
             border-radius: 12px;
         }
-        /* ▲▲▲ AKHIR DARI CSS GALERI FOTO ▲▲▲ */
         
         .popup-buttons { display: flex; flex-direction: column; gap: 10px; margin-top: 20px; }
         .popup-button { display: block; padding: 12px; border: none; border-radius: 10px; color: white; font-weight: 600; text-decoration: none; text-align: center; transition: all 0.2s ease; }
@@ -215,7 +213,6 @@
                 }
             });
 
-            // ▼▼▼ FUNGSI POPUP YANG SUDAH DISEMPURNAKAN ▼▼▼
             function showResultPopup(result) {
                 const existingPopup = document.getElementById('download-popup');
                 if (existingPopup) existingPopup.remove();
@@ -233,15 +230,11 @@
                     return `/api/downloadProxy?url=${encodeURIComponent(url)}&filename=${filename}`;
                 };
 
-                if (result.video_nowm) {
-                    // --- KASUS 1: VIDEO ---
-                    contentHTML = `<video src="${result.video_nowm}" controls class="popup-video"></video>`;
-                    buttonsHTML += `<a href="${generateProxyUrl(result.video_nowm, 'mp4')}" class="popup-button btn-download-popup-video"><i class="fas fa-video"></i> Download Video</a>`;
-                    if (result.audio_url) {
-                        buttonsHTML += `<a href="${generateProxyUrl(result.audio_url, 'mp3')}" class="popup-button btn-download-popup-audio"><i class="fas fa-music"></i> Download Audio</a>`;
-                    }
-                } else if (result.slides && result.slides.length > 0) {
-                    // --- KASUS 2: SLIDESHOW FOTO (LEBIH DARI 1) ---
+                // ▼▼▼ PERUBAHAN UTAMA ADA DI URUTAN LOGIKA IF/ELSE IF DI BAWAH INI ▼▼▼
+                // Kita dahulukan pengecekan FOTO/SLIDES, baru VIDEO.
+
+                if (result.slides && result.slides.length > 0) {
+                    // --- KASUS 1: SLIDESHOW FOTO (PRIORITAS UTAMA) ---
                     contentHTML = '<div class="popup-images">';
                     result.slides.forEach((imgUrl, index) => {
                         contentHTML += `
@@ -253,11 +246,21 @@
                     });
                     contentHTML += '</div>';
                     buttonsHTML += `<button id="downloadAllImagesBtn" class="popup-button btn-download-all-images"><i class="fas fa-images"></i> Download Semua Foto (${result.slides.length})</button>`;
+                
                 } else if (result.photo) {
-                    // --- KASUS 3: FOTO TUNGGAL ---
+                    // --- KASUS 2: FOTO TUNGGAL ---
                     contentHTML = `<img src="${result.photo}" alt="TikTok Photo" style="max-width:100%;border-radius:12px">`;
                     buttonsHTML += `<a href="${generateProxyUrl(result.photo, 'jpg')}" class="popup-button btn-download-all-images"><i class="fas fa-image"></i> Download Foto</a>`;
+                
+                } else if (result.video_nowm) {
+                    // --- KASUS 3: VIDEO (JIKA BUKAN FOTO) ---
+                    contentHTML = `<video src="${result.video_nowm}" controls class="popup-video"></video>`;
+                    buttonsHTML += `<a href="${generateProxyUrl(result.video_nowm, 'mp4')}" class="popup-button btn-download-popup-video"><i class="fas fa-video"></i> Download Video</a>`;
+                    if (result.audio_url) {
+                        buttonsHTML += `<a href="${generateProxyUrl(result.audio_url, 'mp3')}" class="popup-button btn-download-popup-audio"><i class="fas fa-music"></i> Download Audio</a>`;
+                    }
                 } else {
+                    // --- KASUS 4: GAGAL / KONTEN TIDAK DITEMUKAN ---
                     contentHTML = '<p>Konten tidak ditemukan atau tidak didukung.</p>';
                 }
 
@@ -272,14 +275,17 @@
                 document.body.appendChild(popupOverlay);
                 setTimeout(() => popupOverlay.classList.add('show'), 10);
 
-                const close = () => popupOverlay.classList.remove('show');
+                const close = () => {
+                    popupOverlay.classList.remove('show');
+                    popupOverlay.addEventListener('transitionend', () => popupOverlay.remove());
+                };
                 popupOverlay.querySelector('#close-popup-button').onclick = close;
                 popupOverlay.onclick = e => { if (e.target === popupOverlay) close(); };
 
                 const downloadAllBtn = document.getElementById('downloadAllImagesBtn');
                 if (downloadAllBtn) {
                     downloadAllBtn.onclick = async () => {
-                        downloadAllBtn.textContent = 'Mengunduh... (1/ ' + result.slides.length + ')';
+                        downloadAllBtn.textContent = 'Mengunduh... (1/' + result.slides.length + ')';
                         downloadAllBtn.disabled = true;
 
                         for (let i = 0; i < result.slides.length; i++) {
@@ -291,7 +297,6 @@
                             a.click();
                             document.body.removeChild(a);
                             downloadAllBtn.textContent = `Mengunduh... (${i + 1}/${result.slides.length})`;
-                            // Menambahkan jeda singkat agar browser tidak memblokir download massal
                             await new Promise(resolve => setTimeout(resolve, 300));
                         }
 
