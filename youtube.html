@@ -163,14 +163,12 @@
                     toast.addEventListener('transitionend', () => toast.remove());
                 }, 3000);
             }
-
             darkModeToggle.addEventListener('click', () => {
                 body.classList.toggle('dark-mode');
                 const isDarkMode = body.classList.contains('dark-mode');
                 darkModeToggle.querySelector('i').className = isDarkMode ? 'fas fa-sun' : 'fas fa-moon';
                 localStorage.setItem('darkMode', isDarkMode);
             });
-
             if (localStorage.getItem('darkMode') === 'true') {
                  body.classList.add('dark-mode');
                  darkModeToggle.querySelector('i').className = 'fas fa-sun';
@@ -208,9 +206,13 @@
                 popupOverlay.id = 'download-popup';
                 popupOverlay.className = 'popup-overlay';
 
+                // ▼▼▼ PERBAIKAN UTAMA: TIDAK MENGGUNAKAN PROXY ▼▼▼
                 const contentHTML = `<audio controls src="${mp3Url}"></audio>`;
-                const downloadHref = `/api/downloadProxy?url=${encodeURIComponent(mp3Url)}&filename=youtube_${Date.now()}.mp3`;
-                const buttonsHTML = `<a href="${downloadHref}" class="popup-button"><i class="fas fa-download"></i> Download MP3</a>`;
+                const buttonsHTML = `<a href="${mp3Url}" class="popup-button" download="youtube_${Date.now()}.mp3"><i class="fas fa-download"></i> Download MP3</a>`;
+                // ▲▲▲ Keterangan: 
+                // href="${mp3Url}" -> Langsung ke link asli, tidak lewat proxy.
+                // download="..." -> Atribut HTML5 untuk memaksa browser men-download file.
+                // ▲▲▲ AKHIR PERBAIKAN ▲▲▲
 
                 popupOverlay.innerHTML = `
                     <div class="popup">
