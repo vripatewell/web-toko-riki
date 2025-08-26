@@ -21,33 +21,16 @@
             --text-secondary: #8e8e93; --border-color: #3a3a3c; --shadow-color: rgba(0, 0, 0, 0.4);
         }
         body {
-    font-family: 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
-    background-color: var(--bg-body);
-    color: var(--text-primary);
-    margin: 0;
-    
-    /* ▼▼▼ INI KUNCI UTAMANYA ▼▼▼ */
-    display: flex;
-    flex-direction: column;
-    justify-content: center; /* Menengahkan secara vertikal */
-    align-items: center;     /* Menengahkan secara horizontal */
-    
-    min-height: 100vh;
-    padding: 20px;
-    box-sizing: border-box;
-    transition: background-color 0.3s ease;
-}
-.container {
-    background-color: var(--bg-container);
-    border-radius: 24px;
-    box-shadow: 0 10px 40px var(--shadow-color);
-    padding: 30px 25px; /* Pastikan padding kiri-kanan adalah 25px */
-    width: 100%;
-    max-width: 500px;
-    text-align: center;
-    animation: fadeIn 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-    box-sizing: border-box; /* Pastikan ini ada */
-}
+            font-family: 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--bg-body); color: var(--text-primary); margin: 0;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            min-height: 100vh; padding: 20px; box-sizing: border-box; transition: background-color 0.3s ease;
+        }
+        .container {
+            background-color: var(--bg-container); border-radius: 24px; box-shadow: 0 10px 40px var(--shadow-color);
+            padding: 30px 25px; width: 100%; max-width: 500px; text-align: center;
+            animation: fadeIn 0.5s cubic-bezier(0.4, 0, 0.2, 1); box-sizing: border-box;
+        }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
         h1 { color: var(--text-primary); margin: 0 0 10px; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 12px; }
         p.subtitle { color: var(--text-secondary); margin-bottom: 30px; }
@@ -69,21 +52,15 @@
             animation: spin 1s linear infinite;
         }
         @keyframes spin { to { transform: rotate(360deg); } }
-
         .dark-mode-toggle {
             position: fixed; top: 20px; right: 20px; background-color: var(--bg-container); color: var(--text-primary);
             border: 1px solid var(--border-color); border-radius: 50px; padding: 8px; width: 40px; height: 40px;
             cursor: pointer; font-size: 1.2em; display: flex; align-items: center; justify-content: center;
             box-shadow: 0 4px 10px var(--shadow-color); z-index: 1001;
         }
-        
-        .footer { margin-top: 30px; text-align: center; font-size: 0.9em; color: var(--text-secondary); width: 100%; max-width: 500px; }
-        .footer a { color: var(--text-secondary); text-decoration: none; font-weight: 600; display: inline-flex; align-items: center; gap: 8px; transition: color 0.3s ease, text-shadow 0.3s ease; }
-        .footer a:hover { color: var(--primary-color); text-shadow: 0 0 8px var(--primary-color); }
-        .footer .fab.fa-youtube { color: #ff0000; }
-        .footer a:hover .fab.fa-youtube { text-shadow: 0 0 8px #ff0000; }
-        .glow-text { text-shadow: 0 0 5px rgba(0, 122, 255, 0.6); }
-        .glow-youtube { text-shadow: 0 0 5px rgba(255, 0, 0, 0.6); }
+        .footer { margin-top: 30px; text-align: center; font-size: 0.9em; color: var(--text-secondary); }
+        .footer a { color: var(--text-secondary); text-decoration: none; font-weight: 600; }
+        .footer a:hover { color: var(--primary-color); }
 
         /* GAYA POPUP */
         .popup-overlay {
@@ -94,111 +71,84 @@
         .popup-overlay.show { display: flex; opacity: 1; }
         .popup {
             background-color: var(--bg-container); color: var(--text-primary); border-radius: 20px;
-            padding: 25px 30px; text-align: center; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
-            width: 90%; max-width: 550px; animation: popIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            padding: 25px; text-align: center; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            width: 90%; max-width: 400px; animation: popIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
         @keyframes popIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
-        .popup h3 { margin: 0 0 15px; font-size: 1.4em; }
+        .popup h3 { margin: 0 0 15px; font-size: 1.3em; line-height: 1.4; }
         .popup-content { margin-top: 20px; text-align: center; }
         .popup-video { width: 100%; max-height: 400px; border-radius: 12px; }
-        .popup-images { display: flex; overflow-x: auto; gap: 10px; padding-bottom: 10px; }
-        .popup-images img { height: 250px; border-radius: 10px; cursor: pointer; transition: transform 0.2s ease; }
-        .popup-images img:hover { transform: scale(1.05); }
+
+        /* ▼▼▼ INI CSS UNTUK GALERI FOTO YANG BISA DIGESER ▼▼▼ */
+        .popup-images {
+            display: flex;
+            overflow-x: auto;
+            scroll-snap-type: x mandatory; /* Kunci utama untuk snapping */
+            -webkit-overflow-scrolling: touch; /* Scrolling mulus di iOS */
+            gap: 15px;
+            padding: 10px 0;
+            scrollbar-width: none; /* Sembunyikan scrollbar di Firefox */
+        }
+        .popup-images::-webkit-scrollbar {
+            display: none; /* Sembunyikan scrollbar di Chrome/Safari */
+        }
+        .image-slide {
+            flex: 0 0 100%; /* Setiap item mengisi 100% lebar container */
+            scroll-snap-align: center; /* Posisi item di tengah saat di-snap */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+        .popup-images img {
+            width: 100%;
+            height: auto;
+            max-height: 450px;
+            object-fit: contain;
+            border-radius: 12px;
+        }
+        /* ▲▲▲ AKHIR DARI CSS GALERI FOTO ▲▲▲ */
+        
         .popup-buttons { display: flex; flex-direction: column; gap: 10px; margin-top: 20px; }
-        .popup-button { display: block; padding: 12px; border: none; border-radius: 10px; color: white; font-weight: 600; text-decoration: none; text-align: center; transition: transform 0.2s ease; }
-        .popup-button:hover { transform: scale(1.03); }
+        .popup-button { display: block; padding: 12px; border: none; border-radius: 10px; color: white; font-weight: 600; text-decoration: none; text-align: center; transition: all 0.2s ease; }
+        .popup-button:hover { transform: scale(1.03); opacity: 0.9; }
         .btn-download-popup-video { background-color: var(--success-color); }
         .btn-download-popup-audio { background-color: var(--warning-color); color: var(--text-color-light); }
-        .btn-download-all-images { background-color: var(--primary-color); }
+        .btn-download-all-images, .btn-download-single-image { background-color: var(--primary-color); }
         .popup #close-popup-button {
-            width: 100%; margin-top: 15px; padding: 12px; font-weight: 600; font-size: 1em;
-            border-radius: 10px; cursor: pointer; border: none; background-color: var(--secondary-color);
-            color: var(--text-secondary); border: 1px solid var(--border-color);
+            width: 100%; margin-top: 15px; padding: 12px; font-weight: 600; border-radius: 10px;
+            cursor: pointer; border: 1px solid var(--border-color); background-color: transparent;
+            color: var(--text-secondary);
         }
 
         /* NOTIFIKASI GAYA IPHONE (TOAST) */
+        #toast-container { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 9999; }
         .toast-notification {
-            position: fixed; top: 20px; left: 50%; 
-            transform: translate(-50%, -150%);
-            padding: 12px 20px;
-            background-color: #333;
-            color: white;
-            border-radius: 25px;
-            font-size: 0.9em;
-            font-weight: 500;
-            z-index: 9999;
-            display: flex;
-            align-items: center;
-            gap: 10px;
+            padding: 12px 20px; background-color: #333; color: white; border-radius: 25px;
+            font-size: 0.9em; font-weight: 500; display: flex; align-items: center; gap: 10px;
             box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+            transform: translateY(-150%); opacity: 0;
             transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.5s ease;
-            opacity: 0;
-            pointer-events: none;
         }
-        .toast-notification.show {
-            opacity: 1;
-            transform: translate(-50%, 0);
-        }
+        .toast-notification.show { opacity: 1; transform: translateY(0); }
         .toast-notification.success { background-color: var(--success-color); }
         .toast-notification.error { background-color: var(--error-color); }
-        
-        /* ▼▼▼ TAMBAHKAN KODE INI DI AKHIR CSS ANDA ▼▼▼ */
-.click-animation {
-    position: relative;
-    display: inline-flex;
-}
-.click-hand {
-    position: absolute;
-    bottom: -25px;
-    left: 50%;
-    width: 25px;
-    height: 25px;
-    background-image: url('https://emojicdn.elk.sh/👆');
-    background-size: contain;
-    background-repeat: no-repeat;
-    opacity: 0;
-    transform: translateX(-50%);
-    transform-origin: bottom center;
-    animation: pointing-up 2.5s infinite ease-in-out 1.5s;
-    pointer-events: none;
-}
-@keyframes pointing-up {
-    0%, 100% {
-        transform: translateX(-50%) translateY(10px);
-        opacity: 0;
-    }
-    30%, 70% {
-        transform: translateX(-50%) translateY(0);
-        opacity: 1;
-    }
-    80% {
-        transform: translateX(-50%) translateY(10px);
-        opacity: 0;
-    }
-}
     </style>
 </head>
-<body class="light-mode">
+<body>
 
-    <div id="toast-container"></div> <button id="dark-mode-toggle" class="dark-mode-toggle" aria-label="Ganti Tema">
-        <i class="fas fa-moon"></i>
-    </button>
+    <div id="toast-container"></div>
+    <button id="dark-mode-toggle" class="dark-mode-toggle" aria-label="Ganti Tema"><i class="fas fa-moon"></i></button>
 
     <div class="container">
         <h1><i class="fab fa-tiktok"></i> TikTok Downloader</h1>
         <p class="subtitle">Tempelkan link video TikTok untuk mengunduh tanpa watermark.</p>
-        
         <div class="input-group">
             <input type="text" id="tiktok-url" placeholder="https://vt.tiktok.com/xxxxxx/">
             <button id="download-btn"><i class="fas fa-download"></i></button>
         </div>
-        
         <div class="footer">
-            Powered by <a href="https://toko.rikishop.my.id" target="_blank" style="margin-left: 5px;"><span class="glow-text">Riki Shop</span></a>
-            <span style="margin: 0 10px;">|</span>
-            <a href="https://www.youtube.com/@rikishopreal" target="_blank">
-                <i class="fab fa-youtube glow-youtube"></i> Subscribe
-            </a>
+             Powered by <a href="https://toko.rikishop.my.id" target="_blank">Riki Shop</a>
         </div>
     </div>
 
@@ -211,47 +161,42 @@
             const toastContainer = document.getElementById('toast-container');
             let toastTimeout;
 
-            // --- FUNGSI BARU UNTUK NOTIFIKASI GAYA IPHONE ---
             function showToast(message, type = 'success') {
                 if(toastTimeout) clearTimeout(toastTimeout);
-
-                toastContainer.innerHTML = ''; // Hapus notif lama jika ada
                 const toast = document.createElement('div');
                 toast.className = `toast-notification ${type}`;
                 const iconClass = type === 'success' ? 'fa-check-circle' : 'fa-times-circle';
                 toast.innerHTML = `<i class="fas ${iconClass}"></i> ${message}`;
-                
+                toastContainer.innerHTML = '';
                 toastContainer.appendChild(toast);
-                
-                setTimeout(() => {
-                    toast.classList.add('show');
-                }, 10);
-
+                setTimeout(() => toast.classList.add('show'), 10);
                 toastTimeout = setTimeout(() => {
                     toast.classList.remove('show');
                     toast.addEventListener('transitionend', () => toast.remove());
                 }, 3000);
             }
 
-            // Dark Mode Toggle
             darkModeToggle.addEventListener('click', () => {
                 body.classList.toggle('dark-mode');
                 const isDarkMode = body.classList.contains('dark-mode');
                 darkModeToggle.querySelector('i').className = isDarkMode ? 'fas fa-sun' : 'fas fa-moon';
+                localStorage.setItem('darkMode', isDarkMode);
             });
+            
+            if (localStorage.getItem('darkMode') === 'true') {
+                 body.classList.add('dark-mode');
+                 darkModeToggle.querySelector('i').className = 'fas fa-sun';
+            }
 
-            // Logika Tombol Download
             downloadBtn.addEventListener('click', async () => {
                 const tiktokUrl = urlInput.value.trim();
                 if (!tiktokUrl) {
                     showToast('Silakan masukkan URL TikTok.', 'error');
                     return;
                 }
-
                 const originalBtnContent = downloadBtn.innerHTML;
                 downloadBtn.innerHTML = '<span class="spinner"></span>';
                 downloadBtn.disabled = true;
-                
                 try {
                     const response = await fetch('/api/tiktok', {
                         method: 'POST',
@@ -260,10 +205,8 @@
                     });
                     const result = await response.json();
                     if (!response.ok) throw new Error(result.message || 'Gagal memproses link.');
-                    
                     showToast('Berhasil mendapatkan data!', 'success');
                     showResultPopup(result);
-
                 } catch (error) {
                     showToast(error.message, 'error');
                 } finally {
@@ -272,101 +215,93 @@
                 }
             });
 
-            // ▼▼▼ GANTI FUNGSI LAMA DENGAN YANG INI ▼▼▼
-function showResultPopup(result) {
-  const existingPopup = document.getElementById('download-popup');
-  if (existingPopup) existingPopup.remove();
+            // ▼▼▼ FUNGSI POPUP YANG SUDAH DISEMPURNAKAN ▼▼▼
+            function showResultPopup(result) {
+                const existingPopup = document.getElementById('download-popup');
+                if (existingPopup) existingPopup.remove();
 
-  const popupOverlay = document.createElement('div');
-  popupOverlay.id = 'download-popup';
-  popupOverlay.className = 'popup-overlay';
+                const popupOverlay = document.createElement('div');
+                popupOverlay.id = 'download-popup';
+                popupOverlay.className = 'popup-overlay';
 
-  let contentHTML = '';
-  let buttonsHTML = '';
-  const title = result.description ? (result.description.substring(0, 50) + '...') : 'Hasil Ditemukan';
+                let contentHTML = '';
+                let buttonsHTML = '';
+                const title = result.description ? (result.description.substring(0, 50) + '...') : 'Hasil Ditemukan';
 
-  if (result.video_nowm) {
-    // --- VIDEO (sudah jalan, jangan ubah) ---
-    contentHTML = `<video src="${result.video_nowm}" controls class="popup-video"></video>`;
-    const videoProxyUrl = `/api/downloadProxy?url=${encodeURIComponent(result.video_nowm)}&filename=${Date.now()}_${Math.random().toString(36).substring(2, 8)}.mp4`;
-    buttonsHTML += `<a href="${videoProxyUrl}" class="popup-button btn-download-popup-video"><i class="fas fa-video"></i> Download Video</a>`;
-    if (result.audio_url) {
-      const audioProxyUrl = `/api/downloadProxy?url=${encodeURIComponent(result.audio_url)}&filename=${Date.now()}_${Math.random().toString(36).substring(2, 8)}.mp3`;
-      buttonsHTML += `<a href="${audioProxyUrl}" class="popup-button btn-download-popup-audio"><i class="fas fa-music"></i> Download Audio</a>`;
-    }
+                const generateProxyUrl = (url, extension) => {
+                    const filename = `${Date.now()}_${Math.random().toString(36).substring(2, 8)}.${extension}`;
+                    return `/api/downloadProxy?url=${encodeURIComponent(url)}&filename=${filename}`;
+                };
 
-  } else if (result.slides && result.slides.length > 0) {
-    // --- SLIDESHOW FOTO ---
-    contentHTML = '<div class="popup-images">';
-    result.slides.forEach((imgUrl, index) => {
-      const proxyUrl = `/api/downloadProxy?url=${encodeURIComponent(imgUrl)}&filename=${Date.now()}_${Math.random().toString(36).substring(2, 8)}.jpg`;
-      contentHTML += `
-        <div style="display:flex;flex-direction:column;align-items:center">
-          <img src="${imgUrl}" alt="TikTok Slide">
-          <a href="${proxyUrl}" class="popup-button" style="margin-top:5px;background:#007aff"><i class="fas fa-download"></i> Foto ${index + 1}</a>
-        </div>
-      `;
-    });
-    contentHTML += '</div>';
-    buttonsHTML += `<button id="downloadAllImagesBtn" class="popup-button btn-download-all-images"><i class="fas fa-images"></i> Download Semua Foto (${result.slides.length})</button>`;
+                if (result.video_nowm) {
+                    // --- KASUS 1: VIDEO ---
+                    contentHTML = `<video src="${result.video_nowm}" controls class="popup-video"></video>`;
+                    buttonsHTML += `<a href="${generateProxyUrl(result.video_nowm, 'mp4')}" class="popup-button btn-download-popup-video"><i class="fas fa-video"></i> Download Video</a>`;
+                    if (result.audio_url) {
+                        buttonsHTML += `<a href="${generateProxyUrl(result.audio_url, 'mp3')}" class="popup-button btn-download-popup-audio"><i class="fas fa-music"></i> Download Audio</a>`;
+                    }
+                } else if (result.slides && result.slides.length > 0) {
+                    // --- KASUS 2: SLIDESHOW FOTO (LEBIH DARI 1) ---
+                    contentHTML = '<div class="popup-images">';
+                    result.slides.forEach((imgUrl, index) => {
+                        contentHTML += `
+                            <div class="image-slide">
+                                <img src="${imgUrl}" alt="TikTok Slide ${index + 1}">
+                                <a href="${generateProxyUrl(imgUrl, 'jpg')}" class="popup-button btn-download-single-image" style="width:100%"><i class="fas fa-download"></i> Download Foto ${index + 1}</a>
+                            </div>
+                        `;
+                    });
+                    contentHTML += '</div>';
+                    buttonsHTML += `<button id="downloadAllImagesBtn" class="popup-button btn-download-all-images"><i class="fas fa-images"></i> Download Semua Foto (${result.slides.length})</button>`;
+                } else if (result.photo) {
+                    // --- KASUS 3: FOTO TUNGGAL ---
+                    contentHTML = `<img src="${result.photo}" alt="TikTok Photo" style="max-width:100%;border-radius:12px">`;
+                    buttonsHTML += `<a href="${generateProxyUrl(result.photo, 'jpg')}" class="popup-button btn-download-all-images"><i class="fas fa-image"></i> Download Foto</a>`;
+                } else {
+                    contentHTML = '<p>Konten tidak ditemukan atau tidak didukung.</p>';
+                }
 
-  } else if (result.photo) {
-    // --- 1 FOTO (post foto tunggal) ---
-    const proxyUrl = `/api/downloadProxy?url=${encodeURIComponent(result.photo)}&filename=${Date.now()}_${Math.random().toString(36).substring(2, 8)}.jpg`;
-    contentHTML = `<img src="${result.photo}" alt="TikTok Photo" style="max-width:100%;border-radius:12px">`;
-    buttonsHTML += `<a href="${proxyUrl}" class="popup-button btn-download-all-images"><i class="fas fa-image"></i> Download Foto</a>`;
+                popupOverlay.innerHTML = `
+                    <div class="popup">
+                        <h3>${title}</h3>
+                        <div class="popup-content">${contentHTML}</div>
+                        <div class="popup-buttons">${buttonsHTML}</div>
+                        <button id="close-popup-button">Tutup</button>
+                    </div>
+                `;
+                document.body.appendChild(popupOverlay);
+                setTimeout(() => popupOverlay.classList.add('show'), 10);
 
-  } else {
-    contentHTML = '<p>Konten tidak ditemukan atau tidak didukung.</p>';
-  }
+                const close = () => popupOverlay.classList.remove('show');
+                popupOverlay.querySelector('#close-popup-button').onclick = close;
+                popupOverlay.onclick = e => { if (e.target === popupOverlay) close(); };
 
-  popupOverlay.innerHTML = `
-    <div class="popup">
-      <h3>${title}</h3>
-      <div class="popup-content">${contentHTML}</div>
-      <div class="popup-buttons">${buttonsHTML}</div>
-      <button id="close-popup-button">Tutup</button>
-    </div>
-  `;
-  document.body.appendChild(popupOverlay);
-  setTimeout(() => popupOverlay.classList.add('show'), 10);
+                const downloadAllBtn = document.getElementById('downloadAllImagesBtn');
+                if (downloadAllBtn) {
+                    downloadAllBtn.onclick = async () => {
+                        downloadAllBtn.textContent = 'Mengunduh... (1/ ' + result.slides.length + ')';
+                        downloadAllBtn.disabled = true;
 
-  // Event close
-  const closeBtn = popupOverlay.querySelector('#close-popup-button');
-  if (closeBtn) closeBtn.onclick = () => popupOverlay.remove();
-  popupOverlay.onclick = e => { if (e.target === popupOverlay) popupOverlay.remove(); };
+                        for (let i = 0; i < result.slides.length; i++) {
+                            const url = result.slides[i];
+                            const proxyUrl = generateProxyUrl(url, 'jpg');
+                            const a = document.createElement('a');
+                            a.href = proxyUrl;
+                            document.body.appendChild(a);
+                            a.click();
+                            document.body.removeChild(a);
+                            downloadAllBtn.textContent = `Mengunduh... (${i + 1}/${result.slides.length})`;
+                            // Menambahkan jeda singkat agar browser tidak memblokir download massal
+                            await new Promise(resolve => setTimeout(resolve, 300));
+                        }
 
-  // Event download semua foto
-  const downloadAllBtn = document.getElementById('downloadAllImagesBtn');
-  if (downloadAllBtn) {
-    downloadAllBtn.onclick = () => {
-      downloadAllBtn.textContent = 'Mengunduh...';
-      result.slides.forEach(url => {
-        const proxyUrl = `/api/downloadProxy?url=${encodeURIComponent(url)}&filename=${Date.now()}_${Math.random().toString(36).substring(2, 8)}.jpg`;
-        const a = document.createElement('a');
-        a.href = proxyUrl;
-        document.body.appendChild(a);
-        a.click();
-        a.remove();
-      });
-      setTimeout(() => { downloadAllBtn.textContent = `Download Semua Foto (${result.slides.length})`; }, 1500);
-    };
-  }
-}
-            
-            // Animasi tangan (jika ada footer)
-            const footer = document.querySelector('.footer');
-            if(footer) {
-                const youtubeLink = footer.querySelector('a[href*="youtube.com"]');
-                if (youtubeLink) {
-                    const hand = document.createElement('div');
-                    hand.className = 'click-hand';
-                    youtubeLink.classList.add('click-animation');
-                    youtubeLink.appendChild(hand);
+                        showToast('Semua foto telah diunduh!', 'success');
+                        downloadAllBtn.textContent = `Download Semua Foto (${result.slides.length})`;
+                        downloadAllBtn.disabled = false;
+                    };
                 }
             }
         });
     </script>
-
 </body>
 </html>
