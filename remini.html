@@ -323,9 +323,9 @@
                     
                     const beforeUrl = uploadResult.link;
 
-                    // Panggil downloader.js (yang sudah support remini)
+                    // Panggil remini.js (yang sudah support remini)
                     enhanceBtn.innerHTML = '<span class="spinner"></span> Memproses HD (2/2)...';
-                    const reminiResponse = await fetch('/api/downloader', {
+                    const reminiResponse = await fetch('/api/remini', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ url: beforeUrl, type: 'remini' }) // Tambahkan type: 'remini'
