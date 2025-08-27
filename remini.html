@@ -315,10 +315,15 @@
                     // ==========================================================
                     
                     // ✅ Parsing hasil API Remini lebih simpel
+// ✅ Parsing hasil API Remini sesuai format respons
 const reminiResult = await reminiResponse.json();
 
-if (!reminiResponse.ok || !reminiResult.status || !reminiResult.result) {
+if (!reminiResponse.ok) {
     throw new Error(reminiResult.message || 'Gagal memproses gambar HD.');
+}
+
+if (!reminiResult.status || !reminiResult.result) {
+    throw new Error('API tidak mengembalikan link hasil.');
 }
 
 const afterUrl = reminiResult.result;
