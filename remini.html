@@ -301,17 +301,15 @@
                     // ==========================================================
                     
                     // Baca respons sebagai JSON, bukan teks mentah.
-                    const reminiResult = await reminiResponse.json();
+                    const afterUrl = await reminiResponse.json(); // Hasilnya langsung berupa link, bukan objek JSON
+if (!reminiResponse.ok) throw new Error(afterUrl.message || 'Gagal memproses gambar HD.');
+if (typeof afterUrl !== 'string' || !afterUrl.startsWith('http')) {
+    // Jika hasilnya bukan link, coba baca sebagai objek (untuk jaga-jaga)
+    const errorResult = JSON.parse(JSON.stringify(afterUrl));
+    throw new Error(errorResult.message || 'Format hasil Remini tidak valid.');
+}
 
-                    if (!reminiResponse.ok) {
-                        // Jika ada pesan error di dalam JSON, gunakan itu.
-                        throw new Error(reminiResult.message || 'Gagal memproses gambar HD.');
-                    }
-
-                    // Periksa apakah respons JSON memiliki property 'result' dan apakah itu URL yang valid
-                    if (reminiResult && reminiResult.result && typeof reminiResult.result === 'string' && reminiResult.result.startsWith('http')) {
-                        const afterUrl = reminiResult.result; // Ambil URL dari property 'result'
-                        showResultPopup(beforeUrl, afterUrl); // Lanjutkan untuk menampilkan popup
+showResultPopup(beforeUrl, afterUrl);
                     } else {
                         // Jika format JSON tidak sesuai atau tidak ada property 'result', lempar error.
                         console.error("Respons tidak valid dari API:", reminiResult);
