@@ -305,7 +305,7 @@
                     const beforeUrl = uploadResult.link;
 
                     enhanceBtn.innerHTML = '<span class="spinner"></span> Memproses HD (2/2)...';
-                    const reminiResponse = await fetch('/api/apinew/remini', {
+                    const reminiResponse = await fetch('/apinew/remini', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ url: beforeUrl })
