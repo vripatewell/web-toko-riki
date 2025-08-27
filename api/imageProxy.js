@@ -9,8 +9,8 @@ export default async function handler(request, response) {
             'tiktokcdn.com', 
             'rapidcdn.app', 
             'cdninstagram.com',
-            'pixhost.to',           // <-- DOMAIN PENTING UNTUK GAMBAR "SEBELUM"
-            'replicate.delivery'    // <-- DOMAIN PENTING UNTUK GAMBAR "SESUDAH"
+            'pixhost.to',           // Jika Anda menggunakan Pixhost untuk upload gambar
+            'replicate.delivery'    // <-- DOMAIN PENTING UNTUK HASIL HD
         ];
         const urlHost = new URL(url).hostname;
         if (!allowedDomains.some(domain => urlHost.endsWith(domain))) {
