@@ -8,16 +8,19 @@ export default async function handler(request, response) {
     }
 
     try {
-        // ▼▼▼ PERBAIKAN: Tambahkan domain 'googlevideo.com' ▼▼▼
-        const allowedDomains = ['tiktokcdn.com', 'rapidcdn.app', 'cdninstagram.com', '123tokyo.xyz', 'googlevideo.com'];
+        const allowedDomains = [
+            'tiktokcdn.com', 
+            'rapidcdn.app', 
+            'cdninstagram.com', 
+            '123tokyo.xyz',
+            'replicate.delivery' // <-- DOMAIN BARU DITAMBAHKAN
+        ];
         const urlHost = new URL(url).hostname;
         const isAllowed = allowedDomains.some(domain => urlHost.endsWith(domain));
         
         if (!isAllowed) {
-            // Jika domain tidak ada di daftar, kirim error ini
             return response.status(403).json({ message: 'Domain tidak diizinkan.' });
         }
-        // ▲▲▲ AKHIR PERBAIKAN ▲▲▲
 
         const externalResponse = await fetch(url);
 

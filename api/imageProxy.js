@@ -8,15 +8,19 @@ export default async function handler(request, response) {
     }
 
     try {
-        // ▼▼▼ PERBAIKAN: Izinkan beberapa domain ▼▼▼
-        const allowedDomains = ['tiktokcdn.com', 'rapidcdn.app', 'cdninstagram.com'];
+        const allowedDomains = [
+            'tiktokcdn.com', 
+            'rapidcdn.app', 
+            'cdninstagram.com',
+            'pixhost.to',           // <-- DOMAIN BARU DITAMBAHKAN
+            'replicate.delivery'    // <-- DOMAIN BARU DITAMBAHKAN
+        ];
         const urlHost = new URL(url).hostname;
         const isAllowed = allowedDomains.some(domain => urlHost.endsWith(domain));
 
         if (!isAllowed) {
              return response.status(403).send('Domain not allowed.');
         }
-        // ▲▲▲ AKHIR PERBAIKAN ▲▲▲
 
         const externalResponse = await fetch(url, {
             headers: {
