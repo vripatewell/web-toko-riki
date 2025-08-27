@@ -44,14 +44,7 @@
         .upload-area span { font-size: clamp(0.85em, 3.5vw, 1em); }
         #file-input { display: none; }
         #preview-container { margin-top: 20px; text-align: center; }
-        #image-preview {
-    max-width: 100%;
-    height: auto;
-    display: block;
-    margin: 10px auto;
-    border-radius: 12px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-}
+        #image-preview { max-width: 100%; max-height: 200px; border-radius: 12px; }
         #enhance-btn {
             width: 100%; padding: 15px; margin-top: 25px; background-color: var(--primary-color); color: white;
             border: none; border-radius: 12px; font-size: 1.1em; font-weight: 600; cursor: pointer; display: none;
@@ -79,26 +72,29 @@
         #back-button:hover { color: var(--primary-color); background-color: rgba(0,0,0,0.05); }
         body.dark-mode #back-button:hover { background-color: rgba(255,255,255,0.05); }
         .footer { margin-top: 30px; text-align: center; font-size: 0.9em; color: var(--text-secondary); }
-        
+        .footer a { text-decoration: none; color: inherit; display: inline-flex; align-items: center; gap: 5px; }
+        .footer a:hover { color: var(--primary-color); }
+
+        /* Animasi Tombol YouTube */
         /* CSS FOOTER & ANIMASI YOUTUBE */
-        .footer a { color: var(--text-secondary); text-decoration: none; font-weight: 600; display: inline-flex; align-items: center; gap: 8px; transition: color 0.3s ease, text-shadow 0.3s ease; }
-        .footer a:hover { color: var(--primary-color); text-shadow: 0 0 8px var(--primary-color); }
-        .footer .fab.fa-youtube { color: #ff0000; }
-        .footer a:hover .fab.fa-youtube { text-shadow: 0 0 8px #ff0000; }
-        .glow-text { text-shadow: 0 0 5px var(--primary-color); }
-        .glow-youtube { text-shadow: 0 0 5px rgba(255, 0, 0, 0.6); }
-        .click-animation { position: relative; display: inline-flex; }
-        .click-hand {
-            position: absolute; bottom: -25px; left: 50%; width: 25px; height: 25px;
-            background-image: url('https://emojicdn.elk.sh/👆'); background-size: contain; background-repeat: no-repeat;
-            opacity: 0; transform: translateX(-50%); transform-origin: bottom center;
-            animation: pointing-up 2.5s infinite ease-in-out 1.5s; pointer-events: none;
-        }
-        @keyframes pointing-up {
-            0%, 100% { transform: translateX(-50%) translateY(10px); opacity: 0; }
-            30%, 70% { transform: translateX(-50%) translateY(0); opacity: 1; }
-            80% { transform: translateX(-50%) translateY(10px); opacity: 0; }
-        }
+.footer a { color: var(--text-secondary); text-decoration: none; font-weight: 600; display: inline-flex; align-items: center; gap: 8px; transition: color 0.3s ease, text-shadow 0.3s ease; }
+.footer a:hover { color: var(--primary-color); text-shadow: 0 0 8px var(--primary-color); }
+.footer .fab.fa-youtube { color: #ff0000; }
+.footer a:hover .fab.fa-youtube { text-shadow: 0 0 8px #ff0000; }
+.glow-text { text-shadow: 0 0 5px var(--primary-color); }
+.glow-youtube { text-shadow: 0 0 5px rgba(255, 0, 0, 0.6); }
+.click-animation { position: relative; display: inline-flex; }
+.click-hand {
+    position: absolute; bottom: -25px; left: 50%; width: 25px; height: 25px;
+    background-image: url('https://emojicdn.elk.sh/👆'); background-size: contain; background-repeat: no-repeat;
+    opacity: 0; transform: translateX(-50%); transform-origin: bottom center;
+    animation: pointing-up 2.5s infinite ease-in-out 1.5s; pointer-events: none;
+}
+@keyframes pointing-up {
+    0%, 100% { transform: translateX(-50%) translateY(10px); opacity: 0; }
+    30%, 70% { transform: translateX(-50%) translateY(0); opacity: 1; }
+    80% { transform: translateX(-50%) translateY(10px); opacity: 0; }
+}
 
         /* GAYA POPUP (Sebelum-Sesudah) */
         .popup-overlay {
@@ -117,13 +113,11 @@
         .image-comparison-wrapper {
             position: relative;
             width: 100%;
-            height: 0; /* Akan diatur oleh JS berdasarkan rasio gambar */
-            padding-bottom: 75%; /* Placeholder ratio 4:3, akan disesuaikan */
+            padding-top: 75%; /* Aspect ratio 4:3, sesuaikan jika gambar punya rasio lain */
             overflow: hidden;
             border-radius: 12px;
             border: 1px solid var(--border-color);
             margin-top: 20px;
-            box-sizing: border-box; /* Pastikan padding dihitung dalam ukuran */
         }
 
         .image-comparison-wrapper img {
@@ -135,20 +129,18 @@
             object-fit: contain; /* Agar gambar tidak terpotong */
             pointer-events: none; /* Penting agar slider bisa disentuh */
             user-select: none;
-            will-change: transform; /* Hint browser untuk optimasi animasi */
         }
 
         .resizer {
             position: absolute;
             top: 0;
             left: 50%;
-            width: 4px; /* Lebar resizer */
+            width: 4px;
             height: 100%;
             background: var(--primary-color);
             cursor: ew-resize;
             user-select: none;
             z-index: 10;
-            will-change: left; /* Hint browser untuk optimasi animasi */
         }
 
         .resizer::before {
@@ -173,16 +165,12 @@
             width: 50%; /* Awalnya setengah */
             height: 100%;
             overflow: hidden;
-            will-change: width; /* Hint browser untuk optimasi animasi */
         }
         .image-after img {
-            position: absolute; /* Perlu posisi absolut untuk bekerja dengan benar */
-            left: 0;
-            width: 200%; /* Gambar harus 2x lebih lebar dari container */
-            max-width: 200%; /* Pastikan tidak lebih dari 200% */
-            height: 100%;
-            object-fit: contain;
-            transform: translateX(-50%); /* Geser gambar agar bagian kanan yang terlihat */
+            width: 200%; /* Untuk memastikan gambar mengisi ruang meskipun ukurannya berubah */
+            left: unset;
+            right: 0;
+            transform: translateX(0%); /* Sesuaikan posisi gambar di dalam container */
         }
         
         .popup-buttons { display: flex; flex-direction: column; gap: 10px; margin-top: 20px; }
@@ -206,7 +194,7 @@
 
     <div class="container">
         <a href="index.html" id="back-button" aria-label="Kembali"><i class="fas fa-arrow-left"></i></a>
-        <h1><i class="fas fa-image"></i> AI Image Enhancer</h1>
+        <h1><i class="fas fa-magic-sparkles"></i> AI Image Enhancer</h1>
         <p class="subtitle">Unggah gambar buram untuk diubah menjadi kualitas HD.</p>
         <label for="file-input" class="upload-area" id="upload-area">
             <i class="fas fa-cloud-upload-alt"></i>
@@ -216,11 +204,11 @@
         <div id="preview-container"></div>
         <button id="enhance-btn"><span>HD-kan Gambar Ini</span></button>
         <div class="footer">
-            Powered by <a href="https://toko.rikishop.my.id" target="_blank" style="margin-left: 5px;"><span class="glow-text">Riki Shop</span></a>
-            <span style="margin: 0 10px;">|</span>
-            <a href="https://www.youtube.com/@rikishopreal" target="_blank">
-                <i class="fab fa-youtube glow-youtube"></i> Subscribe
-            </a>
+    Powered by <a href="https://toko.rikishop.my.id" target="_blank" style="margin-left: 5px;"><span class="glow-text">Riki Shop</span></a>
+    <span style="margin: 0 10px;">|</span>
+    <a href="https://www.youtube.com/@rikishopreal" target="_blank">
+        <i class="fab fa-youtube glow-youtube"></i> Subscribe
+    </a>
         </div>
     </div>
 
@@ -309,30 +297,11 @@
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ url: beforeUrl, type: 'remini' }) // Tambahkan type: 'remini'
                     });
-                    
-                    // ==========================================================
-                    // ==== BAGIAN INI ADALAH PERBAIKANNYA =====================
-                    // ==========================================================
-                    
-                    // ✅ Parsing hasil API Remini lebih simpel
-// ✅ Parsing hasil API Remini sesuai format respons
-const reminiResult = await reminiResponse.json();
+                    const reminiResult = await reminiResponse.json();
+                    if (!reminiResponse.ok) throw new Error(reminiResult.message || 'Gagal memproses gambar HD.');
+                    if (!reminiResult || !reminiResult.result) throw new Error('Format hasil Remini tidak valid.');
 
-if (!reminiResponse.ok) {
-    throw new Error(reminiResult.message || 'Gagal memproses gambar HD.');
-}
-
-if (!reminiResult.status || !reminiResult.result) {
-    throw new Error('API tidak mengembalikan link hasil.');
-}
-
-const afterUrl = reminiResult.result;
-showResultPopup(beforeUrl, afterUrl);
-                    
-                    // ==========================================================
-                    // ==== AKHIR DARI BAGIAN PERBAIKAN =========================
-                    // ==========================================================
-
+                    const afterUrl = reminiResult.result;
                     showResultPopup(beforeUrl, afterUrl);
 
                 } catch (error) {
@@ -364,93 +333,74 @@ showResultPopup(beforeUrl, afterUrl);
                         </div>
                         <div class="popup-buttons">
                             <a href="${downloadHref}" class="popup-button"><i class="fas fa-download"></i> Download Hasil HD</a>
-                            <button id="close-popup-button" class="popup-button">Tutup</button>
+                            <button id="close-popup-button">Tutup</button>
                         </div>
                     </div>
                 `;
                 document.body.appendChild(popupOverlay);
                 popupOverlay.classList.add('show');
 
+                // Fungsi untuk slider
                 const resizer = popupOverlay.querySelector('.resizer');
-                const imageAfterContainer = popupOverlay.querySelector('.image-after');
+                const imageAfter = popupOverlay.querySelector('.image-after');
                 const wrapper = popupOverlay.querySelector('.image-comparison-wrapper');
-                const imgBefore = popupOverlay.querySelector('.image-before');
-                
-                const tempImg = new Image();
-                tempImg.src = imgBefore.src;
-                tempImg.onload = () => {
-                    const aspectRatio = tempImg.naturalHeight / tempImg.naturalWidth;
-                    wrapper.style.paddingBottom = `${aspectRatio * 100}%`;
-                    initComparisonSlider(resizer, imageAfterContainer, wrapper);
+                let isDragging = false;
+
+                const moveResizer = (x) => {
+                    const wrapperRect = wrapper.getBoundingClientRect();
+                    let newLeft = x - wrapperRect.left;
+                    if (newLeft < 0) newLeft = 0;
+                    if (newLeft > wrapperRect.width) newLeft = wrapperRect.width;
+
+                    resizer.style.left = `${(newLeft / wrapperRect.width) * 100}%`;
+                    imageAfter.style.width = `${100 - (newLeft / wrapperRect.width) * 100}%`;
+                    imageAfter.querySelector('img').style.transform = `translateX(${-(newLeft / wrapperRect.width) * 100}%)`;
                 };
-                tempImg.onerror = () => {
-                    console.error("Gagal memuat gambar sebelum.");
-                    wrapper.style.paddingBottom = '75%'; // Fallback
-                    initComparisonSlider(resizer, imageAfterContainer, wrapper);
-                };
+
+                resizer.addEventListener('mousedown', (e) => {
+                    isDragging = true;
+                });
+                wrapper.addEventListener('mousemove', (e) => {
+                    if (isDragging) moveResizer(e.clientX);
+                });
+                wrapper.addEventListener('mouseup', () => {
+                    isDragging = false;
+                });
+                wrapper.addEventListener('mouseleave', () => { // Penting agar tidak nyangkut saat mouse keluar area
+                    isDragging = false;
+                });
+
+                // Touch events untuk mobile
+                resizer.addEventListener('touchstart', (e) => {
+                    isDragging = true;
+                });
+                wrapper.addEventListener('touchmove', (e) => {
+                    if (isDragging && e.touches.length > 0) moveResizer(e.touches[0].clientX);
+                });
+                wrapper.addEventListener('touchend', () => {
+                    isDragging = false;
+                });
+
+                // Set posisi awal slider ke tengah
+                moveResizer(wrapper.getBoundingClientRect().left + wrapper.getBoundingClientRect().width / 2);
+
 
                 popupOverlay.querySelector('#close-popup-button').onclick = () => {
                     popupOverlay.classList.remove('show');
-                    setTimeout(() => popupOverlay.remove(), 300);
                 };
             }
 
-            function initComparisonSlider(resizer, imageAfterContainer, wrapper) {
-                let isDragging = false;
-
-                const moveSlider = (x) => {
-                    const rect = wrapper.getBoundingClientRect();
-                    let newX = x - rect.left;
-
-                    if (newX < 0) newX = 0;
-                    if (newX > rect.width) newX = rect.width;
-                    
-                    const percentage = (newX / rect.width) * 100;
-                    resizer.style.left = `${percentage}%`;
-                    imageAfterContainer.style.width = `${100 - percentage}%`;
-                };
-
-                const startDrag = (e) => {
-                    isDragging = true;
-                    resizer.style.transition = 'none';
-                    imageAfterContainer.style.transition = 'none';
-                };
-
-                const stopDrag = () => {
-                    isDragging = false;
-                    resizer.style.transition = '';
-                    imageAfterContainer.style.transition = '';
-                };
-
-                const onDrag = (e) => {
-                    if (!isDragging) return;
-                    const clientX = e.clientX || (e.touches && e.touches[0].clientX);
-                    if (clientX === undefined) return;
-                    requestAnimationFrame(() => moveSlider(clientX));
-                };
-
-                resizer.addEventListener('mousedown', startDrag);
-                document.addEventListener('mouseup', stopDrag);
-                document.addEventListener('mousemove', onDrag);
-
-                resizer.addEventListener('touchstart', startDrag, { passive: true });
-                document.addEventListener('touchend', stopDrag);
-                document.addEventListener('touchmove', onDrag, { passive: true });
-
-                 // Inisialisasi posisi awal di tengah
-                moveSlider(wrapper.getBoundingClientRect().left + wrapper.getBoundingClientRect().width / 2);
-            }
-
+            // Animasi Klik YouTube
             const footer = document.querySelector('.footer');
-            if(footer) {
-                const youtubeLink = footer.querySelector('a[href*="youtube.com"]');
-                if (youtubeLink) {
-                    const hand = document.createElement('div');
-                    hand.className = 'click-hand';
-                    youtubeLink.classList.add('click-animation');
-                    youtubeLink.appendChild(hand);
-                }
-            }
+if(footer) {
+    const youtubeLink = footer.querySelector('a[href*="youtube.com"]');
+    if (youtubeLink) {
+        const hand = document.createElement('div');
+        hand.className = 'click-hand';
+        youtubeLink.classList.add('click-animation');
+        youtubeLink.appendChild(hand);
+    }
+}
         });
     </script>
 </body>
