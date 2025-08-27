@@ -297,12 +297,15 @@
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ url: beforeUrl, type: 'remini' }) // Tambahkan type: 'remini'
                     });
-                    const reminiResult = await reminiResponse.json();
-                    if (!reminiResponse.ok) throw new Error(reminiResult.message || 'Gagal memproses gambar HD.');
-                    if (!reminiResult || !reminiResult.result) throw new Error('Format hasil Remini tidak valid.');
+                    const afterUrl = await reminiResponse.json(); // Hasilnya langsung berupa link, bukan objek JSON
+if (!reminiResponse.ok) throw new Error(afterUrl.message || 'Gagal memproses gambar HD.');
+if (typeof afterUrl !== 'string' || !afterUrl.startsWith('http')) {
+    // Jika hasilnya bukan link, coba baca sebagai objek (untuk jaga-jaga)
+    const errorResult = JSON.parse(JSON.stringify(afterUrl));
+    throw new Error(errorResult.message || 'Format hasil Remini tidak valid.');
+}
 
-                    const afterUrl = reminiResult.result;
-                    showResultPopup(beforeUrl, afterUrl);
+showResultPopup(beforeUrl, afterUrl);
 
                 } catch (error) {
                     showToast(error.message, 'error');
