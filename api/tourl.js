@@ -1,9 +1,8 @@
 import { promises as fs } from 'fs';
 import { IncomingForm } from 'formidable';
 import { ImageUploadService } from 'node-upload-images';
-import path from 'path'; // <-- Tambahkan import ini
+import path from 'path';
 
-// Menonaktifkan bodyParser bawaan Vercel
 export const config = {
     api: {
         bodyParser: false,
@@ -25,21 +24,12 @@ export default async function handler(request, response) {
         }
 
         const fileContent = await fs.readFile(imageFile.filepath);
-        
-        // --- ▼▼▼ LOGIKA NAMA KUSTOM DIMULAI DI SINI ▼▼▼ ---
-
-        // 1. Ambil ekstensi file asli (misalnya .jpg, .png)
         const fileExtension = path.extname(imageFile.originalFilename);
-        
-        // 2. Buat nama file baru yang Anda inginkan
         const newFilename = `by_rikishopreal${fileExtension}`;
         
-        // 3. Unggah dengan nama file baru
         const service = new ImageUploadService('pixhost.to');
         const { directLink } = await service.uploadFromBinary(fileContent, newFilename);
         
-        // --- ▲▲▲ LOGIKA NAMA KUSTOM SELESAI ▲▲▲ ---
-
         await fs.unlink(imageFile.filepath);
 
         response.status(200).json({ link: directLink });
