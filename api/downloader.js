@@ -5,7 +5,6 @@ export default async function handler(request, response) {
         return response.status(405).json({ message: 'Metode tidak diizinkan.' });
     }
 
-    // Sekarang kita menerima 'url' dan 'type' dari frontend
     const { url, type } = request.body;
 
     if (!url || !type) {
@@ -15,7 +14,6 @@ export default async function handler(request, response) {
     let externalApiUrl = '';
     let apiName = '';
 
-    // Memilih API yang akan digunakan berdasarkan 'type'
     switch (type) {
         case 'tiktok':
             apiName = 'TikTok';
@@ -30,12 +28,14 @@ export default async function handler(request, response) {
             externalApiUrl = `https://api-simplebot.vercel.app/download/ytmp4?apikey=free&url=${encodeURIComponent(url)}`;
             break;
         case 'remini':
-    apiName = 'Remini';
-    externalApiUrl = `https://newapiriki.vercel.app/imagecreator/remini?apikey=rikinew&url=${encodeURIComponent(url)}`;
-    break;
-default:
-    return response.status(400).json({ message: 'Tipe downloader tidak valid.' });
+            apiName = 'Remini';
+            externalApiUrl = `https://newapiriki.vercel.app/imagecreator/remini?apikey=rikinew&url=${encodeURIComponent(url)}`;
+            break;
+        default:
+            return response.status(400).json({ message: 'Tipe downloader tidak valid.' });
+    } // <-- Tanda kurung kurawal ini adalah akhir dari switch
 
+    // Blok try...catch seharusnya ada di sini, DI LUAR dan SETELAH switch
     try {
         const apiResponse = await fetch(externalApiUrl);
         const data = await apiResponse.json();
@@ -45,7 +45,6 @@ default:
             throw new Error(errorMessage);
         }
 
-        // Mengirim kembali hanya bagian 'result' ke frontend, sama seperti sebelumnya
         response.status(200).json(data.result);
 
     } catch (error) {
