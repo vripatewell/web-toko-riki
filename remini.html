@@ -72,29 +72,26 @@
         #back-button:hover { color: var(--primary-color); background-color: rgba(0,0,0,0.05); }
         body.dark-mode #back-button:hover { background-color: rgba(255,255,255,0.05); }
         .footer { margin-top: 30px; text-align: center; font-size: 0.9em; color: var(--text-secondary); }
-        .footer a { text-decoration: none; color: inherit; display: inline-flex; align-items: center; gap: 5px; }
-        .footer a:hover { color: var(--primary-color); }
-
-        /* Animasi Tombol YouTube */
-/* CSS FOOTER & ANIMASI YOUTUBE */
-.footer a { color: var(--text-secondary); text-decoration: none; font-weight: 600; display: inline-flex; align-items: center; gap: 8px; transition: color 0.3s ease, text-shadow 0.3s ease; }
-.footer a:hover { color: var(--primary-color); text-shadow: 0 0 8px var(--primary-color); }
-.footer .fab.fa-youtube { color: #ff0000; }
-.footer a:hover .fab.fa-youtube { text-shadow: 0 0 8px #ff0000; }
-.glow-text { text-shadow: 0 0 5px var(--primary-color); }
-.glow-youtube { text-shadow: 0 0 5px rgba(255, 0, 0, 0.6); }
-.click-animation { position: relative; display: inline-flex; }
-.click-hand {
-    position: absolute; bottom: -25px; left: 50%; width: 25px; height: 25px;
-    background-image: url('https://emojicdn.elk.sh/👆'); background-size: contain; background-repeat: no-repeat;
-    opacity: 0; transform: translateX(-50%); transform-origin: bottom center;
-    animation: pointing-up 2.5s infinite ease-in-out 1.5s; pointer-events: none;
-}
-@keyframes pointing-up {
-    0%, 100% { transform: translateX(-50%) translateY(10px); opacity: 0; }
-    30%, 70% { transform: translateX(-50%) translateY(0); opacity: 1; }
-    80% { transform: translateX(-50%) translateY(10px); opacity: 0; }
-}
+        
+        /* CSS FOOTER & ANIMASI YOUTUBE */
+        .footer a { color: var(--text-secondary); text-decoration: none; font-weight: 600; display: inline-flex; align-items: center; gap: 8px; transition: color 0.3s ease, text-shadow 0.3s ease; }
+        .footer a:hover { color: var(--primary-color); text-shadow: 0 0 8px var(--primary-color); }
+        .footer .fab.fa-youtube { color: #ff0000; }
+        .footer a:hover .fab.fa-youtube { text-shadow: 0 0 8px #ff0000; }
+        .glow-text { text-shadow: 0 0 5px var(--primary-color); }
+        .glow-youtube { text-shadow: 0 0 5px rgba(255, 0, 0, 0.6); }
+        .click-animation { position: relative; display: inline-flex; }
+        .click-hand {
+            position: absolute; bottom: -25px; left: 50%; width: 25px; height: 25px;
+            background-image: url('https://emojicdn.elk.sh/👆'); background-size: contain; background-repeat: no-repeat;
+            opacity: 0; transform: translateX(-50%); transform-origin: bottom center;
+            animation: pointing-up 2.5s infinite ease-in-out 1.5s; pointer-events: none;
+        }
+        @keyframes pointing-up {
+            0%, 100% { transform: translateX(-50%) translateY(10px); opacity: 0; }
+            30%, 70% { transform: translateX(-50%) translateY(0); opacity: 1; }
+            80% { transform: translateX(-50%) translateY(10px); opacity: 0; }
+        }
 
         /* GAYA POPUP (Sebelum-Sesudah) */
         .popup-overlay {
@@ -113,11 +110,13 @@
         .image-comparison-wrapper {
             position: relative;
             width: 100%;
-            padding-top: 75%; /* Aspect ratio 4:3, sesuaikan jika gambar punya rasio lain */
+            height: 0; /* Akan diatur oleh JS berdasarkan rasio gambar */
+            padding-bottom: 75%; /* Placeholder ratio 4:3, akan disesuaikan */
             overflow: hidden;
             border-radius: 12px;
             border: 1px solid var(--border-color);
             margin-top: 20px;
+            box-sizing: border-box; /* Pastikan padding dihitung dalam ukuran */
         }
 
         .image-comparison-wrapper img {
@@ -129,18 +128,20 @@
             object-fit: contain; /* Agar gambar tidak terpotong */
             pointer-events: none; /* Penting agar slider bisa disentuh */
             user-select: none;
+            will-change: transform; /* Hint browser untuk optimasi animasi */
         }
 
         .resizer {
             position: absolute;
             top: 0;
             left: 50%;
-            width: 4px;
+            width: 4px; /* Lebar resizer */
             height: 100%;
             background: var(--primary-color);
             cursor: ew-resize;
             user-select: none;
             z-index: 10;
+            will-change: left; /* Hint browser untuk optimasi animasi */
         }
 
         .resizer::before {
@@ -165,12 +166,13 @@
             width: 50%; /* Awalnya setengah */
             height: 100%;
             overflow: hidden;
+            will-change: width; /* Hint browser untuk optimasi animasi */
         }
         .image-after img {
-            width: 200%; /* Untuk memastikan gambar mengisi ruang meskipun ukurannya berubah */
-            left: unset;
-            right: 0;
-            transform: translateX(0%); /* Sesuaikan posisi gambar di dalam container */
+            width: 100%; /* Agar gambar mengisi penuh container .image-after */
+            left: 0; /* Reset left */
+            transform: translateX(0); /* Reset transform */
+            object-fit: contain;
         }
         
         .popup-buttons { display: flex; flex-direction: column; gap: 10px; margin-top: 20px; }
@@ -194,7 +196,7 @@
 
     <div class="container">
         <a href="index.html" id="back-button" aria-label="Kembali"><i class="fas fa-arrow-left"></i></a>
-        <h1><i class="fas fa-magic-sparkles"></i> AI Image Enhancer</h1>
+        <h1><i class="fas fa-image"></i> AI Image Enhancer</h1>
         <p class="subtitle">Unggah gambar buram untuk diubah menjadi kualitas HD.</p>
         <label for="file-input" class="upload-area" id="upload-area">
             <i class="fas fa-cloud-upload-alt"></i>
@@ -204,14 +206,14 @@
         <div id="preview-container"></div>
         <button id="enhance-btn"><span>HD-kan Gambar Ini</span></button>
         <div class="footer">
-            Powered by Riki Shop |  <a href="https://toko.rikishop.my.id" target="_blank" style="margin-left: 5px;"><span class="glow-text">Riki Shop</span></a>
-    <span style="margin: 0 10px;">|</span>
-    <a href="https://www.youtube.com/@rikishopreal" target="_blank">
-        <i class="fab fa-youtube glow-youtube"></i> Subscribe
-    </a>
+            Powered by <a href="https://toko.rikishop.my.id" target="_blank" style="margin-left: 5px;"><span class="glow-text">Riki Shop</span></a>
+            <span style="margin: 0 10px;">|</span>
+            <a href="https://www.youtube.com/@rikishopreal" target="_blank">
+                <i class="fab fa-youtube glow-youtube"></i> Subscribe
+            </a>
         </div>
     </div>
-    
+
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const body = document.body;
@@ -297,15 +299,30 @@
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ url: beforeUrl, type: 'remini' }) // Tambahkan type: 'remini'
                     });
-                    const afterUrl = await reminiResponse.json(); // Hasilnya langsung berupa link, bukan objek JSON
-if (!reminiResponse.ok) throw new Error(afterUrl.message || 'Gagal memproses gambar HD.');
-if (typeof afterUrl !== 'string' || !afterUrl.startsWith('http')) {
-    // Jika hasilnya bukan link, coba baca sebagai objek (untuk jaga-jaga)
-    const errorResult = JSON.parse(JSON.stringify(afterUrl));
-    throw new Error(errorResult.message || 'Format hasil Remini tidak valid.');
-}
+                    
+                    // Langsung baca sebagai teks untuk menghindari error JSON.parse jika bukan JSON
+                    const reminiRawResult = await reminiResponse.text(); 
+                    
+                    if (!reminiResponse.ok) {
+                        // Coba parse error message jika ada
+                        let errorMessage = 'Gagal memproses gambar HD.';
+                        try {
+                            const errorJson = JSON.parse(reminiRawResult);
+                            errorMessage = errorJson.message || errorMessage;
+                        } catch (e) {
+                            // Raw result bukan JSON, pakai apa adanya
+                            errorMessage = reminiRawResult || errorMessage;
+                        }
+                        throw new Error(errorMessage);
+                    }
 
-showResultPopup(beforeUrl, afterUrl);
+                    // Pastikan hasilnya adalah URL yang valid
+                    if (typeof reminiRawResult !== 'string' || !reminiRawResult.startsWith('http')) {
+                        throw new Error('Format hasil Remini tidak valid: Bukan URL.');
+                    }
+
+                    const afterUrl = reminiRawResult; // Hasilnya langsung berupa link
+                    showResultPopup(beforeUrl, afterUrl);
 
                 } catch (error) {
                     showToast(error.message, 'error');
@@ -322,6 +339,7 @@ showResultPopup(beforeUrl, afterUrl);
                 const popupOverlay = document.createElement('div');
                 popupOverlay.className = 'popup-overlay';
                 
+                // Perbaikan: Tombol download harus selalu mengunduh afterUrl
                 const downloadHref = `/api/downloadProxy?url=${encodeURIComponent(afterUrl)}&filename=enhanced_riki.png`;
                 
                 popupOverlay.innerHTML = `
@@ -343,67 +361,103 @@ showResultPopup(beforeUrl, afterUrl);
                 document.body.appendChild(popupOverlay);
                 popupOverlay.classList.add('show');
 
-                // Fungsi untuk slider
                 const resizer = popupOverlay.querySelector('.resizer');
                 const imageAfter = popupOverlay.querySelector('.image-after');
                 const wrapper = popupOverlay.querySelector('.image-comparison-wrapper');
-                let isDragging = false;
-
-                const moveResizer = (x) => {
-                    const wrapperRect = wrapper.getBoundingClientRect();
-                    let newLeft = x - wrapperRect.left;
-                    if (newLeft < 0) newLeft = 0;
-                    if (newLeft > wrapperRect.width) newLeft = wrapperRect.width;
-
-                    resizer.style.left = `${(newLeft / wrapperRect.width) * 100}%`;
-                    imageAfter.style.width = `${100 - (newLeft / wrapperRect.width) * 100}%`;
-                    imageAfter.querySelector('img').style.transform = `translateX(${-(newLeft / wrapperRect.width) * 100}%)`;
+                const imgBefore = popupOverlay.querySelector('.image-before');
+                
+                // Load gambar sebelum menginisialisasi slider untuk mendapatkan dimensi asli
+                const tempImg = new Image();
+                tempImg.src = imgBefore.src;
+                tempImg.onload = () => {
+                    const aspectRatio = tempImg.naturalHeight / tempImg.naturalWidth;
+                    wrapper.style.paddingBottom = `${aspectRatio * 100}%`;
+                    initComparisonSlider(resizer, imageAfter, wrapper);
                 };
-
-                resizer.addEventListener('mousedown', (e) => {
-                    isDragging = true;
-                });
-                wrapper.addEventListener('mousemove', (e) => {
-                    if (isDragging) moveResizer(e.clientX);
-                });
-                wrapper.addEventListener('mouseup', () => {
-                    isDragging = false;
-                });
-                wrapper.addEventListener('mouseleave', () => { // Penting agar tidak nyangkut saat mouse keluar area
-                    isDragging = false;
-                });
-
-                // Touch events untuk mobile
-                resizer.addEventListener('touchstart', (e) => {
-                    isDragging = true;
-                });
-                wrapper.addEventListener('touchmove', (e) => {
-                    if (isDragging && e.touches.length > 0) moveResizer(e.touches[0].clientX);
-                });
-                wrapper.addEventListener('touchend', () => {
-                    isDragging = false;
-                });
-
-                // Set posisi awal slider ke tengah
-                moveResizer(wrapper.getBoundingClientRect().left + wrapper.getBoundingClientRect().width / 2);
-
+                tempImg.onerror = () => {
+                    console.error("Gagal memuat gambar sebelum.");
+                    wrapper.style.paddingBottom = '75%'; // Fallback
+                    initComparisonSlider(resizer, imageAfter, wrapper);
+                };
 
                 popupOverlay.querySelector('#close-popup-button').onclick = () => {
                     popupOverlay.classList.remove('show');
                 };
             }
 
+            function initComparisonSlider(resizer, imageAfter, wrapper) {
+                let isDragging = false;
+
+                // Set posisi awal slider ke tengah
+                const initialX = wrapper.getBoundingClientRect().width / 2;
+                moveResizer(initialX);
+
+                const moveResizer = (x) => {
+                    const wrapperRect = wrapper.getBoundingClientRect();
+                    let newLeft = x - wrapperRect.left;
+                    
+                    // Batasi pergerakan slider agar tidak keluar area
+                    if (newLeft < 0) newLeft = 0;
+                    if (newLeft > wrapperRect.width) newLeft = wrapperRect.width;
+
+                    const percentage = (newLeft / wrapperRect.width) * 100;
+
+                    // Gunakan transform untuk performa lebih baik
+                    resizer.style.transform = `translateX(${percentage - 50}%)`; // Geser resizer ke tengah
+                    imageAfter.style.width = `${100 - percentage}%`;
+                    imageAfter.style.transform = `translateX(${percentage}%)`; // Geser container .image-after
+                };
+
+                const startDragging = (clientX) => {
+                    isDragging = true;
+                    wrapper.classList.add('dragging'); // Tambahkan kelas untuk kursor atau styling
+                };
+
+                const stopDragging = () => {
+                    isDragging = false;
+                    wrapper.classList.remove('dragging');
+                };
+
+                const onMove = (clientX) => {
+                    if (isDragging) {
+                        requestAnimationFrame(() => moveResizer(clientX));
+                    }
+                };
+
+                // Mouse events
+                resizer.addEventListener('mousedown', (e) => {
+                    e.preventDefault(); // Mencegah drag default browser
+                    startDragging(e.clientX);
+                });
+                wrapper.addEventListener('mousemove', (e) => {
+                    onMove(e.clientX);
+                });
+                wrapper.addEventListener('mouseup', stopDragging);
+                wrapper.addEventListener('mouseleave', stopDragging);
+
+                // Touch events
+                resizer.addEventListener('touchstart', (e) => {
+                    e.preventDefault(); // Mencegah scroll default browser
+                    if (e.touches.length > 0) startDragging(e.touches[0].clientX);
+                }, { passive: false });
+                wrapper.addEventListener('touchmove', (e) => {
+                    if (e.touches.length > 0) onMove(e.touches[0].clientX);
+                }, { passive: false });
+                wrapper.addEventListener('touchend', stopDragging);
+            }
+
+
             // Animasi Klik YouTube
             const footer = document.querySelector('.footer');
-if(footer) {
-    const youtubeLink = footer.querySelector('a[href*="youtube.com"]');
-    if (youtubeLink) {
-        const hand = document.createElement('div');
-        hand.className = 'click-hand';
-        youtubeLink.classList.add('click-animation');
-        youtubeLink.appendChild(hand);
-    }
-}
+            if(footer) {
+                const youtubeLink = footer.querySelector('a[href*="youtube.com"]');
+                if (youtubeLink) {
+                    const hand = document.createElement('div');
+                    hand.className = 'click-hand';
+                    youtubeLink.classList.add('click-animation');
+                    youtubeLink.appendChild(hand);
+                }
+            }
         });
     </script>
 </body>
