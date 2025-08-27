@@ -44,7 +44,14 @@
         .upload-area span { font-size: clamp(0.85em, 3.5vw, 1em); }
         #file-input { display: none; }
         #preview-container { margin-top: 20px; text-align: center; }
-        #image-preview { max-width: 100%; max-height: 200px; border-radius: 12px; }
+        #image-preview {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: 10px auto;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
         #enhance-btn {
             width: 100%; padding: 15px; margin-top: 25px; background-color: var(--primary-color); color: white;
             border: none; border-radius: 12px; font-size: 1.1em; font-weight: 600; cursor: pointer; display: none;
@@ -135,7 +142,6 @@
             position: absolute;
             top: 0;
             left: 50%;
-            transform: translateX(-50%);
             width: 4px; /* Lebar resizer */
             height: 100%;
             background: var(--primary-color);
@@ -163,12 +169,20 @@
         .image-after {
             position: absolute;
             top: 0;
-            left: 0;
-            width: 100%;
+            right: 0;
+            width: 50%; /* Awalnya setengah */
             height: 100%;
             overflow: hidden;
-            clip-path: polygon(50% 0, 100% 0, 100% 100%, 50% 100%);
-            will-change: clip-path;
+            will-change: width; /* Hint browser untuk optimasi animasi */
+        }
+        .image-after img {
+            position: absolute; /* Perlu posisi absolut untuk bekerja dengan benar */
+            left: 0;
+            width: 200%; /* Gambar harus 2x lebih lebar dari container */
+            max-width: 200%; /* Pastikan tidak lebih dari 200% */
+            height: 100%;
+            object-fit: contain;
+            transform: translateX(-50%); /* Geser gambar agar bagian kanan yang terlihat */
         }
         
         .popup-buttons { display: flex; flex-direction: column; gap: 10px; margin-top: 20px; }
@@ -293,30 +307,28 @@
                     const reminiResponse = await fetch('/api/downloader', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ url: beforeUrl, type: 'remini' })
+                        body: JSON.stringify({ url: beforeUrl, type: 'remini' }) // Tambahkan type: 'remini'
                     });
                     
                     // ==========================================================
-                    // ==== BAGIAN INI TELAH DIPERBAIKI =========================
+                    // ==== BAGIAN INI ADALAH PERBAIKANNYA =====================
                     // ==========================================================
                     
-                    // Baca respons sebagai JSON, bukan teks mentah.
-                    const reminiResult = await reminiResponse.json();
+                    // ✅ Parsing hasil API Remini lebih simpel
+const reminiResult = await reminiResponse.json();
+
 if (!reminiResponse.ok || !reminiResult.status || !reminiResult.result) {
     throw new Error(reminiResult.message || 'Gagal memproses gambar HD.');
 }
 
-const afterUrl = reminiResult.result; // ambil langsung link hasil Remini
+const afterUrl = reminiResult.result;
 showResultPopup(beforeUrl, afterUrl);
-                    } else {
-                        // Jika format JSON tidak sesuai atau tidak ada property 'result', lempar error.
-                        console.error("Respons tidak valid dari API:", reminiResult);
-                        throw new Error('Format hasil Remini tidak valid atau tidak dikenali.');
-                    }
                     
                     // ==========================================================
                     // ==== AKHIR DARI BAGIAN PERBAIKAN =========================
                     // ==========================================================
+
+                    showResultPopup(beforeUrl, afterUrl);
 
                 } catch (error) {
                     showToast(error.message, 'error');
@@ -355,7 +367,7 @@ showResultPopup(beforeUrl, afterUrl);
                 popupOverlay.classList.add('show');
 
                 const resizer = popupOverlay.querySelector('.resizer');
-                const imageAfter = popupOverlay.querySelector('.image-after');
+                const imageAfterContainer = popupOverlay.querySelector('.image-after');
                 const wrapper = popupOverlay.querySelector('.image-comparison-wrapper');
                 const imgBefore = popupOverlay.querySelector('.image-before');
                 
@@ -364,58 +376,64 @@ showResultPopup(beforeUrl, afterUrl);
                 tempImg.onload = () => {
                     const aspectRatio = tempImg.naturalHeight / tempImg.naturalWidth;
                     wrapper.style.paddingBottom = `${aspectRatio * 100}%`;
-                    initComparisonSlider(resizer, imageAfter, wrapper);
+                    initComparisonSlider(resizer, imageAfterContainer, wrapper);
                 };
                 tempImg.onerror = () => {
                     console.error("Gagal memuat gambar sebelum.");
                     wrapper.style.paddingBottom = '75%'; // Fallback
-                    initComparisonSlider(resizer, imageAfter, wrapper);
+                    initComparisonSlider(resizer, imageAfterContainer, wrapper);
                 };
 
                 popupOverlay.querySelector('#close-popup-button').onclick = () => {
                     popupOverlay.classList.remove('show');
-                    setTimeout(() => { popupOverlay.remove(); }, 300);
+                    setTimeout(() => popupOverlay.remove(), 300);
                 };
             }
-            
-            function initComparisonSlider(resizer, imageAfter, wrapper) {
+
+            function initComparisonSlider(resizer, imageAfterContainer, wrapper) {
                 let isDragging = false;
 
-                function move(x) {
+                const moveSlider = (x) => {
                     const rect = wrapper.getBoundingClientRect();
                     let newX = x - rect.left;
+
                     if (newX < 0) newX = 0;
                     if (newX > rect.width) newX = rect.width;
-                    let percent = (newX / rect.width) * 100;
-                    resizer.style.left = `${percent}%`;
-                    imageAfter.style.clipPath = `polygon(${percent}% 0, 100% 0, 100% 100%, ${percent}% 100%)`;
-                }
+                    
+                    const percentage = (newX / rect.width) * 100;
+                    resizer.style.left = `${percentage}%`;
+                    imageAfterContainer.style.width = `${100 - percentage}%`;
+                };
 
-                function onDown(e) {
+                const startDrag = (e) => {
                     isDragging = true;
-                    wrapper.classList.add('is-dragging');
-                }
+                    resizer.style.transition = 'none';
+                    imageAfterContainer.style.transition = 'none';
+                };
 
-                function onUp() {
+                const stopDrag = () => {
                     isDragging = false;
-                    wrapper.classList.remove('is-dragging');
-                }
+                    resizer.style.transition = '';
+                    imageAfterContainer.style.transition = '';
+                };
 
-                function onMove(e) {
+                const onDrag = (e) => {
                     if (!isDragging) return;
-                    e.preventDefault();
-                    move(e.clientX || e.touches[0].clientX);
-                }
+                    const clientX = e.clientX || (e.touches && e.touches[0].clientX);
+                    if (clientX === undefined) return;
+                    requestAnimationFrame(() => moveSlider(clientX));
+                };
 
-                resizer.addEventListener('mousedown', onDown);
-                document.addEventListener('mouseup', onUp);
-                document.addEventListener('mousemove', onMove);
-                resizer.addEventListener('touchstart', onDown, { passive: true });
-                document.addEventListener('touchend', onUp);
-                document.addEventListener('touchmove', onMove, { passive: true });
+                resizer.addEventListener('mousedown', startDrag);
+                document.addEventListener('mouseup', stopDrag);
+                document.addEventListener('mousemove', onDrag);
 
-                // Inisialisasi posisi awal
-                move(wrapper.getBoundingClientRect().left + wrapper.offsetWidth / 2);
+                resizer.addEventListener('touchstart', startDrag, { passive: true });
+                document.addEventListener('touchend', stopDrag);
+                document.addEventListener('touchmove', onDrag, { passive: true });
+
+                 // Inisialisasi posisi awal di tengah
+                moveSlider(wrapper.getBoundingClientRect().left + wrapper.getBoundingClientRect().width / 2);
             }
 
             const footer = document.querySelector('.footer');
