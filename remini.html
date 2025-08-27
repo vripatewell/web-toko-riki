@@ -135,6 +135,7 @@
             position: absolute;
             top: 0;
             left: 50%;
+            transform: translateX(-50%);
             width: 4px; /* Lebar resizer */
             height: 100%;
             background: var(--primary-color);
@@ -162,20 +163,12 @@
         .image-after {
             position: absolute;
             top: 0;
-            right: 0;
-            width: 50%; /* Awalnya setengah */
+            left: 0;
+            width: 100%;
             height: 100%;
             overflow: hidden;
-            will-change: width; /* Hint browser untuk optimasi animasi */
-        }
-        .image-after img {
-            position: absolute; /* Perlu posisi absolut untuk bekerja dengan benar */
-            left: 0;
-            width: 200%; /* Gambar harus 2x lebih lebar dari container */
-            max-width: 200%; /* Pastikan tidak lebih dari 200% */
-            height: 100%;
-            object-fit: contain;
-            transform: translateX(-50%); /* Geser gambar agar bagian kanan yang terlihat */
+            clip-path: polygon(50% 0, 100% 0, 100% 100%, 50% 100%);
+            will-change: clip-path;
         }
         
         .popup-buttons { display: flex; flex-direction: column; gap: 10px; margin-top: 20px; }
@@ -300,64 +293,34 @@
                     const reminiResponse = await fetch('/api/downloader', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ url: beforeUrl, type: 'remini' }) // Tambahkan type: 'remini'
+                        body: JSON.stringify({ url: beforeUrl, type: 'remini' })
                     });
                     
                     // ==========================================================
-                    // ==== BAGIAN INI ADALAH PERBAIKANNYA =====================
+                    // ==== BAGIAN INI TELAH DIPERBAIKI =========================
                     // ==========================================================
                     
-                    const reminiRawResult = await reminiResponse.text();
-                    
+                    // Baca respons sebagai JSON, bukan teks mentah.
+                    const reminiResult = await reminiResponse.json();
+
                     if (!reminiResponse.ok) {
-                        // Jika respons tidak OK, coba parse error dari teks mentah
-                        let errorMessage = 'Gagal memproses gambar HD.';
-                        try {
-                            const errorJson = JSON.parse(reminiRawResult);
-                            errorMessage = errorJson.message || errorMessage;
-                        } catch (e) {
-                            // Jika bukan JSON, gunakan teks mentah sebagai pesan error jika ada
-                            if(reminiRawResult.length < 100) { // Cek agar tidak menampilkan halaman HTML error
-                                errorMessage = reminiRawResult || errorMessage;
-                            }
-                        }
-                        throw new Error(errorMessage);
+                        // Jika ada pesan error di dalam JSON, gunakan itu.
+                        throw new Error(reminiResult.message || 'Gagal memproses gambar HD.');
                     }
 
-                    let afterUrl = '';
-                    try {
-                        // Coba parse hasilnya sebagai JSON
-                        const reminiJsonResult = JSON.parse(reminiRawResult);
-
-                        // Periksa apakah format JSON-nya benar dan ambil link dari property 'result' atau 'link'
-                        if (reminiJsonResult && (reminiJsonResult.result || reminiJsonResult.link)) {
-                            afterUrl = reminiJsonResult.result || reminiJsonResult.link;
-                            if (typeof afterUrl !== 'string' || !afterUrl.startsWith('http')) {
-                                throw new Error('Format link di dalam JSON tidak valid.');
-                            }
-                        } else {
-                            throw new Error('Format JSON dari API tidak dikenali.');
-                        }
-                    } catch (e) {
-                        // Jika parsing JSON gagal, cek apakah teks mentah itu sendiri adalah URL
-                        if (typeof reminiRawResult === 'string' && reminiRawResult.startsWith('http')) {
-                            afterUrl = reminiRawResult;
-                        } else {
-                            // Jika semua gagal, lempar error akhir
-                            console.error("Hasil mentah dari API HD:", reminiRawResult);
-                            throw new Error('Format hasil Remini tidak valid atau bukan URL.');
-                        }
-                    }
-                    
-                    if (!afterUrl) {
-                        throw new Error('Gagal mendapatkan URL gambar HD dari respons API.');
+                    // Periksa apakah respons JSON memiliki property 'result' dan apakah itu URL yang valid
+                    if (reminiResult && reminiResult.result && typeof reminiResult.result === 'string' && reminiResult.result.startsWith('http')) {
+                        const afterUrl = reminiResult.result; // Ambil URL dari property 'result'
+                        showResultPopup(beforeUrl, afterUrl); // Lanjutkan untuk menampilkan popup
+                    } else {
+                        // Jika format JSON tidak sesuai atau tidak ada property 'result', lempar error.
+                        console.error("Respons tidak valid dari API:", reminiResult);
+                        throw new Error('Format hasil Remini tidak valid atau tidak dikenali.');
                     }
                     
                     // ==========================================================
                     // ==== AKHIR DARI BAGIAN PERBAIKAN =========================
                     // ==========================================================
-
-                    showResultPopup(beforeUrl, afterUrl);
 
                 } catch (error) {
                     showToast(error.message, 'error');
@@ -396,7 +359,7 @@
                 popupOverlay.classList.add('show');
 
                 const resizer = popupOverlay.querySelector('.resizer');
-                const imageAfterContainer = popupOverlay.querySelector('.image-after');
+                const imageAfter = popupOverlay.querySelector('.image-after');
                 const wrapper = popupOverlay.querySelector('.image-comparison-wrapper');
                 const imgBefore = popupOverlay.querySelector('.image-before');
                 
@@ -405,64 +368,58 @@
                 tempImg.onload = () => {
                     const aspectRatio = tempImg.naturalHeight / tempImg.naturalWidth;
                     wrapper.style.paddingBottom = `${aspectRatio * 100}%`;
-                    initComparisonSlider(resizer, imageAfterContainer, wrapper);
+                    initComparisonSlider(resizer, imageAfter, wrapper);
                 };
                 tempImg.onerror = () => {
                     console.error("Gagal memuat gambar sebelum.");
                     wrapper.style.paddingBottom = '75%'; // Fallback
-                    initComparisonSlider(resizer, imageAfterContainer, wrapper);
+                    initComparisonSlider(resizer, imageAfter, wrapper);
                 };
 
                 popupOverlay.querySelector('#close-popup-button').onclick = () => {
                     popupOverlay.classList.remove('show');
-                    setTimeout(() => popupOverlay.remove(), 300);
+                    setTimeout(() => { popupOverlay.remove(); }, 300);
                 };
             }
-
-            function initComparisonSlider(resizer, imageAfterContainer, wrapper) {
+            
+            function initComparisonSlider(resizer, imageAfter, wrapper) {
                 let isDragging = false;
 
-                const moveSlider = (x) => {
+                function move(x) {
                     const rect = wrapper.getBoundingClientRect();
                     let newX = x - rect.left;
-
                     if (newX < 0) newX = 0;
                     if (newX > rect.width) newX = rect.width;
-                    
-                    const percentage = (newX / rect.width) * 100;
-                    resizer.style.left = `${percentage}%`;
-                    imageAfterContainer.style.width = `${100 - percentage}%`;
-                };
+                    let percent = (newX / rect.width) * 100;
+                    resizer.style.left = `${percent}%`;
+                    imageAfter.style.clipPath = `polygon(${percent}% 0, 100% 0, 100% 100%, ${percent}% 100%)`;
+                }
 
-                const startDrag = (e) => {
+                function onDown(e) {
                     isDragging = true;
-                    resizer.style.transition = 'none';
-                    imageAfterContainer.style.transition = 'none';
-                };
+                    wrapper.classList.add('is-dragging');
+                }
 
-                const stopDrag = () => {
+                function onUp() {
                     isDragging = false;
-                    resizer.style.transition = '';
-                    imageAfterContainer.style.transition = '';
-                };
+                    wrapper.classList.remove('is-dragging');
+                }
 
-                const onDrag = (e) => {
+                function onMove(e) {
                     if (!isDragging) return;
-                    const clientX = e.clientX || (e.touches && e.touches[0].clientX);
-                    if (clientX === undefined) return;
-                    requestAnimationFrame(() => moveSlider(clientX));
-                };
+                    e.preventDefault();
+                    move(e.clientX || e.touches[0].clientX);
+                }
 
-                resizer.addEventListener('mousedown', startDrag);
-                document.addEventListener('mouseup', stopDrag);
-                document.addEventListener('mousemove', onDrag);
+                resizer.addEventListener('mousedown', onDown);
+                document.addEventListener('mouseup', onUp);
+                document.addEventListener('mousemove', onMove);
+                resizer.addEventListener('touchstart', onDown, { passive: true });
+                document.addEventListener('touchend', onUp);
+                document.addEventListener('touchmove', onMove, { passive: true });
 
-                resizer.addEventListener('touchstart', startDrag, { passive: true });
-                document.addEventListener('touchend', stopDrag);
-                document.addEventListener('touchmove', onDrag, { passive: true });
-
-                 // Inisialisasi posisi awal di tengah
-                moveSlider(wrapper.getBoundingClientRect().left + wrapper.getBoundingClientRect().width / 2);
+                // Inisialisasi posisi awal
+                move(wrapper.getBoundingClientRect().left + wrapper.offsetWidth / 2);
             }
 
             const footer = document.querySelector('.footer');
