@@ -71,10 +71,9 @@
         }
         #back-button:hover { color: var(--primary-color); background-color: rgba(0,0,0,0.05); }
         body.dark-mode #back-button:hover { background-color: rgba(255,255,255,0.05); }
-
         .footer { margin-top: 30px; text-align: center; font-size: 0.9em; color: var(--text-secondary); }
-        
-        /* MODIFIKASI: CSS untuk footer dan animasi YouTube dikembalikan */
+
+        /* CSS FOOTER & ANIMASI YOUTUBE DARI KODE ASLI */
         .footer a { color: var(--text-secondary); text-decoration: none; font-weight: 600; display: inline-flex; align-items: center; gap: 8px; transition: color 0.3s ease, text-shadow 0.3s ease; }
         .footer a:hover { color: var(--primary-color); text-shadow: 0 0 8px var(--primary-color); }
         .footer .fab.fa-youtube { color: #ff0000; }
@@ -93,60 +92,81 @@
             30%, 70% { transform: translateX(-50%) translateY(0); opacity: 1; }
             80% { transform: translateX(-50%) translateY(10px); opacity: 0; }
         }
-        
-        /* GAYA POPUP (Sebelum-Sesudah) -- MODIFIKASI DARI SEBELUMNYA TETAP ADA */
+
+        /* CSS BARU UNTUK SLIDER GESER */
         .popup-overlay {
-            position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.7);
-            display: flex; align-items: center; justify-content: center; padding: 20px;
+            position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.8);
+            display: flex; align-items: center; justify-content: center; padding: 10px;
             visibility: hidden; opacity: 0; transition: visibility 0s 0.3s, opacity 0.3s ease; box-sizing: border-box;
         }
         .popup-overlay.show { visibility: visible; opacity: 1; transition-delay: 0s; }
         .popup {
             background-color: var(--bg-container); border-radius: 20px; width: 100%; 
-            max-width: 90vw;
+            max-width: 600px;
             padding: 25px; text-align: center; max-height: 90vh; overflow-y: auto; 
-            transform: scale(0.95); transition: transform 0.3s ease;
+            transform: scale(0.95); transition: transform 0.3s ease; display: flex; flex-direction: column;
         }
         .popup-overlay.show .popup { transform: scale(1); }
-        .comparison-container {
-            display: flex;
-            gap: 15px;
-            justify-content: center;
-            align-items: flex-start;
-            margin-top: 20px;
+
+        .slider-container {
+            width: 100%;
+            position: relative;
+            overflow: hidden;
+            border-radius: 12px;
+            margin-top: 15px;
+            border: 1px solid var(--border-color);
+            touch-action: pan-y;
         }
-        .image-box {
-            flex: 1;
-            min-width: 0;
+
+        .slider-wrapper {
+            display: flex;
+            width: 200%; /* Karena ada 2 gambar */
+            transition: transform 0.4s ease-in-out;
+        }
+
+        .slide {
+            width: 50%; /* Lebar per slide */
+            flex-shrink: 0;
+            box-sizing: border-box;
             position: relative;
         }
-        .image-box img {
-            max-width: 100%;
+
+        .slide img {
+            width: 100%;
             height: auto;
-            border-radius: 12px;
-            border: 1px solid var(--border-color);
+            display: block;
+            user-select: none;
+            -webkit-user-drag: none; /* Mencegah ghost image saat drag di Chrome */
         }
-        .image-box .label {
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            background-color: rgba(0, 0, 0, 0.6);
-            color: white;
-            padding: 4px 10px;
-            border-radius: 8px;
-            font-size: 0.8em;
-            font-weight: 500;
+        .slide .label {
+            position: absolute; top: 10px; left: 10px; background-color: rgba(0, 0, 0, 0.6);
+            color: white; padding: 4px 10px; border-radius: 8px; font-size: 0.9em;
         }
-        @media (max-width: 768px) {
-            .comparison-container {
-                flex-direction: column;
-                align-items: center;
-            }
-            .popup { max-width: 90vw; }
+
+        .slider-btn {
+            position: absolute; top: 50%; transform: translateY(-50%);
+            background-color: rgba(0, 0, 0, 0.4); color: white; border: none;
+            width: 40px; height: 40px; border-radius: 50%; cursor: pointer;
+            font-size: 1.2em; display: flex; align-items: center; justify-content: center;
+            transition: background-color 0.2s ease; z-index: 10;
         }
-        .popup-buttons { display: flex; flex-direction: column; gap: 10px; margin-top: 25px; }
+        .slider-btn:hover { background-color: rgba(0, 0, 0, 0.7); }
+        .slider-btn.prev { left: 10px; }
+        .slider-btn.next { right: 10px; }
+
+        .slider-dots {
+            display: flex; gap: 8px; justify-content: center; margin-top: 15px;
+        }
+        .dot {
+            width: 10px; height: 10px; background-color: var(--border-color);
+            border-radius: 50%; cursor: pointer; transition: background-color 0.3s ease;
+        }
+        .dot.active { background-color: var(--primary-color); }
+        
+        .popup-buttons { display: flex; flex-direction: column; gap: 10px; margin-top: 20px; }
         .popup-button { display: block; padding: 12px; border: none; border-radius: 10px; color: white; font-weight: 600; text-decoration: none; background-color: var(--primary-color); }
         #close-popup-button { background-color: transparent; color: var(--text-secondary); border: 1px solid var(--border-color); }
+        
         #toast-container { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 9999; }
         .toast-notification {
             padding: 12px 20px; background-color: #333; color: white; border-radius: 25px;
@@ -174,11 +194,10 @@
         <input type="file" id="file-input" accept="image/jpeg, image/png, image/webp">
         <div id="preview-container"></div>
         <button id="enhance-btn"><span>HD-kan Gambar Ini</span></button>
-
         <div class="footer">
             Powered by <a href="https://toko.rikishop.my.id" target="_blank" style="margin-left: 5px;"><span class="glow-text">Riki Shop</span></a>
             <span style="margin: 0 10px;">|</span>
-            <a href="https://www.youtube.com/@rikishopreal" target="_blank">
+            <a href="https://www.youtube.com/@rikishopreal" target="_blank" class="click-animation">
                 <i class="fab fa-youtube glow-youtube"></i> Subscribe
             </a>
         </div>
@@ -186,7 +205,6 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            // ... (kode dark mode, toast, file handling, dan API call tetap sama) ...
             const body = document.body;
             const darkModeToggle = document.getElementById('dark-mode-toggle');
           
@@ -255,10 +273,13 @@
                 try {
                     const formData = new FormData();
                     formData.append('image', selectedFile);
+
                     const uploadResponse = await fetch('/api/tourl', { method: 'POST', body: formData });
                     const uploadResult = await uploadResponse.json();
                     if (!uploadResponse.ok) throw new Error(uploadResult.message || 'Gagal mengubah gambar ke link.');
+                    
                     const beforeUrl = uploadResult.link;
+
                     enhanceBtn.innerHTML = '<span class="spinner"></span> Memproses HD (2/2)...';
                     const reminiResponse = await fetch('/api/remini', {
                         method: 'POST',
@@ -268,8 +289,10 @@
                     const reminiResult = await reminiResponse.json();
                     if (!reminiResponse.ok) throw new Error(reminiResult.message || 'Gagal memproses gambar HD.');
                     if (!reminiResult || !reminiResult.result) throw new Error('Format hasil Remini tidak valid.');
+
                     const afterUrl = reminiResult.result;
                     showResultPopup(beforeUrl, afterUrl);
+
                 } catch (error) {
                     showToast(error.message, 'error');
                 } finally {
@@ -281,21 +304,32 @@
             function showResultPopup(beforeUrl, afterUrl) {
                 const existingPopup = document.querySelector('.popup-overlay');
                 if (existingPopup) existingPopup.remove();
+
                 const popupOverlay = document.createElement('div');
                 popupOverlay.className = 'popup-overlay';
+                
                 const downloadHref = `/api/downloadProxy?url=${encodeURIComponent(afterUrl)}&filename=enhanced_riki.png`;
+                
                 popupOverlay.innerHTML = `
                     <div class="popup">
-                        <h3>Hasil Perbandingan</h3>
-                        <div class="comparison-container">
-                            <div class="image-box">
-                                <span class="label">Gambar Asli</span>
-                                <img src="/api/imageProxy?url=${encodeURIComponent(beforeUrl)}" alt="Sebelum">
+                        <h3>Hasil Perbandingan (Geser Gambar)</h3>
+                        <div class="slider-container">
+                            <div class="slider-wrapper">
+                                <div class="slide">
+                                    <span class="label">Hasil HD</span>
+                                    <img src="/api/imageProxy?url=${encodeURIComponent(afterUrl)}" alt="Sesudah">
+                                </div>
+                                <div class="slide">
+                                    <span class="label">Gambar Asli</span>
+                                    <img src="/api/imageProxy?url=${encodeURIComponent(beforeUrl)}" alt="Sebelum">
+                                </div>
                             </div>
-                            <div class="image-box">
-                                <span class="label">Hasil HD</span>
-                                <img src="/api/imageProxy?url=${encodeURIComponent(afterUrl)}" alt="Sesudah">
-                            </div>
+                            <button class="slider-btn prev"><i class="fas fa-chevron-left"></i></button>
+                            <button class="slider-btn next"><i class="fas fa-chevron-right"></i></button>
+                        </div>
+                        <div class="slider-dots">
+                            <span class="dot active"></span>
+                            <span class="dot"></span>
                         </div>
                         <div class="popup-buttons">
                             <a href="${downloadHref}" class="popup-button"><i class="fas fa-download"></i> Download Hasil HD</a>
@@ -305,20 +339,100 @@
                 `;
                 document.body.appendChild(popupOverlay);
                 popupOverlay.classList.add('show');
+                
+                // --- LOGIKA SLIDER GESER ---
+                const sliderContainer = popupOverlay.querySelector('.slider-container');
+                const sliderWrapper = popupOverlay.querySelector('.slider-wrapper');
+                const prevBtn = popupOverlay.querySelector('.slider-btn.prev');
+                const nextBtn = popupOverlay.querySelector('.slider-btn.next');
+                const dots = popupOverlay.querySelectorAll('.dot');
+                
+                let currentIndex = 0;
+                const totalSlides = 2;
+                let isDragging = false, startPosX = 0, currentTranslate = 0, animationID;
+
+                function getPositionX(event) {
+                    return event.type.includes('mouse') ? event.pageX : event.touches[0].clientX;
+                }
+                
+                function setSliderPosition() {
+                    sliderWrapper.style.transform = `translateX(${currentTranslate}px)`;
+                }
+
+                function goToSlide(index) {
+                    const slideWidth = sliderContainer.clientWidth;
+                    currentTranslate = -index * slideWidth;
+                    sliderWrapper.style.transition = 'transform 0.4s ease-in-out';
+                    setSliderPosition();
+                    dots.forEach((dot, i) => dot.classList.toggle('active', i === index));
+                    currentIndex = index;
+                }
+
+                prevBtn.addEventListener('click', () => goToSlide(currentIndex === 0 ? totalSlides - 1 : currentIndex - 1));
+                nextBtn.addEventListener('click', () => goToSlide(currentIndex === totalSlides - 1 ? 0 : currentIndex + 1));
+                dots.forEach((dot, i) => dot.addEventListener('click', () => goToSlide(i)));
+
+                function dragStart(e) {
+                    isDragging = true;
+                    startPosX = getPositionX(e);
+                    animationID = requestAnimationFrame(animation);
+                    sliderWrapper.style.transition = 'none';
+                }
+
+                function dragging(e) {
+                    if (isDragging) {
+                        const currentPosition = getPositionX(e);
+                        const slideWidth = sliderContainer.clientWidth;
+                        currentTranslate = -currentIndex * slideWidth + currentPosition - startPosX;
+                    }
+                }
+
+                function dragEnd(e) {
+                    if (!isDragging) return;
+                    isDragging = false;
+                    cancelAnimationFrame(animationID);
+                    
+                    const movedBy = getPositionX(e) - startPosX;
+
+                    if (movedBy < -50 && currentIndex < totalSlides - 1) currentIndex += 1;
+                    if (movedBy > 50 && currentIndex > 0) currentIndex -= 1;
+                    
+                    goToSlide(currentIndex);
+                }
+
+                function animation() {
+                    setSliderPosition();
+                    if (isDragging) requestAnimationFrame(animation);
+                }
+
+                sliderContainer.addEventListener('mousedown', dragStart);
+                sliderContainer.addEventListener('touchstart', dragStart, { passive: true });
+                
+                sliderContainer.addEventListener('mousemove', dragging);
+                sliderContainer.addEventListener('touchmove', dragging, { passive: true });
+
+                sliderContainer.addEventListener('mouseup', dragEnd);
+                sliderContainer.addEventListener('mouseleave', (e) => { if(isDragging) dragEnd(e) });
+                sliderContainer.addEventListener('touchend', dragEnd);
+                
+                window.addEventListener('resize', () => goToSlide(currentIndex));
+
+                // Inisialisasi posisi
+                goToSlide(0);
+
                 popupOverlay.querySelector('#close-popup-button').onclick = () => {
                     popupOverlay.classList.remove('show');
                     popupOverlay.addEventListener('transitionend', () => popupOverlay.remove(), { once: true });
                 };
             }
-            
-            // MODIFIKASI: Script untuk animasi YouTube dikembalikan
+
+            // Script untuk animasi YouTube
             const footer = document.querySelector('.footer');
             if(footer) {
                 const youtubeLink = footer.querySelector('a[href*="youtube.com"]');
                 if (youtubeLink) {
                     const hand = document.createElement('div');
                     hand.className = 'click-hand';
-                    youtubeLink.classList.add('click-animation');
                     youtubeLink.appendChild(hand);
                 }
             }
