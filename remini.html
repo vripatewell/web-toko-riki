@@ -33,34 +33,15 @@
         @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
         h1 { margin: 0 0 10px; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 12px; font-size: 1.8em; }
         p.subtitle { color: var(--text-secondary); margin-bottom: 30px; }
-        
-        /* ▼▼▼ KODE BARU UNTUK AREA UPLOAD YANG LEBIH PROPORSONAL ▼▼▼ */
         .upload-area {
-            border: 2px dashed var(--border-color);
-            border-radius: 16px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            width: 100%; 
-            min-height: 120px; /* Tinggi minimal yang lebih kecil */
-            max-height: 250px; /* Tinggi maksimal agar tidak terlalu besar di desktop */
-            padding: 20px; 
-            box-sizing: border-box; 
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
+            border: 2px dashed var(--border-color); border-radius: 16px; cursor: pointer; transition: all 0.2s ease;
+            width: 100%; min-height: 120px; max-height: 250px; padding: 20px; 
+            box-sizing: border-box; display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
         }
         .upload-area:hover { border-color: var(--primary-color); background-color: var(--bg-body); }
-        .upload-area i { 
-            font-size: clamp(2em, 8vw, 3em); /* Rentang ukuran ikon yang lebih terkontrol */
-            color: var(--primary-color); 
-            margin-bottom: 15px; 
-        }
-        .upload-area span {
-            font-size: clamp(0.85em, 3.5vw, 1em); /* Rentang ukuran teks yang lebih terkontrol */
-        }
-        /* ▲▲▲ AKHIR DARI KODE BARU ▲▲▲ */
-
+        .upload-area i { font-size: clamp(2em, 8vw, 3em); color: var(--primary-color); margin-bottom: 15px; }
+        .upload-area span { font-size: clamp(0.85em, 3.5vw, 1em); }
         #file-input { display: none; }
         #preview-container { margin-top: 20px; text-align: center; }
         #image-preview { max-width: 100%; max-height: 200px; border-radius: 12px; }
@@ -82,118 +63,46 @@
             cursor: pointer; font-size: 1.2em; display: flex; align-items: center; justify-content: center;
             box-shadow: 0 4px 10px var(--shadow-color); z-index: 1001;
         }
-        
-        /* Tombol Kembali */
         #back-button {
-    text-decoration: none; /* Menghilangkan garis bawah dari link */
-}
-#back-button:hover {
-    color: var(--primary-color);
-    background-color: rgba(0,0,0,0.05); /* Sedikit efek hover */
-}
-        body.dark-mode #back-button:hover {
-            background-color: rgba(255,255,255,0.05);
+            position: absolute; top: 25px; left: 25px; background-color: transparent; border: none; font-size: 1.5em; 
+            cursor: pointer; color: var(--text-secondary); transition: color 0.3s ease;
+            display: flex; align-items: center; justify-content: center;
+            padding: 5px; border-radius: 50%; text-decoration: none;
         }
-
-        /* CSS FOOTER & ANIMASI YOUTUBE */
-        .footer { margin-top: 30px; text-align: center; font-size: 0.9em; color: var(--text-secondary); width: 100%; max-width: 500px; }
-        .footer a { color: var(--text-secondary); text-decoration: none; font-weight: 600; display: inline-flex; align-items: center; gap: 8px; transition: color 0.3s ease, text-shadow 0.3s ease; }
-        .footer a:hover { color: var(--primary-color); text-shadow: 0 0 8px var(--primary-color); }
-        .footer .fab.fa-youtube { color: #ff0000; }
-        .footer a:hover .fab.fa-youtube { text-shadow: 0 0 8px #ff0000; }
-        .glow-text { text-shadow: 0 0 5px var(--primary-color); }
-        .glow-youtube { text-shadow: 0 0 5px rgba(255, 0, 0, 0.6); }
-        .click-animation { position: relative; display: inline-flex; }
-        .click-hand {
-            position: absolute; bottom: -25px; left: 50%; width: 25px; height: 25px;
-            background-image: url('https://emojicdn.elk.sh/👆'); background-size: contain; background-repeat: no-repeat;
-            opacity: 0; transform: translateX(-50%); transform-origin: bottom center;
-            animation: pointing-up 2.5s infinite ease-in-out 1.5s; pointer-events: none;
-        }
-        @keyframes pointing-up {
-            0%, 100% { transform: translateX(-50%) translateY(10px); opacity: 0; }
-            30%, 70% { transform: translateX(-50%) translateY(0); opacity: 1; }
-            80% { transform: translateX(-50%) translateY(10px); opacity: 0; }
-        }
-        
+        #back-button:hover { color: var(--primary-color); background-color: rgba(0,0,0,0.05); }
+        body.dark-mode #back-button:hover { background-color: rgba(255,255,255,0.05); }
+        .footer { margin-top: 30px; text-align: center; font-size: 0.9em; color: var(--text-secondary); }
         /* GAYA POPUP */
-/* GAYA POPUP (DIPERBAIKI AGAR SELALU DI TENGAH) */
-.popup-overlay {
-    position: fixed;
-    z-index: 1000;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0,0,0,0.7);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
-    visibility: hidden;
-    opacity: 0;
-    transition: visibility 0s 0.3s, opacity 0.3s ease;
-    box-sizing: border-box;
-}
-.popup-overlay.show {
-    visibility: visible;
-    opacity: 1;
-    transition-delay: 0s;
-}
-.popup {
-    background-color: var(--bg-container);
-    border-radius: 20px;
-    width: 100%; 
-    max-width: 700px; 
-    padding: 25px;
-    text-align: center;
-    max-height: 90vh; 
-    overflow-y: auto; 
-    transform: scale(0.95);
-    transition: transform 0.3s ease;
-}
-.popup-overlay.show .popup {
-    transform: scale(1);
-}
-.comparison-container { display: flex; flex-direction: column; gap: 15px; margin-top: 20px; }
-.image-box { flex: 1; text-align: center; }
-.image-box h4 { margin: 0 0 10px; font-weight: 500; color: var(--text-secondary); }
-.image-box img { width: 100%; border-radius: 12px; border: 1px solid var(--border-color); }
-.popup-buttons { display: flex; flex-direction: column; gap: 10px; margin-top: 20px; }
-.popup-button { display: block; padding: 12px; border: none; border-radius: 10px; color: white; font-weight: 600; text-decoration: none; background-color: var(--primary-color); }
-#close-popup-button { background-color: transparent; color: var(--text-secondary); border: 1px solid var(--border-color); }
-
+        .popup-overlay {
+            position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.7);
+            display: flex; align-items: center; justify-content: center; padding: 20px;
+            visibility: hidden; opacity: 0; transition: visibility 0s 0.3s, opacity 0.3s ease; box-sizing: border-box;
+        }
+        .popup-overlay.show { visibility: visible; opacity: 1; transition-delay: 0s; }
+        .popup {
+            background-color: var(--bg-container); border-radius: 20px; width: 100%; max-width: 700px; 
+            padding: 25px; text-align: center; max-height: 90vh; overflow-y: auto; 
+            transform: scale(0.95); transition: transform 0.3s ease;
+        }
+        .popup-overlay.show .popup { transform: scale(1); }
+        .comparison-container { display: flex; flex-direction: column; gap: 15px; margin-top: 20px; }
+        .image-box { flex: 1; text-align: center; }
+        .image-box h4 { margin: 0 0 10px; font-weight: 500; color: var(--text-secondary); }
+        .image-box img { width: 100%; border-radius: 12px; border: 1px solid var(--border-color); }
+        .popup-buttons { display: flex; flex-direction: column; gap: 10px; margin-top: 20px; }
+        .popup-button { display: block; padding: 12px; border: none; border-radius: 10px; color: white; font-weight: 600; text-decoration: none; background-color: var(--primary-color); }
+        #close-popup-button { background-color: transparent; color: var(--text-secondary); border: 1px solid var(--border-color); }
         #toast-container { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 9999; }
         .toast-notification {
             padding: 12px 20px; background-color: #333; color: white; border-radius: 25px;
             font-size: 0.9em; font-weight: 500; display: flex; align-items: center; gap: 10px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
-            transform: translateY(-150%); opacity: 0;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2); transform: translateY(-150%); opacity: 0;
             transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.5s ease;
         }
         .toast-notification.show { opacity: 1; transform: translateY(0); }
         .toast-notification.success { background-color: var(--success-color); }
         .toast-notification.error { background-color: var(--error-color); }
-
-        /* Media queries khusus untuk penyesuaian di layar sangat kecil */
-        @media (max-width: 400px) {
-            h1 { font-size: 1.5em; }
-            .upload-area {
-                min-height: 100px; /* Lebih kecil di layar sangat kecil */
-                padding: 15px; /* Padding lebih kecil */
-            }
-            .upload-area i {
-                margin-bottom: 10px;
-            }
-            #back-button {
-                top: 15px;
-                left: 15px;
-                font-size: 1.2em;
-            }
-        }
-        @media (min-width: 600px) {
-            .comparison-container { flex-direction: row; }
-        }
+        @media (min-width: 600px) { .comparison-container { flex-direction: row; } }
     </style>
 </head>
 <body>
@@ -201,28 +110,18 @@
     <button id="dark-mode-toggle" class="dark-mode-toggle" aria-label="Ganti Tema"><i class="fas fa-moon"></i></button>
 
     <div class="container">
-<a href="index.html" id="back-button" aria-label="Kembali"><i class="fas fa-arrow-left"></i></a>
+        <a href="index.html" id="back-button" aria-label="Kembali"><i class="fas fa-arrow-left"></i></a>
         <h1><i class="fas fa-magic-sparkles"></i> AI Image Enhancer</h1>
         <p class="subtitle">Unggah gambar buram untuk diubah menjadi kualitas HD.</p>
-        
         <label for="file-input" class="upload-area" id="upload-area">
             <i class="fas fa-cloud-upload-alt"></i>
             <span id="upload-text">Klik atau seret gambar ke sini</span>
         </label>
         <input type="file" id="file-input" accept="image/jpeg, image/png, image/webp">
-        
         <div id="preview-container"></div>
-        
-        <button id="enhance-btn">
-            <span>HD-kan Gambar Ini</span>
-        </button>
-
+        <button id="enhance-btn"><span>HD-kan Gambar Ini</span></button>
         <div class="footer">
-            Powered by <a href="https://toko.rikishop.my.id" target="_blank" style="margin-left: 5px;"><span class="glow-text">Riki Shop</span></a>
-            <span style="margin: 0 10px;">|</span>
-            <a href="https://www.youtube.com/@rikishopreal" target="_blank">
-                <i class="fab fa-youtube glow-youtube"></i> Subscribe
-            </a>
+            Powered by Riki Shop | <a href="https://www.youtube.com/@rikishopreal" target="_blank">Subscribe</a>
         </div>
     </div>
 
