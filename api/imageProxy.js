@@ -2,37 +2,24 @@ import fetch from 'node-fetch';
 
 export default async function handler(request, response) {
     const { url } = request.query;
-
-    if (!url) {
-        return response.status(400).send('URL parameter is required.');
-    }
+    if (!url) return response.status(400).send('URL parameter is required.');
 
     try {
         const allowedDomains = [
             'tiktokcdn.com', 
             'rapidcdn.app', 
             'cdninstagram.com',
-            'pixhost.to',           // <-- DOMAIN BARU DITAMBAHKAN
-            'replicate.delivery'    // <-- DOMAIN BARU DITAMBAHKAN
+            'pixhost.to',           // <-- DOMAIN PENTING UNTUK GAMBAR "SEBELUM"
+            'replicate.delivery'    // <-- DOMAIN PENTING UNTUK GAMBAR "SESUDAH"
         ];
         const urlHost = new URL(url).hostname;
-        const isAllowed = allowedDomains.some(domain => urlHost.endsWith(domain));
-
-        if (!isAllowed) {
+        if (!allowedDomains.some(domain => urlHost.endsWith(domain))) {
              return response.status(403).send('Domain not allowed.');
         }
 
-        const externalResponse = await fetch(url, {
-            headers: {
-                'Referer': 'https://www.instagram.com/',
-                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36'
-            }
-        });
-
-        if (!externalResponse.ok) {
-            return response.status(externalResponse.status).send('Failed to fetch image.');
-        }
-
+        const externalResponse = await fetch(url);
+        if (!externalResponse.ok) return response.status(externalResponse.status).send('Failed to fetch image.');
+        
         const contentType = externalResponse.headers.get('content-type');
         response.setHeader('Content-Type', contentType || 'image/jpeg');
         
