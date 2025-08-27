@@ -72,7 +72,31 @@
         #back-button:hover { color: var(--primary-color); background-color: rgba(0,0,0,0.05); }
         body.dark-mode #back-button:hover { background-color: rgba(255,255,255,0.05); }
         .footer { margin-top: 30px; text-align: center; font-size: 0.9em; color: var(--text-secondary); }
-        /* GAYA POPUP */
+        .footer a { text-decoration: none; color: inherit; display: inline-flex; align-items: center; gap: 5px; }
+        .footer a:hover { color: var(--primary-color); }
+
+        /* Animasi Tombol YouTube */
+/* CSS FOOTER & ANIMASI YOUTUBE */
+.footer a { color: var(--text-secondary); text-decoration: none; font-weight: 600; display: inline-flex; align-items: center; gap: 8px; transition: color 0.3s ease, text-shadow 0.3s ease; }
+.footer a:hover { color: var(--primary-color); text-shadow: 0 0 8px var(--primary-color); }
+.footer .fab.fa-youtube { color: #ff0000; }
+.footer a:hover .fab.fa-youtube { text-shadow: 0 0 8px #ff0000; }
+.glow-text { text-shadow: 0 0 5px var(--primary-color); }
+.glow-youtube { text-shadow: 0 0 5px rgba(255, 0, 0, 0.6); }
+.click-animation { position: relative; display: inline-flex; }
+.click-hand {
+    position: absolute; bottom: -25px; left: 50%; width: 25px; height: 25px;
+    background-image: url('https://emojicdn.elk.sh/👆'); background-size: contain; background-repeat: no-repeat;
+    opacity: 0; transform: translateX(-50%); transform-origin: bottom center;
+    animation: pointing-up 2.5s infinite ease-in-out 1.5s; pointer-events: none;
+}
+@keyframes pointing-up {
+    0%, 100% { transform: translateX(-50%) translateY(10px); opacity: 0; }
+    30%, 70% { transform: translateX(-50%) translateY(0); opacity: 1; }
+    80% { transform: translateX(-50%) translateY(10px); opacity: 0; }
+}
+
+        /* GAYA POPUP (Sebelum-Sesudah) */
         .popup-overlay {
             position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.7);
             display: flex; align-items: center; justify-content: center; padding: 20px;
@@ -85,10 +109,70 @@
             transform: scale(0.95); transition: transform 0.3s ease;
         }
         .popup-overlay.show .popup { transform: scale(1); }
-        .comparison-container { display: flex; flex-direction: column; gap: 15px; margin-top: 20px; }
-        .image-box { flex: 1; text-align: center; }
-        .image-box h4 { margin: 0 0 10px; font-weight: 500; color: var(--text-secondary); }
-        .image-box img { width: 100%; border-radius: 12px; border: 1px solid var(--border-color); }
+        
+        .image-comparison-wrapper {
+            position: relative;
+            width: 100%;
+            padding-top: 75%; /* Aspect ratio 4:3, sesuaikan jika gambar punya rasio lain */
+            overflow: hidden;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            margin-top: 20px;
+        }
+
+        .image-comparison-wrapper img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: contain; /* Agar gambar tidak terpotong */
+            pointer-events: none; /* Penting agar slider bisa disentuh */
+            user-select: none;
+        }
+
+        .resizer {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            width: 4px;
+            height: 100%;
+            background: var(--primary-color);
+            cursor: ew-resize;
+            user-select: none;
+            z-index: 10;
+        }
+
+        .resizer::before {
+            content: '';
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            width: 30px;
+            height: 30px;
+            background: var(--primary-color);
+            border-radius: 50%;
+            border: 2px solid white;
+            box-shadow: 0 0 5px rgba(0,0,0,0.3);
+        }
+        body.dark-mode .resizer::before { border-color: #333; }
+
+        .image-after {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 50%; /* Awalnya setengah */
+            height: 100%;
+            overflow: hidden;
+        }
+        .image-after img {
+            width: 200%; /* Untuk memastikan gambar mengisi ruang meskipun ukurannya berubah */
+            left: unset;
+            right: 0;
+            transform: translateX(0%); /* Sesuaikan posisi gambar di dalam container */
+        }
+        
         .popup-buttons { display: flex; flex-direction: column; gap: 10px; margin-top: 20px; }
         .popup-button { display: block; padding: 12px; border: none; border-radius: 10px; color: white; font-weight: 600; text-decoration: none; background-color: var(--primary-color); }
         #close-popup-button { background-color: transparent; color: var(--text-secondary); border: 1px solid var(--border-color); }
@@ -102,7 +186,6 @@
         .toast-notification.show { opacity: 1; transform: translateY(0); }
         .toast-notification.success { background-color: var(--success-color); }
         .toast-notification.error { background-color: var(--error-color); }
-        @media (min-width: 600px) { .comparison-container { flex-direction: row; } }
     </style>
 </head>
 <body>
@@ -121,16 +204,19 @@
         <div id="preview-container"></div>
         <button id="enhance-btn"><span>HD-kan Gambar Ini</span></button>
         <div class="footer">
-            Powered by Riki Shop | <a href="https://www.youtube.com/@rikishopreal" target="_blank">Subscribe</a>
+            Powered by Riki Shop |  <a href="https://toko.rikishop.my.id" target="_blank" style="margin-left: 5px;"><span class="glow-text">Riki Shop</span></a>
+    <span style="margin: 0 10px;">|</span>
+    <a href="https://www.youtube.com/@rikishopreal" target="_blank">
+        <i class="fab fa-youtube glow-youtube"></i> Subscribe
+    </a>
         </div>
     </div>
-
+    
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const body = document.body;
             const darkModeToggle = document.getElementById('dark-mode-toggle');
           
-
             darkModeToggle.addEventListener('click', () => {
                 body.classList.toggle('dark-mode');
                 const isDarkMode = body.classList.contains('dark-mode');
@@ -197,20 +283,23 @@
                     const formData = new FormData();
                     formData.append('image', selectedFile);
 
+                    // Panggil tourl.js dari folder /api/
                     const uploadResponse = await fetch('/api/tourl', { method: 'POST', body: formData });
                     const uploadResult = await uploadResponse.json();
                     if (!uploadResponse.ok) throw new Error(uploadResult.message || 'Gagal mengubah gambar ke link.');
                     
                     const beforeUrl = uploadResult.link;
 
+                    // Panggil downloader.js (yang sudah support remini)
                     enhanceBtn.innerHTML = '<span class="spinner"></span> Memproses HD (2/2)...';
                     const reminiResponse = await fetch('/api/downloader', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ url: beforeUrl, type: 'remini' })
-});
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ url: beforeUrl, type: 'remini' }) // Tambahkan type: 'remini'
+                    });
                     const reminiResult = await reminiResponse.json();
                     if (!reminiResponse.ok) throw new Error(reminiResult.message || 'Gagal memproses gambar HD.');
+                    if (!reminiResult || !reminiResult.result) throw new Error('Format hasil Remini tidak valid.');
 
                     const afterUrl = reminiResult.result;
                     showResultPopup(beforeUrl, afterUrl);
@@ -235,15 +324,12 @@
                 popupOverlay.innerHTML = `
                     <div class="popup">
                         <h3>Hasil Perbandingan</h3>
-                        <div class="comparison-container">
-                            <div class="image-box">
-                                <h4>Sebelum</h4>
-                                <img src="/api/imageProxy?url=${encodeURIComponent(beforeUrl)}" alt="Sebelum">
-                            </div>
-                            <div class="image-box">
-                                <h4>Sesudah (HD)</h4>
+                        <div class="image-comparison-wrapper">
+                            <img class="image-before" src="/api/imageProxy?url=${encodeURIComponent(beforeUrl)}" alt="Sebelum">
+                            <div class="image-after">
                                 <img src="/api/imageProxy?url=${encodeURIComponent(afterUrl)}" alt="Sesudah">
                             </div>
+                            <div class="resizer"></div>
                         </div>
                         <div class="popup-buttons">
                             <a href="${downloadHref}" class="popup-button"><i class="fas fa-download"></i> Download Hasil HD</a>
@@ -254,21 +340,67 @@
                 document.body.appendChild(popupOverlay);
                 popupOverlay.classList.add('show');
 
+                // Fungsi untuk slider
+                const resizer = popupOverlay.querySelector('.resizer');
+                const imageAfter = popupOverlay.querySelector('.image-after');
+                const wrapper = popupOverlay.querySelector('.image-comparison-wrapper');
+                let isDragging = false;
+
+                const moveResizer = (x) => {
+                    const wrapperRect = wrapper.getBoundingClientRect();
+                    let newLeft = x - wrapperRect.left;
+                    if (newLeft < 0) newLeft = 0;
+                    if (newLeft > wrapperRect.width) newLeft = wrapperRect.width;
+
+                    resizer.style.left = `${(newLeft / wrapperRect.width) * 100}%`;
+                    imageAfter.style.width = `${100 - (newLeft / wrapperRect.width) * 100}%`;
+                    imageAfter.querySelector('img').style.transform = `translateX(${-(newLeft / wrapperRect.width) * 100}%)`;
+                };
+
+                resizer.addEventListener('mousedown', (e) => {
+                    isDragging = true;
+                });
+                wrapper.addEventListener('mousemove', (e) => {
+                    if (isDragging) moveResizer(e.clientX);
+                });
+                wrapper.addEventListener('mouseup', () => {
+                    isDragging = false;
+                });
+                wrapper.addEventListener('mouseleave', () => { // Penting agar tidak nyangkut saat mouse keluar area
+                    isDragging = false;
+                });
+
+                // Touch events untuk mobile
+                resizer.addEventListener('touchstart', (e) => {
+                    isDragging = true;
+                });
+                wrapper.addEventListener('touchmove', (e) => {
+                    if (isDragging && e.touches.length > 0) moveResizer(e.touches[0].clientX);
+                });
+                wrapper.addEventListener('touchend', () => {
+                    isDragging = false;
+                });
+
+                // Set posisi awal slider ke tengah
+                moveResizer(wrapper.getBoundingClientRect().left + wrapper.getBoundingClientRect().width / 2);
+
+
                 popupOverlay.querySelector('#close-popup-button').onclick = () => {
                     popupOverlay.classList.remove('show');
                 };
             }
 
+            // Animasi Klik YouTube
             const footer = document.querySelector('.footer');
-            if(footer) {
-                const youtubeLink = footer.querySelector('a[href*="youtube.com"]');
-                if (youtubeLink) {
-                    const hand = document.createElement('div');
-                    hand.className = 'click-hand';
-                    youtubeLink.classList.add('click-animation');
-                    youtubeLink.appendChild(hand);
-                }
-            }
+if(footer) {
+    const youtubeLink = footer.querySelector('a[href*="youtube.com"]');
+    if (youtubeLink) {
+        const hand = document.createElement('div');
+        hand.className = 'click-hand';
+        youtubeLink.classList.add('click-animation');
+        youtubeLink.appendChild(hand);
+    }
+}
         });
     </script>
 </body>
