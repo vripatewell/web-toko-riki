@@ -111,25 +111,23 @@
         .popup-overlay.show .popup { transform: scale(1); }
         
         .image-comparison-wrapper {
-            position: relative;
-            width: 100%;
-            padding-top: 75%; /* Aspect ratio 4:3, sesuaikan jika gambar punya rasio lain */
-            overflow: hidden;
-            border-radius: 12px;
-            border: 1px solid var(--border-color);
-            margin-top: 20px;
-        }
+    position: relative;
+    width: 100%;
+    padding-top: 75%; /* aspect ratio */
+    overflow: hidden;
+    border-radius: 12px;
+    border: 1px solid var(--border-color);
+    margin-top: 20px;
+}
 
-        .image-comparison-wrapper img {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            object-fit: contain; /* Agar gambar tidak terpotong */
-            pointer-events: none; /* Penting agar slider bisa disentuh */
-            user-select: none;
-        }
+.image-comparison-wrapper img {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    object-fit: contain; /* biar proporsional */
+    pointer-events: none;
+    user-select: none;
+}
 
         .resizer {
             position: absolute;
@@ -158,21 +156,20 @@
         }
         body.dark-mode .resizer::before { border-color: #333; }
 
-        .image-after {
-            position: absolute;
-            top: 0;
-            right: 0;
-            width: 50%; /* Awalnya setengah */
-            height: 100%;
-            overflow: hidden;
-        }
-        .image-after img {
+.image-after {
+    position: absolute;
+    top: 0; right: 0;
+    width: 50%; /* awal setengah */
+    height: 100%;
+    overflow: hidden;
+}
+
+.image-after img {
     width: 100%;
     height: 100%;
     object-fit: contain;
     position: absolute;
-    top: 0;
-    left: 0;
+    top: 0; left: 0;
 }
         
         .popup-buttons { display: flex; flex-direction: column; gap: 10px; margin-top: 20px; }
@@ -358,8 +355,7 @@ const moveResizer = (x) => {
 
     const percentage = (newX / rect.width) * 100;
     resizer.style.left = `${percentage}%`;
-    imageAfter.style.width = `${100 - percentage}%`;
-    imageAfter.querySelector('img').style.transform = `translateX(${-percentage}%)`;
+    imageAfter.style.width = `${100 - percentage}%`; // ⬅️ cukup ini aja
 };
 
 // mouse
