@@ -169,10 +169,13 @@
             will-change: width; /* Hint browser untuk optimasi animasi */
         }
         .image-after img {
-            width: 100%; /* Agar gambar mengisi penuh container .image-after */
-            left: 0; /* Reset left */
-            transform: translateX(0); /* Reset transform */
+            position: absolute; /* Perlu posisi absolut untuk bekerja dengan benar */
+            left: 0;
+            width: 200%; /* Gambar harus 2x lebih lebar dari container */
+            max-width: 200%; /* Pastikan tidak lebih dari 200% */
+            height: 100%;
             object-fit: contain;
+            transform: translateX(-50%); /* Geser gambar agar bagian kanan yang terlihat */
         }
         
         .popup-buttons { display: flex; flex-direction: column; gap: 10px; margin-top: 20px; }
@@ -300,28 +303,60 @@
                         body: JSON.stringify({ url: beforeUrl, type: 'remini' }) // Tambahkan type: 'remini'
                     });
                     
-                    // Langsung baca sebagai teks untuk menghindari error JSON.parse jika bukan JSON
-                    const reminiRawResult = await reminiResponse.text(); 
+                    // ==========================================================
+                    // ==== BAGIAN INI ADALAH PERBAIKANNYA =====================
+                    // ==========================================================
+                    
+                    const reminiRawResult = await reminiResponse.text();
                     
                     if (!reminiResponse.ok) {
-                        // Coba parse error message jika ada
+                        // Jika respons tidak OK, coba parse error dari teks mentah
                         let errorMessage = 'Gagal memproses gambar HD.';
                         try {
                             const errorJson = JSON.parse(reminiRawResult);
                             errorMessage = errorJson.message || errorMessage;
                         } catch (e) {
-                            // Raw result bukan JSON, pakai apa adanya
-                            errorMessage = reminiRawResult || errorMessage;
+                            // Jika bukan JSON, gunakan teks mentah sebagai pesan error jika ada
+                            if(reminiRawResult.length < 100) { // Cek agar tidak menampilkan halaman HTML error
+                                errorMessage = reminiRawResult || errorMessage;
+                            }
                         }
                         throw new Error(errorMessage);
                     }
 
-                    // Pastikan hasilnya adalah URL yang valid
-                    if (typeof reminiRawResult !== 'string' || !reminiRawResult.startsWith('http')) {
-                        throw new Error('Format hasil Remini tidak valid: Bukan URL.');
-                    }
+                    let afterUrl = '';
+                    try {
+                        // Coba parse hasilnya sebagai JSON
+                        const reminiJsonResult = JSON.parse(reminiRawResult);
 
-                    const afterUrl = reminiRawResult; // Hasilnya langsung berupa link
+                        // Periksa apakah format JSON-nya benar dan ambil link dari property 'result' atau 'link'
+                        if (reminiJsonResult && (reminiJsonResult.result || reminiJsonResult.link)) {
+                            afterUrl = reminiJsonResult.result || reminiJsonResult.link;
+                            if (typeof afterUrl !== 'string' || !afterUrl.startsWith('http')) {
+                                throw new Error('Format link di dalam JSON tidak valid.');
+                            }
+                        } else {
+                            throw new Error('Format JSON dari API tidak dikenali.');
+                        }
+                    } catch (e) {
+                        // Jika parsing JSON gagal, cek apakah teks mentah itu sendiri adalah URL
+                        if (typeof reminiRawResult === 'string' && reminiRawResult.startsWith('http')) {
+                            afterUrl = reminiRawResult;
+                        } else {
+                            // Jika semua gagal, lempar error akhir
+                            console.error("Hasil mentah dari API HD:", reminiRawResult);
+                            throw new Error('Format hasil Remini tidak valid atau bukan URL.');
+                        }
+                    }
+                    
+                    if (!afterUrl) {
+                        throw new Error('Gagal mendapatkan URL gambar HD dari respons API.');
+                    }
+                    
+                    // ==========================================================
+                    // ==== AKHIR DARI BAGIAN PERBAIKAN =========================
+                    // ==========================================================
+
                     showResultPopup(beforeUrl, afterUrl);
 
                 } catch (error) {
@@ -339,7 +374,6 @@
                 const popupOverlay = document.createElement('div');
                 popupOverlay.className = 'popup-overlay';
                 
-                // Perbaikan: Tombol download harus selalu mengunduh afterUrl
                 const downloadHref = `/api/downloadProxy?url=${encodeURIComponent(afterUrl)}&filename=enhanced_riki.png`;
                 
                 popupOverlay.innerHTML = `
@@ -354,7 +388,7 @@
                         </div>
                         <div class="popup-buttons">
                             <a href="${downloadHref}" class="popup-button"><i class="fas fa-download"></i> Download Hasil HD</a>
-                            <button id="close-popup-button">Tutup</button>
+                            <button id="close-popup-button" class="popup-button">Tutup</button>
                         </div>
                     </div>
                 `;
@@ -362,92 +396,75 @@
                 popupOverlay.classList.add('show');
 
                 const resizer = popupOverlay.querySelector('.resizer');
-                const imageAfter = popupOverlay.querySelector('.image-after');
+                const imageAfterContainer = popupOverlay.querySelector('.image-after');
                 const wrapper = popupOverlay.querySelector('.image-comparison-wrapper');
                 const imgBefore = popupOverlay.querySelector('.image-before');
                 
-                // Load gambar sebelum menginisialisasi slider untuk mendapatkan dimensi asli
                 const tempImg = new Image();
                 tempImg.src = imgBefore.src;
                 tempImg.onload = () => {
                     const aspectRatio = tempImg.naturalHeight / tempImg.naturalWidth;
                     wrapper.style.paddingBottom = `${aspectRatio * 100}%`;
-                    initComparisonSlider(resizer, imageAfter, wrapper);
+                    initComparisonSlider(resizer, imageAfterContainer, wrapper);
                 };
                 tempImg.onerror = () => {
                     console.error("Gagal memuat gambar sebelum.");
                     wrapper.style.paddingBottom = '75%'; // Fallback
-                    initComparisonSlider(resizer, imageAfter, wrapper);
+                    initComparisonSlider(resizer, imageAfterContainer, wrapper);
                 };
 
                 popupOverlay.querySelector('#close-popup-button').onclick = () => {
                     popupOverlay.classList.remove('show');
+                    setTimeout(() => popupOverlay.remove(), 300);
                 };
             }
 
-            function initComparisonSlider(resizer, imageAfter, wrapper) {
+            function initComparisonSlider(resizer, imageAfterContainer, wrapper) {
                 let isDragging = false;
 
-                // Set posisi awal slider ke tengah
-                const initialX = wrapper.getBoundingClientRect().width / 2;
-                moveResizer(initialX);
+                const moveSlider = (x) => {
+                    const rect = wrapper.getBoundingClientRect();
+                    let newX = x - rect.left;
 
-                const moveResizer = (x) => {
-                    const wrapperRect = wrapper.getBoundingClientRect();
-                    let newLeft = x - wrapperRect.left;
+                    if (newX < 0) newX = 0;
+                    if (newX > rect.width) newX = rect.width;
                     
-                    // Batasi pergerakan slider agar tidak keluar area
-                    if (newLeft < 0) newLeft = 0;
-                    if (newLeft > wrapperRect.width) newLeft = wrapperRect.width;
-
-                    const percentage = (newLeft / wrapperRect.width) * 100;
-
-                    // Gunakan transform untuk performa lebih baik
-                    resizer.style.transform = `translateX(${percentage - 50}%)`; // Geser resizer ke tengah
-                    imageAfter.style.width = `${100 - percentage}%`;
-                    imageAfter.style.transform = `translateX(${percentage}%)`; // Geser container .image-after
+                    const percentage = (newX / rect.width) * 100;
+                    resizer.style.left = `${percentage}%`;
+                    imageAfterContainer.style.width = `${100 - percentage}%`;
                 };
 
-                const startDragging = (clientX) => {
+                const startDrag = (e) => {
                     isDragging = true;
-                    wrapper.classList.add('dragging'); // Tambahkan kelas untuk kursor atau styling
+                    resizer.style.transition = 'none';
+                    imageAfterContainer.style.transition = 'none';
                 };
 
-                const stopDragging = () => {
+                const stopDrag = () => {
                     isDragging = false;
-                    wrapper.classList.remove('dragging');
+                    resizer.style.transition = '';
+                    imageAfterContainer.style.transition = '';
                 };
 
-                const onMove = (clientX) => {
-                    if (isDragging) {
-                        requestAnimationFrame(() => moveResizer(clientX));
-                    }
+                const onDrag = (e) => {
+                    if (!isDragging) return;
+                    const clientX = e.clientX || (e.touches && e.touches[0].clientX);
+                    if (clientX === undefined) return;
+                    requestAnimationFrame(() => moveSlider(clientX));
                 };
 
-                // Mouse events
-                resizer.addEventListener('mousedown', (e) => {
-                    e.preventDefault(); // Mencegah drag default browser
-                    startDragging(e.clientX);
-                });
-                wrapper.addEventListener('mousemove', (e) => {
-                    onMove(e.clientX);
-                });
-                wrapper.addEventListener('mouseup', stopDragging);
-                wrapper.addEventListener('mouseleave', stopDragging);
+                resizer.addEventListener('mousedown', startDrag);
+                document.addEventListener('mouseup', stopDrag);
+                document.addEventListener('mousemove', onDrag);
 
-                // Touch events
-                resizer.addEventListener('touchstart', (e) => {
-                    e.preventDefault(); // Mencegah scroll default browser
-                    if (e.touches.length > 0) startDragging(e.touches[0].clientX);
-                }, { passive: false });
-                wrapper.addEventListener('touchmove', (e) => {
-                    if (e.touches.length > 0) onMove(e.touches[0].clientX);
-                }, { passive: false });
-                wrapper.addEventListener('touchend', stopDragging);
+                resizer.addEventListener('touchstart', startDrag, { passive: true });
+                document.addEventListener('touchend', stopDrag);
+                document.addEventListener('touchmove', onDrag, { passive: true });
+
+                 // Inisialisasi posisi awal di tengah
+                moveSlider(wrapper.getBoundingClientRect().left + wrapper.getBoundingClientRect().width / 2);
             }
 
-
-            // Animasi Klik YouTube
             const footer = document.querySelector('.footer');
             if(footer) {
                 const youtubeLink = footer.querySelector('a[href*="youtube.com"]');
